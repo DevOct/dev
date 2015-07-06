@@ -1,0 +1,38 @@
+/* Empty. Add your own CSS if you like */
+#__sideMenu, 
+.__sideList .list .item,
+.__sideList .list .item-complex,
+.__sideList .list .item-complex .item-content{
+	background-color: #29A0DD !important;
+	color: #fff;
+  	border-left: none;
+  	border-right: none;
+}
+.__sideList .list .item:first-child{
+	border-top:none;
+}
+.__sideList .list .item{
+	margin-left:20px;
+	margin-right:5px;
+}
+.__sideList .list .item h1{
+	color:#fff;
+	text-align: center;
+}
+#__user img {
+  width: 100%;
+}
+#__user {
+  border-radius: 50%;
+  overflow: hidden;
+}
+.__feed a{
+	border: none;
+	background-color: transparent;
+}
+.__feed ion-item {
+  border-top-width: 8px;
+}
+.seemore{
+	float:right;
+}
