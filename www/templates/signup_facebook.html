@@ -4,7 +4,7 @@
     <img class="__img" src="img/octant_logo.png">
   </div>
 
-  <h3>Sign Up with Email</h3>
+  <h3>Sign Up with Facebook</h3>
 
   <div class="card">
 
@@ -31,12 +31,14 @@
           <input type="text" placeholder="Zip Code">
         </div>
 
-        <div class="item item-checkbox">
+        <div class="item item-icon-left">
+          <i class="icon">
            <label class="checkbox">
              <input type="checkbox">
-           </label>
-           <a href="#" class="Button Button-clear">Terms &amp; Condition</a><br/>
-           <a href="#" class="Button Button-clear">Privacy Policy</a>
+           </label>            
+          </i>
+           <a href="#" class="Button Button-clear" ng-click="terms()">Terms &amp; Condition</a><br/>
+           <a href="#" class="Button Button-clear" ng-click="privacy()">Privacy Policy</a>
         </div>
         
       </li>
@@ -47,9 +49,6 @@
         <br/>
         <button class="button button-block button-outline button-positive"  ui-sref="app.home">
           Sign Up
-        </button>
-        <button class="button button-block button-positive icon-left ion-social-facebook"  ui-sref="facebook">
-          Sign Up with Facebook
         </button>
       </li>
 

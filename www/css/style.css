@@ -48,15 +48,18 @@
 }
 
 /*Login*/
+#__signup,
 #__login{
 	background-color: #29A0DD;
 }
 
 #__login .card,
+#__signup .card,
 #__login .list .item{
 	background-color: transparent;
 }
 
+#__signup .card,
 #__login .card{
 	box-shadow: none;
 }
@@ -100,4 +103,9 @@
 
 .__loginForm .item{
 	border: none !important;
+}
+
+#__signup h3{
+	text-align: center;
+	color: #fff;
 }

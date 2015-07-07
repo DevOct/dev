@@ -31,7 +31,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   .state('signup', {
     url: "/signup",
     templateUrl: "templates/signup.html",
-    controller: 'LoginCtrl'
+    controller: 'SignupCtrl'
+    })
+  .state('facebook', {
+    url: "/facebook",
+    templateUrl: "templates/signup_facebook.html",
+    controller: 'SignupCtrl'
     })
   .state('app', {
     url: "/app",
@@ -39,8 +44,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     templateUrl: "templates/menu.html",
     controller: 'AppCtrl'
   })
-    .state('app.playlists', {
-      url: "/playlists",
+    .state('app.home', {
+      url: "/home",
       views: {
         'menuContent': {
           templateUrl: "templates/playlists.html",
