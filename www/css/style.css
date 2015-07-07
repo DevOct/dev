@@ -1,4 +1,6 @@
 /* Empty. Add your own CSS if you like */
+
+/*Playlists <=== rename this shit*/
 #__sideMenu, 
 .__sideList .list .item,
 .__sideList .list .item-complex,
@@ -8,31 +10,94 @@
   	border-left: none;
   	border-right: none;
 }
+
 .__sideList .list .item:first-child{
 	border-top:none;
 }
+
 .__sideList .list .item{
 	margin-left:20px;
 	margin-right:5px;
 }
+
 .__sideList .list .item h1{
 	color:#fff;
 	text-align: center;
 }
+
 #__user img {
   width: 100%;
 }
+
 #__user {
   border-radius: 50%;
   overflow: hidden;
 }
+
 .__feed a{
 	border: none;
 	background-color: transparent;
 }
+
 .__feed ion-item {
   border-top-width: 8px;
 }
+
 .seemore{
 	float:right;
+}
+
+/*Login*/
+#__login{
+	background-color: #29A0DD;
+}
+
+#__login .card,
+#__login .list .item{
+	background-color: transparent;
+}
+
+#__login .card{
+	box-shadow: none;
+}
+
+#__login .list .item input[type="text"]{
+	width: calc(100% - 32px);
+	padding: 7px
+}
+
+#__login .list{
+	width: calc(100% - 80px);
+	margin: auto;
+}
+
+#__login .list .item i{
+	color: #fff;
+}
+
+.__img{
+	width: calc(100% - 40px);
+}
+
+.__loginButton,
+.__logo{
+	text-align:center;	
+}
+
+.__loginButton .button.button-outline{
+	color: #fff !important;
+	border-color: #fff !important;
+}
+
+.__loginFooter button{
+	margin-top: 0 !important;
+}
+
+.__loginFooter .title,
+.__loginFooter{
+	height: 90px;
+}
+
+.__loginForm .item{
+	border: none !important;
 }
