@@ -109,3 +109,23 @@
 	text-align: center;
 	color: #fff;
 }
+#__signup .__signupForm{
+	width: calc(100% - 70px);
+	margin: auto;
+}
+#__signup .__signupForm .item {
+  margin: 4px 0;
+  background-color: transparent;
+  border-bottom: transparent;
+}
+
+#__signup .__signupForm .item input[type="text"],
+#__signup .__signupForm .item input[type="password"]{
+	background-color: #fff;
+	padding: 7px;
+}
+
+.pull-right {
+  right: 5px;
+  position: absolute;
+}

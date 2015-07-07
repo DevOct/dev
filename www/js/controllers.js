@@ -58,30 +58,33 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, $stateParams) {
 })
 
-.controller('SignupCtrl', function($scope, $ionicModal, $stateParams) {
+.controller('SignupCtrl', function($scope, $stateParams) {
 
   // Triggered in the login modal to close it
-  $scope.closeMod = function() {
-    $scope.modal.hide();
+
+})
+
+.run(function($rootScope, $ionicModal) {
+  $rootScope.closeMod = function() {
+    $rootScope.modal.hide();
   };
 
   // Open the login modal
-  $scope.terms = function() {
+  $rootScope.terms = function() {
     $ionicModal.fromTemplateUrl('templates/terms.html', {
-      scope: $scope
+      scope: $rootScope
     }).then(function(modal) {
-      $scope.modal = modal;
-      $scope.modal.show();
+      $rootScope.modal = modal;
+      $rootScope.modal.show();
     });
   };
 
-  $scope.privacy = function() {
+  $rootScope.privacy = function() {
     $ionicModal.fromTemplateUrl('templates/privacy.html', {
-      scope: $scope
+      scope: $rootScope
     }).then(function(modal) {
-      $scope.modal = modal;
-      $scope.modal.show();
+      $rootScope.modal = modal;
+      $rootScope.modal.show();
     });
   };
-
 });
