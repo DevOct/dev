@@ -55,8 +55,11 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $stateParams) {
-  var feeds;
+.controller('PlaylistsCtrl', function($scope, $http, $stateParams, $ionicViewService) {
+  $ionicViewService.nextViewOptions({
+    disableBack: true
+  });
+    var feeds;
 
   $http.get('data/test.json').then(function(resp) {
     console.log('Success', resp);
