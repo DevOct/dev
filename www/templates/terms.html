@@ -2,22 +2,11 @@
   <ion-header-bar>
     <h1 class="title">Terms &amp; Conditions</h1>
   </ion-header-bar>
-  <ion-content>
-
-    <ion-list>
-      <ion-item class="item-stable"
-                ng-click="toggleGroup(group)"
-                ng-class="{active: isGroupShown(group)}">
-          <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
-        &nbsp;
-        Group 101
-      </ion-item>
-      <ion-item class="item-accordion"
-                ng-show="isGroupShown(group)">
-        lalala
-      </ion-item>
-    </ion-list>
-
+  <ion-content ng-controller="ModalController">
+    <div ng:repeat="t in terms" ng-bind-html-unsafe="t.html">
+      <div ng-bind-html="t.tc_donor"></div>
+    </div>
+    {{terms[0]}}
   </ion-content>
   <ion-footer-bar align-title="left" class="bar-positive">
     <div class="buttons" ng-click="closeMod()">

@@ -10,14 +10,6 @@ angular.module('starter.controllers', [])
   //});
   
   // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
@@ -39,12 +31,34 @@ angular.module('starter.controllers', [])
       $scope.closeLogin();
     }, 1000);
   };
+  $scope.closeMod = function() {
+    $scope.modal.hide();
+  };
+
+  // Open the login modal
+  $scope.terms = function() {
+    $ionicModal.fromTemplateUrl('templates/terms.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.modal = modal;
+      $scope.modal.show();
+    });
+  };
+
+  $scope.privacy = function() {
+    $ionicModal.fromTemplateUrl('templates/privacy.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.modal = modal;
+      $scope.modal.show();
+    });
+  };
 })
 
 .controller('PlaylistsCtrl', function($scope, $http, $stateParams) {
   var feeds;
 
-  $http.get('http://54.175.16.235/api/feed').then(function(resp) {
+  $http.get('data/test.json').then(function(resp) {
     console.log('Success', resp);
     // For JSON responses, resp.data contains the result
   }, function(err) {
@@ -65,6 +79,16 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
 
+.controller('ModalController', function($scope, $stateParams, $http) {
+  k = null;
+  $http.get("data/test.json").then(function(response){
+    $scope.terms = response.data.tc_id;
+    console.log(response.data.tc_id);
+  });
+  console.log(k)
+
+})
+
 .controller('LoginCtrl', function($scope, $stateParams) {
 })
 
@@ -74,34 +98,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.run(function($rootScope, $ionicModal) {
-  $rootScope.closeMod = function() {
-    $rootScope.modal.hide();
-  };
-
-  // Open the login modal
-  $rootScope.terms = function() {
-    $ionicModal.fromTemplateUrl('templates/terms.html', {
-      scope: $rootScope
-    }).then(function(modal) {
-      $rootScope.explode("terms");
-      $rootScope.modal = modal;
-      $rootScope.modal.show();
-    });
-  };
-
-  $rootScope.explode = function() {
-
-  };
-
-  $rootScope.privacy = function() {
-    $ionicModal.fromTemplateUrl('templates/privacy.html', {
-      scope: $rootScope
-    }).then(function(modal) {
-      $rootScope.modal = modal;
-      $rootScope.modal.show();
-    });
-  };
+.run(function($rootScope, $ionicModal, staticData) {
 
   $rootScope.groups = [];
   for (var i=0; i<10; i++) {
@@ -126,4 +123,16 @@ angular.module('starter.controllers', [])
     return group.show;
   };
 
+})
+.factory('staticData', function($http) {
+  var termsFac;
+
+  return {
+    getTerms: function(){
+      return $http.get("data/test.json").then(function(response){
+        termsFac = response;
+        return termsFac;
+      });
+    },
+  }
 });

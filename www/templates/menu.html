@@ -43,16 +43,16 @@
     </ion-header-bar>
     <ion-content>
       <ion-list class="__sideList">
-        <ion-item menu-close ui-sref="app.profile">
+        <ion-item>
           <div id="__user">
             <img src="img/dummy.jpg">
           </div>
-          <h1>Jhon Doe</h1>
+          <h1 menu-close>Jhon Doe</h1>
         </ion-item>
         <ion-item menu-close href="#">
           My Organization
         </ion-item>
-        <ion-item menu-close href="#">
+        <ion-item menu-close href="#/app/profile">
           Profile
         </ion-item>
         <ion-item menu-close ng-click="terms()">
@@ -64,7 +64,7 @@
         <ion-item>
           Help
         </ion-item>
-        <ion-item>
+        <ion-item menu-close ui-sref="login">
           Logout
         </ion-item>
       </ion-list>
