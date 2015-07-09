@@ -97,10 +97,6 @@ angular.module('starter.controllers', [])
     console.log("Status: Error "+status);
     console.log("Error: ");
   });
-  // $http.get("data/test.json").then(function(response){
-  //   $scope.terms = response.data.tc_id;
-  //   console.log(response.data.tc_id);
-  // });
   console.log(k)
 
 })
