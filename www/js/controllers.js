@@ -61,7 +61,7 @@ angular.module('starter.controllers', [])
   });
     var feeds;
 
-  $http.get('data/test.json').then(function(resp) {
+  $http.get('http://app.octantapp.com/api/td/oct5678093672').then(function(resp) {
     console.log('Success', resp);
     // For JSON responses, resp.data contains the result
   }, function(err) {
@@ -80,25 +80,38 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
+
 })
 
 .controller('ModalController', function($scope, $stateParams, $http) {
   k = null;
-  $http.get("data/test.json").then(function(response){
-    $scope.terms = response.data.tc_id;
-    console.log(response.data.tc_id);
+  $http({
+    type: 'GET',
+    url: "http://app.octantapp.com/api/td/oct5678093672",
+    dataType: 'json'
+  }).
+  success(function(data, status, headers, config) {
+    console.log(JSON.parse(data.tc_id));
+  }).
+  error(function(data, status, headers, config) {
+    console.log("Status: Error "+status);
+    console.log("Error: ");
   });
+  // $http.get("data/test.json").then(function(response){
+  //   $scope.terms = response.data.tc_id;
+  //   console.log(response.data.tc_id);
+  // });
   console.log(k)
 
 })
 
 .controller('LoginCtrl', function($scope, $stateParams) {
+
 })
 
 .controller('SignupCtrl', function($scope, $stateParams) {
 
   // Triggered in the login modal to close it
-
 })
 
 .run(function($rootScope, $ionicModal, staticData) {
