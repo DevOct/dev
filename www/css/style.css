@@ -129,3 +129,20 @@
   right: 5px;
   position: absolute;
 }
+
+.button-circle {
+  border-radius: 50%;
+  background-color: #11bbbb;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
+
+.__profile .item-avatar{
+	padding-left: 16px;
+	background-color: #E5E5E5;
+}
+.__profile .item-avatar > img:first-child{
+  right: 16px !important;
+  left: initial;
+}

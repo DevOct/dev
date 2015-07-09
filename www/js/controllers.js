@@ -41,7 +41,17 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
+.controller('PlaylistsCtrl', function($scope, $http, $stateParams) {
+  var feeds;
+
+  $http.get('http://54.175.16.235/api/feed').then(function(resp) {
+    console.log('Success', resp);
+    // For JSON responses, resp.data contains the result
+  }, function(err) {
+    console.error('ERR', err);
+    // err.status will contain the status code
+  })
+
   $scope.organizations = [
     { title: 'Reggae', id: 1, details:'lLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' },
     { title: 'Chill', id: 2, details:'lLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' },
@@ -74,9 +84,14 @@ angular.module('starter.controllers', [])
     $ionicModal.fromTemplateUrl('templates/terms.html', {
       scope: $rootScope
     }).then(function(modal) {
+      $rootScope.explode("terms");
       $rootScope.modal = modal;
       $rootScope.modal.show();
     });
+  };
+
+  $rootScope.explode = function() {
+
   };
 
   $rootScope.privacy = function() {
@@ -87,4 +102,28 @@ angular.module('starter.controllers', [])
       $rootScope.modal.show();
     });
   };
+
+  $rootScope.groups = [];
+  for (var i=0; i<10; i++) {
+    $rootScope.groups[i] = {
+      name: i,
+      items: [],
+      show: false
+    };
+    for (var j=0; j<3; j++) {
+      $rootScope.groups[i].items.push(i + '-' + j);
+    }
+  }
+  
+  /*
+   * if given group is the selected group, deselect it
+   * else, select the given group
+   */
+  $rootScope.toggleGroup = function(group) {
+    group.show = !group.show;
+  };
+  $rootScope.isGroupShown = function(group) {
+    return group.show;
+  };
+
 });

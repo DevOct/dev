@@ -20,7 +20,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   $stateProvider
 
   .state('login', {
@@ -48,11 +48,27 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       url: "/home",
       views: {
         'menuContent': {
-          templateUrl: "templates/playlists.html",
+          templateUrl: "templates/home.html",
+          controller: 'PlaylistsCtrl'
+        }
+      }
+    })
+    .state('app.profile', {
+      url: "/profile",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/profile.html",
           controller: 'PlaylistsCtrl'
         }
       }
     });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
+
+  $httpProvider.defaults.useXDomain = true;
+  $httpProvider.defaults.withCredentials = true;
+  delete $httpProvider.defaults.headers.common["X-Requested-With"];
+  $httpProvider.defaults.headers.common["Accept"] = "application/json";
+  $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
+
 });
