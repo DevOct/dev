@@ -71,12 +71,12 @@ angular.module('starter.controllers', [])
   ];
   k = null;
   
-  // var divs = document.getElementsById('.item p');
-  // for(i=0;i<divs.length;i++) {
-  //   if(divs[i].className == '__content') {
-  //     divs[i].innerHTML = divs[i].innerHTML.substring(0,300);
-  //   }
-  // }
+  var divs = document.getElementsById('.item p');
+  for(i=0;i<divs.length;i++) {
+    if(divs[i].className == '__content') {
+      divs[i].innerHTML = divs[i].innerHTML.substring(0,300);
+    }
+  }
 
   dataFactory._get("http://app.octantapp.com/api/feed/oct5678093672").
     success(function(data, status, headers, config) {
