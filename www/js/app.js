@@ -49,7 +49,16 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       views: {
         'menuContent': {
           templateUrl: "templates/home.html",
-          controller: 'PlaylistsCtrl'
+          controller: 'FeedsController'
+        }
+      }
+    })
+    .state('app.feed', {
+      url: "/feed",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/feed.html",
+          controller: 'FeedController'
         }
       }
     })
@@ -58,7 +67,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       views: {
         'menuContent': {
           templateUrl: "templates/profile.html",
-          controller: 'PlaylistsCtrl'
+          controller: 'ProfileController'
         }
       }
     });

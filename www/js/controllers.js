@@ -55,21 +55,13 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $stateParams, $ionicViewService) {
+.controller('FeedsController', function($scope, $http, $stateParams, $ionicViewService, dataFactory) {
   $ionicViewService.nextViewOptions({
     disableBack: true
   });
-    var feeds;
 
-  $http.get('http://app.octantapp.com/api/td/oct5678093672').then(function(resp) {
-    console.log('Success', resp);
-    // For JSON responses, resp.data contains the result
-  }, function(err) {
-    console.error('ERR', err);
-    // err.status will contain the status code
-  })
-
-  $scope.organizations = [
+  $scope.feeds = [];
+  $scope.feeds = [
     { title: 'Reggae', id: 1, details:'lLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' },
     { title: 'Chill', id: 2, details:'lLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' },
     { title: 'Dubstep', id: 3, details:'lLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' },
@@ -77,9 +69,29 @@ angular.module('starter.controllers', [])
     { title: 'Rap', id: 5, details:'lLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' },
     { title: 'Cowbell', id: 6, details:'lLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' }
   ];
+  k = null;
+
+  dataFactory._get("http://app.octantapp.com/api/feed/oct5678093672").
+    success(function(data, status, headers, config) {
+      console.info("Status: Success ",status);
+      k = JSON.parse(data.feed_id);
+    }).
+    error(function(data, status, headers, config, error) {
+      console.log("Status: Error ",status);
+      console.log("Error: ",error);
+    }).
+    then(function(){
+      $scope.feeds = k;
+    });
+
+
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+.controller('FeedCtrl', function($scope, $stateParams) {
+
+})
+
+.controller('ProfileController', function($scope, $stateParams) {
 
 })
 
@@ -91,7 +103,7 @@ angular.module('starter.controllers', [])
   head = null;
   body = [];
 
-  dataFactory.getTerms().
+  dataFactory._get("http://app.octantapp.com/api/td/oct5678093672").
     success(function(data, status, headers, config) {
       console.info("Status: Success ",status);
       k = JSON.parse(data.tc_id);
@@ -115,12 +127,10 @@ angular.module('starter.controllers', [])
 
         //fetch everything else in order
         for (var j = 0; j < l.childElementCount; j++) {
-          console.log(l.children[j].outerHTML);
           body[j] = {
               id: j.toString(),
               html: l.children[j].outerHTML};
         };
-        console.log(body);
         //mix them together
         $scope.terms[i] = {head,body};
         body = [];
@@ -179,8 +189,10 @@ angular.module('starter.controllers', [])
 .factory('dataFactory', function($http) {
 
   return {
-    getTerms: function(){
-      return $http.get("http://app.octantapp.com/api/td/oct5678093672");
+    _get: function(_url,_callback){
+
+        return $http.get(_url);
+
     }
   }
 
