@@ -83,21 +83,61 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ModalController', function($scope, $stateParams, $http) {
+.controller('ModalController', function($scope, $stateParams, dataFactory) {
   k = null;
-  $http({
-    type: 'GET',
-    url: "http://app.octantapp.com/api/td/oct5678093672",
-    dataType: 'json'
-  }).
-  success(function(data, status, headers, config) {
-    console.log(JSON.parse(data.tc_id));
-  }).
-  error(function(data, status, headers, config) {
-    console.log("Status: Error "+status);
-    console.log("Error: ");
-  });
-  console.log(k)
+
+  $scope.terms2;
+  $scope.terms = [];
+  head = null;
+  body = [];
+
+  dataFactory.getTerms().
+    success(function(data, status, headers, config) {
+      console.info("Status: Success ",status);
+      k = JSON.parse(data.tc_id);
+    }).
+    error(function(data, status, headers, config, error) {
+      console.log("Status: Error ",status);
+      console.log("Error: ",error);
+    }).
+    then(function(){
+      $scope.terms2=k;
+
+      for (var i = 0; i < k.length; i++) {
+
+        l = document.createElement('div');
+        l.innerHTML = k[i].tc_donor;
+
+        //fetch h1
+        var h = l.getElementsByTagName("h1")[0]
+        head = h.innerHTML;
+        h.remove();
+
+        //fetch everything else in order
+        for (var j = 0; j < l.childElementCount; j++) {
+          console.log(l.children[j].outerHTML);
+          body[j] = {
+              id: j.toString(),
+              html: l.children[j].outerHTML};
+        };
+        console.log(body);
+        //mix them together
+        $scope.terms[i] = {head,body};
+        body = [];
+      };
+
+    });
+
+    $scope.toggleGroup = function(group) {
+      if ($scope.isGroupShown(group)) {
+          $scope.shownGroup = null;
+      } else {
+        $scope.shownGroup = group;
+      }
+    };
+    $scope.isGroupShown = function(group) {
+      return $scope.shownGroup === group;
+    };
 
 })
 
@@ -110,7 +150,7 @@ angular.module('starter.controllers', [])
   // Triggered in the login modal to close it
 })
 
-.run(function($rootScope, $ionicModal, staticData) {
+.run(function($rootScope, $ionicModal) {
 
   $rootScope.groups = [];
   for (var i=0; i<10; i++) {
@@ -136,15 +176,12 @@ angular.module('starter.controllers', [])
   };
 
 })
-.factory('staticData', function($http) {
-  var termsFac;
+.factory('dataFactory', function($http) {
 
   return {
     getTerms: function(){
-      return $http.get("data/test.json").then(function(response){
-        termsFac = response;
-        return termsFac;
-      });
-    },
+      return $http.get("http://app.octantapp.com/api/td/oct5678093672");
+    }
   }
+
 });
