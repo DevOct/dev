@@ -34,7 +34,7 @@
   overflow: hidden;
 }
 
-.__feed a{
+.__feed .list > a{
 	border: none;
 	background-color: transparent;
 }
@@ -45,6 +45,20 @@
 
 .seemore{
 	float:right;
+}
+
+.actionBar {
+  padding-left: 106px;
+}
+
+.actionBar .button-circle{
+  background-color: #ED8C2B;
+}
+
+.__feed .seemore{
+  min-height: initial;
+  height: 24px;
+  line-height: normal;
 }
 
 /*Login*/

@@ -6,7 +6,13 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers'])
 
-.run(function($ionicPlatform) {
+.run(function($rootScope,$ionicPlatform,$ionicLoading) {
+  $rootScope.$on('loading.show',function(){
+    $ionicLoading.show();
+  });
+  $rootScope.$on('loading.hide',function(){
+    $ionicLoading.hide();
+  });
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -75,3 +81,45 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   $urlRouterProvider.otherwise('/login');
 
 });
+
+var API = {
+  platformCheck : function(){
+    return (typeof device !== 'undefined') ? device.platform : '';
+  },
+  networkCheck: function()
+  {
+    var noConnection = navigator.connection && navigator.connection.type == Connection.NONE;
+    return noConnection;  
+  },
+  storage:
+  {
+    get: function(key, skipParse)
+    {
+      var data = localStorage.getItem(key);
+
+      if (data)
+      {
+        if (!skipParse)
+        {
+          data = JSON.parse(data);
+        }
+
+        return data;
+      }
+    },
+    set: function(key, value, skipParse)
+    {
+      console.log(value);
+      if (!skipParse)
+      {
+        value = JSON.stringify(value);
+      }
+
+      localStorage.setItem(key, value);
+    },
+    remove: function(key)
+    {
+      localStorage.removeItem(key);
+    }
+  }
+};
