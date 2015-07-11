@@ -87,15 +87,28 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('FeedCtrl', function($scope, $stateParams) {
+.controller('FeedController', function($scope, $stateParams) {
+  //alert($stateParams.feedid);
+  $scope.feed = API.storage.get("feeds");
+  console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
+  for(i in $scope.feed){
+    if($scope.feed[i].message_id == $stateParams.message_id){
+      temp = $scope.feed[i];
+      $scope.feed = null;
+      $scope.feed = temp;
+      console.log("foundFeed:",$scope.feed)
+      break;
+    }
+
+  }
 
 })
 
-.controller('ProfileController', function($scope, $stateParams) {
+.controller('ProfileController', function($scope) {
 
 })
 
-.controller('ModalController', function($scope, $stateParams, dataFactory) {
+.controller('ModalController', function($scope, dataFactory) {
   k = null;
 
   head = null;
@@ -152,6 +165,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('LoginCtrl', function($scope, $stateParams) {
+  $scope.clearAll = function(){
+      API.storage.remove("terms");
+      API.storage.remove("feeds");
+  }
 
 })
 
@@ -233,7 +250,6 @@ angular.module('starter.controllers', [])
             $rootScope.$broadcast('service.'+settings._token);
             $rootScope.$broadcast('loading.hide');
 
-            _Global.hideloading();
           },
           function(res){
             if(typeof settings._success === 'function')

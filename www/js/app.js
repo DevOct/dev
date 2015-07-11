@@ -60,7 +60,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     })
     .state('app.feed', {
-      url: "/feed",
+      url: "/feed/:message_id",
       views: {
         'menuContent': {
           templateUrl: "templates/feed.html",
