@@ -68,7 +68,7 @@ angular.module('starter.controllers', [])
 
   $scope.lala = true;
   $scope.feeds = [];
-  
+
   $scope.$on('service.feeds',function(){
     $scope.feeds = API.storage.get("feeds");
     console.log("lala");
@@ -117,6 +117,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ProfileController', function($scope,dataFactory) {
+
   $scope.$on('service.profile', function(){
     $scope.profile = API.storage.get("profile");
   });
@@ -127,8 +128,7 @@ angular.module('starter.controllers', [])
       _token: "profile",
       _then: function(data, status, headers, config){
         console.log(data);
-        kj = data;
-        return kj = JSON.parse(data.tc_id);
+        return JSON.parse(data.tc_id);
       },
       _success: function(data){
         API.storage.remove('feeds');
@@ -139,6 +139,7 @@ angular.module('starter.controllers', [])
     }
   );
 
+  $scope.popup = dataFactory._alert;
 })
 
 .controller('ModalController', function($scope, dataFactory) {
@@ -325,6 +326,16 @@ angular.module('starter.controllers', [])
     _fetch: function(_url){
 
         return $http.get(_url);
+
+    },
+    _alert: function(alertHead,alertMessage){
+         var alertPopup = $ionicPopup.alert({
+           title: alertHead,
+           template: alertMessage
+         });
+         alertPopup.then(function(res) {
+           console.log('Thank you for not eating my delicious ice cream cone');
+         });
 
     }
   }
