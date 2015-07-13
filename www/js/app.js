@@ -6,13 +6,18 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers'])
 
-.run(function($rootScope,$ionicPlatform,$ionicLoading) {
+.run(function($rootScope,$ionicPlatform,$ionicLoading,$ionicTabsDelegate) {
   $rootScope.$on('loading.show',function(){
-    $ionicLoading.show();
+    $ionicLoading.show({
+    template: '<ion-spinner icon="android"></ion-spinner>'
+  });
   });
   $rootScope.$on('loading.hide',function(){
     $ionicLoading.hide();
   });
+
+  
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -23,6 +28,19 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    // if(API.networkCheck()){
+    //   console.log("NoInternet");
+    //   $ionicPopup.alert({
+    //     title: 'No Internet Connection!',
+    //     template: 'Using Offiline data'
+    //   });
+    // }
+    // else{
+    //   API.storage.remove("terms");
+    //   API.storage.remove("feeds");
+    // }
+
   });
 })
 
@@ -32,17 +50,17 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   .state('login', {
     url: "/login",
     templateUrl: "login.html",
-    controller: 'LoginCtrl'
+    controller: 'LoginController'
   })
   .state('signup', {
     url: "/signup",
     templateUrl: "templates/signup.html",
-    controller: 'SignupCtrl'
+    controller: 'SignupController'
     })
   .state('facebook', {
     url: "/facebook",
     templateUrl: "templates/signup_facebook.html",
-    controller: 'SignupCtrl'
+    controller: 'SignupController'
     })
   .state('app', {
     url: "/app",
@@ -65,6 +83,42 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         'menuContent': {
           templateUrl: "templates/feed.html",
           controller: 'FeedController'
+        }
+      }
+    })
+    .state('app.events', {
+      url: "/events",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/events.html",
+          controller: 'EventsController'
+        }
+      }
+    })
+    .state('app.messages', {
+      url: "/messages",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/messages.html",
+          controller: 'MessagesController'
+        }
+      }
+    })
+    .state('app.donate', {
+      url: "/donate",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/donate.html",
+          controller: 'DonateController'
+        }
+      }
+    })
+    .state('app.pledge', {
+      url: "/pledge",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/pledge.html",
+          controller: 'PledgeController'
         }
       }
     })

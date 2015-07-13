@@ -11,6 +11,12 @@ angular.module('starter.controllers', [])
   
   // Form data for the login modal
 
+  $scope.$on('tab.shown', function() {
+
+      $state.go('tabs.contact');
+      
+  });
+
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
     $scope.modal.hide();
@@ -55,8 +61,8 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('FeedsController', function($scope, $http, $stateParams, $ionicViewService, dataFactory) {
-  $ionicViewService.nextViewOptions({
+.controller('FeedsController', function($scope, $http, $stateParams, $ionicHistory, dataFactory) {
+  $ionicHistory.nextViewOptions({
     disableBack: true
   });
 
@@ -73,6 +79,12 @@ angular.module('starter.controllers', [])
       _token: "feeds",
       _then: function(data, status, headers, config){
         return JSON.parse(data.feed_id);
+      },
+      _success: function(data){
+        API.storage.remove('feeds');
+      },
+      _error: function(data){
+        API.storage.get('feeds');
       }
     }
   );
@@ -104,7 +116,28 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ProfileController', function($scope) {
+.controller('ProfileController', function($scope,dataFactory) {
+  $scope.$on('service.profile', function(){
+    $scope.profile = API.storage.get("profile");
+  });
+
+  dataFactory._get(
+    { 
+      _url:"http://app.octantapp.com/api/dl/oct5678093672",
+      _token: "profile",
+      _then: function(data, status, headers, config){
+        console.log(data);
+        kj = data;
+        return kj = JSON.parse(data.tc_id);
+      },
+      _success: function(data){
+        API.storage.remove('feeds');
+      },
+      _error: function(data){
+        API.storage.get('feeds');
+      }
+    }
+  );
 
 })
 
@@ -146,7 +179,12 @@ angular.module('starter.controllers', [])
           body = [];
         };
         return terms;
-
+      },
+      _success: function(data){
+        API.storage.remove('terms');
+      },
+      _error: function(data){
+        API.storage.get('terms');
       }
     }
   );
@@ -164,15 +202,31 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginCtrl', function($scope, $stateParams) {
-  $scope.clearAll = function(){
-      API.storage.remove("terms");
-      API.storage.remove("feeds");
-  }
+.controller('LoginController', function($scope) {
 
 })
 
-.controller('SignupCtrl', function($scope, $stateParams) {
+.controller('SignupController', function($scope) {
+
+  // Triggered in the login modal to close it
+})
+
+.controller('EventsController', function($scope) {
+
+  // Triggered in the login modal to close it
+})
+
+.controller('MessagesController', function($scope) {
+
+  // Triggered in the login modal to close it
+})
+
+.controller('DonateController', function($scope) {
+
+  // Triggered in the login modal to close it
+})
+
+.controller('PledgeController', function($scope) {
 
   // Triggered in the login modal to close it
 })
@@ -214,7 +268,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.factory('dataFactory', function($http,$rootScope) {
+.factory('dataFactory', function($http,$rootScope,$ionicPopup) {
 
   return {
 
@@ -240,7 +294,7 @@ angular.module('starter.controllers', [])
         this._fetch(settings._url).
         then(
           function(res){
-            console.log(status);
+            console.log(res);
             if(typeof settings._success === 'function')
               settings._success(res.data, res.status, res.headers, res.config);
             API.storage.set(
@@ -254,6 +308,16 @@ angular.module('starter.controllers', [])
           function(res){
             if(typeof settings._success === 'function')
              settings._error(res.data, res.status, res.headers, res.config);
+             $rootScope.$broadcast('loading.hide');
+             $rootScope.showAlert = function() {
+               var alertPopup = $ionicPopup.alert({
+                 title: 'Connection Error',
+                 template: 'lala'
+               });
+               alertPopup.then(function(res) {
+                 console.log('Thank you for not eating my delicious ice cream cone');
+               });
+             };
           });
       }
 

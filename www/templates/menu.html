@@ -11,31 +11,31 @@
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>
 
-  <div class="tabs-striped tabs-color-positive">
-    <div class="tabs tabs-icon-top">
-      <a class="tab-item active" href="#">
+  </ion-side-menu-content>
+  <div class="tabs-striped tabs-color-positive __navtabs">
+    <div class="tabs tabs-icon-top" ng-class="{'tab-item-active': isTabActive()}">
+      <a class="tab-item" href="#/app/home">
         <i class="icon ion-home"></i>
         Home
       </a>
-      <a class="tab-item active" href="#">
+      <a class="tab-item" href="#/app/events">
         <i class="icon ion-calendar"></i>
         Events
       </a>
-      <a class="tab-item active" href="#">
+      <a class="tab-item" href="#/app/messages">
         <i class="icon ion-chatbubbles"></i>
         Messages
       </a>
-      <a class="tab-item active" href="#">
+      <a class="tab-item" href="#/app/donate">
         <i class="icon ion-cash"></i>
         Donate
       </a>
-      <a class="tab-item active" href="#">
+      <a class="tab-item" href="#/app/pledge">
         <i class="icon ion-android-hand"></i>
         Pledge
       </a>
     </div>
   </div>
-  </ion-side-menu-content>
 
   <ion-side-menu side="right" id="__sideMenu">
     <ion-header-bar class="bar-stable bar-positive">
@@ -50,10 +50,14 @@
           <h1>Jhon Doe</h1>
         </ion-item>
         <ion-item menu-close href="#">
-          My Organization
+          <a href="#/app/home">
+            My Organization
+          </a>
         </ion-item>
-        <ion-item menu-close href="#/app/profile">
-          Profile
+        <ion-item menu-close>
+          <a href="#/app/profile">
+            Profile            
+          </a>
         </ion-item>
         <ion-item menu-close ng-click="terms()">
           Terms &amp; Condition
@@ -62,10 +66,14 @@
           Privacy Policy
         </ion-item>
         <ion-item>
-          Help
+          <a href="#/app/home">
+            Help
+          </a>
         </ion-item>
         <ion-item menu-close ui-sref="login">
-          Logout
+          <a href="#/login">
+            Logout
+          </a>
         </ion-item>
       </ion-list>
     </ion-content>
