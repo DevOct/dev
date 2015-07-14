@@ -78,6 +78,7 @@
 	box-shadow: none;
 }
 
+#__login .list .item input[type="password"],
 #__login .list .item input[type="text"]{
 	width: calc(100% - 32px);
 	padding: 7px
