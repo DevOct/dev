@@ -1,8 +1,6 @@
-<ion-side-menus enable-menu-with-back-views="false">
+<ion-side-menus enable-menu-with-back-views="true">
   <ion-side-menu-content>
     <ion-nav-bar class="bar-stable bar-positive">
-      <ion-nav-back-button>
-      </ion-nav-back-button>
 
       <ion-nav-buttons side="right">
         <button class="button button-icon button-clear ion-navicon" menu-toggle="right">
@@ -14,23 +12,23 @@
   </ion-side-menu-content>
   <div class="tabs-striped tabs-color-positive __navtabs">
     <div class="tabs tabs-icon-top" ng-class="{'tab-item-active': isTabActive()}">
-      <a class="tab-item" href="#/app/home">
+      <a class="tab-item" ui-sref="app.home">
         <i class="icon ion-home"></i>
         Home
       </a>
-      <a class="tab-item" href="#/app/events">
+      <a class="tab-item" ui-sref="app.events">
         <i class="icon ion-calendar"></i>
         Events
       </a>
-      <a class="tab-item" href="#/app/messages">
+      <a class="tab-item" ui-sref="app.messages">
         <i class="icon ion-chatbubbles"></i>
         Messages
       </a>
-      <a class="tab-item" href="#/app/donate">
+      <a class="tab-item" ui-sref="app.donate">
         <i class="icon ion-cash"></i>
         Donate
       </a>
-      <a class="tab-item" href="#/app/pledge">
+      <a class="tab-item" ui-sref="app.pledge">
         <i class="icon ion-android-hand"></i>
         Pledge
       </a>

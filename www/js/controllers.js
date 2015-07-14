@@ -11,32 +11,33 @@ angular.module('starter.controllers', [])
   
   // Form data for the login modal
 
-  $scope.$on('tab.shown', function() {
+  // $scope.$on('tab.shown', function() {
 
-      $state.go('tabs.contact');
+  //     $state.go('tabs.contact');
       
-  });
+  // });
 
   // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
+  // $scope.closeLogin = function() {
+  //   $scope.modal.hide();
+  // };
 
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
+  // // Open the login modal
+  // $scope.login = function() {
+  //   $scope.modal.show();
+  // };
 
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
+  // // Perform the login action when the user submits the login form
+  // $scope.doLogin = function() {
+  //   console.log('Doing login', $scope.loginData);
 
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
+  //   // Simulate a login delay. Remove this and replace with your login
+  //   // code if using a login system
+  //   $timeout(function() {
+  //     $scope.closeLogin();
+  //   }, 1000);
+  // };
+
   $scope.closeMod = function() {
     $scope.modal.hide();
   };
@@ -61,33 +62,22 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('FeedsController', function($scope, $http, $stateParams, $ionicHistory, dataFactory) {
-  $ionicHistory.nextViewOptions({
-    disableBack: true
-  });
+.controller('FeedsController', function($scope, dataFactory) {
 
   $scope.lala = true;
   $scope.feeds = [];
 
   $scope.$on('service.feeds',function(){
     $scope.feeds = API.storage.get("feeds");
-    console.log("lala");
   });
   dataFactory._get( 
     { 
       _url:"http://app.octantapp.com/api/feed/oct5678093672",
       _token: "feeds",
-      _then: function(data, status, headers, config){
-        return JSON.parse(data.feed_id);
-      },
-      _success: function(data){
-        API.storage.remove('feeds');
-      },
-      _error: function(data){
-        API.storage.get('feeds');
-      }
+      _tokenID: "feed_id"
     }
   );
+
   // $scope.feeds = [
   //   { message_title: 'Reggae', message_id: 1, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
   //   { message_title: 'Chill', message_id: 2, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
@@ -101,6 +91,7 @@ angular.module('starter.controllers', [])
 
 .controller('FeedController', function($scope, $stateParams) {
   //alert($stateParams.feedid);
+
   $scope.feed = API.storage.get("feeds");
   console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
   for(i in $scope.feed){
@@ -116,7 +107,12 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ProfileController', function($scope,dataFactory) {
+.controller('ProfileController', function($scope,dataFactory,$ionicHistory) {
+
+  $ionicHistory.nextViewOptions({
+    disableAnimate: true,
+    disableBack: true
+  });
 
   $scope.$on('service.profile', function(){
     $scope.profile = API.storage.get("profile");
@@ -126,16 +122,7 @@ angular.module('starter.controllers', [])
     { 
       _url:"http://app.octantapp.com/api/dl/oct5678093672",
       _token: "profile",
-      _then: function(data, status, headers, config){
-        console.log(data);
-        return JSON.parse(data.tc_id);
-      },
-      _success: function(data){
-        API.storage.remove('feeds');
-      },
-      _error: function(data){
-        API.storage.get('feeds');
-      }
+      _tokenID: "tc_id"
     }
   );
 
@@ -148,6 +135,7 @@ angular.module('starter.controllers', [])
   head = null;
   body = [];
 
+
   $scope.$on('service.terms',function(){
     $scope.terms = API.storage.get("terms");
   });
@@ -155,8 +143,9 @@ angular.module('starter.controllers', [])
     { 
       _url:"http://app.octantapp.com/api/td/oct5678093672",
       _token: "terms",
+      _tokenID: "tc_id",
       _then: function(data, status, headers, config){
-        k = JSON.parse(data.tc_id);
+        k = data;
         var terms = [];
 
         for (var i = 0; i < k.length; i++) {
@@ -182,10 +171,10 @@ angular.module('starter.controllers', [])
         return terms;
       },
       _success: function(data){
-        API.storage.remove('terms');
+        API.storage.remove(this._token);
       },
       _error: function(data){
-        API.storage.get('terms');
+        API.storage.get(this._token);
       }
     }
   );
@@ -232,19 +221,7 @@ angular.module('starter.controllers', [])
   // Triggered in the login modal to close it
 })
 
-.run(function($rootScope, $ionicModal) {
-
-  $rootScope.groups = [];
-  for (var i=0; i<10; i++) {
-    $rootScope.groups[i] = {
-      name: i,
-      items: [],
-      show: false
-    };
-    for (var j=0; j<3; j++) {
-      $rootScope.groups[i].items.push(i + '-' + j);
-    }
-  }
+.run(function($rootScope, $ionicModal, dataFactory) {
   
   /*
    * if given group is the selected group, deselect it
@@ -256,6 +233,10 @@ angular.module('starter.controllers', [])
   $rootScope.isGroupShown = function(group) {
     return group.show;
   };
+
+  $rootScope.$on('flag.error.conn',function(){
+    dataFactory._alert("No Connection","You Deivce is currently disconnected from the internet. Using Cached Data if available");
+  });
 
 })
 .factory('_Global', function($ionicLoading){
@@ -270,61 +251,63 @@ angular.module('starter.controllers', [])
 })
 
 .factory('dataFactory', function($http,$rootScope,$ionicPopup) {
+  obj = null;
 
   return {
 
 // settings = {
-//   _url = "";
-//   _token = "";
-//   _then = function(){};
-//   _success = function(){};
+//   _url = "",
+//   _token = "",
+//   _tokenID = "",
+//   _then = function(){},
+//   _success = function(){},
 //   _error = function(){}
 // }
 
     _get: function(settings){
-
       $rootScope.$broadcast('loading.show');
 
-      if(API.storage.get(settings._token)){
-        console.log("lala",settings._token)
-        $rootScope.$broadcast('service.'+settings._token);
-        $rootScope.$broadcast('loading.hide');
-        return true;
-      }
-      else{
-        this._fetch(settings._url).
-        then(
-          function(res){
-            console.log(res);
-            if(typeof settings._success === 'function')
-              settings._success(res.data, res.status, res.headers, res.config);
-            API.storage.set(
-              settings._token,
-              settings._then(res.data, res.status, res.headers, res.config)
-            );
-            $rootScope.$broadcast('service.'+settings._token);
-            $rootScope.$broadcast('loading.hide');
+      this._fetch(settings._url).
+      success(function(data, status, headers, config){
 
-          },
-          function(res){
-            if(typeof settings._success === 'function')
-             settings._error(res.data, res.status, res.headers, res.config);
-             $rootScope.$broadcast('loading.hide');
-             $rootScope.showAlert = function() {
-               var alertPopup = $ionicPopup.alert({
-                 title: 'Connection Error',
-                 template: 'lala'
-               });
-               alertPopup.then(function(res) {
-                 console.log('Thank you for not eating my delicious ice cream cone');
-               });
-             };
-          });
-      }
+        API.storage.remove(this._token);
+        // console.log(data, settings._tokenID, data[settings._tokenID]);
+        this.k = JSON.parse(data[settings._tokenID]);
+        if(typeof settings._success === 'function')
+          settings._success(this.k);
+
+      }).
+      error(function(data, status, headers, config){
+
+        this.k = API.storage.get(this._token);
+        if(typeof settings._error === 'function')
+          settings._error(this.k);    
+      
+      }).
+      then(
+        function(){
+          if(typeof settings._then === 'function')
+            this.k = settings._then(this.k);
+          API.storage.set(
+            settings._token,
+            this.k
+          );
+          $rootScope.$broadcast('service.'+settings._token);
+          $rootScope.$broadcast('loading.hide');
+        },
+        function(){
+//          _update();
+          $rootScope.$broadcast("flag.error.conn");
+//          $rootScope.$broadcast('service.'+settings._token);
+          $rootScope.$broadcast('loading.hide');
+      }).
+      finally(
+        function(){
+      });
+      
 
     },
     _fetch: function(_url){
-
         return $http.get(_url);
 
     },

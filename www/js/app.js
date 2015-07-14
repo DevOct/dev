@@ -6,16 +6,17 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers'])
 
-.run(function($rootScope,$ionicPlatform,$ionicLoading,$ionicTabsDelegate) {
+.run(function($rootScope,$ionicPlatform,$ionicLoading) {
+
   $rootScope.$on('loading.show',function(){
     $ionicLoading.show({
-    template: '<ion-spinner icon="android"></ion-spinner>'
+      template: '<ion-spinner icon="lines"></ion-spinner>'
+    });
   });
-  });
+
   $rootScope.$on('loading.hide',function(){
     $ionicLoading.hide();
   });
-
   
 
   $ionicPlatform.ready(function() {
@@ -177,3 +178,12 @@ var API = {
     }
   }
 };
+
+// var settings = {
+//   _url : "",
+//   _token : "",
+//   _tokenID : "",
+//   _then : function(){},
+//   _success : function(){},
+//   _error : function(){}
+// }

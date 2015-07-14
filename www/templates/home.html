@@ -1,7 +1,7 @@
 <ion-view view-title="Home">
   <ion-content>
     <ion-list class="__feed">
-      <ion-item ng-repeat="feed in feeds">
+      <ion-item ng-repeat="feed in feeds track by feed.message_id">
       	<div class="list">
 		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}">
 
