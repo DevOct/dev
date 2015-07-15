@@ -206,7 +206,7 @@ angular.module('starter.controllers', [])
   $scope.login = function(){
     dataFactory._fetch("http://app.octantapp.com/api/donor").
     then(function(res){
-      console.log($scope.user);
+      usr = true;
       d=res.data
       for(key in lu = d.Users){
         if($scope.user.email==lu[key].email){
@@ -214,13 +214,14 @@ angular.module('starter.controllers', [])
             $state.go('app.home');
           }
           else{
-            console.log($scope.user.password,lu[key].password);
+            dataFactory._alert("Incorrect Credentials","Incorrect Password");
+            usr = false;
+            break;
           }
         }
-        else{console.log($scope.user.email,lu[key].email)}
-            
-        console.log(key,d.Users[key]);
       }
+      if(usr)
+        dataFactory._alert("Incorrect Credentials","Cannot find User");
     });
   }
 })
