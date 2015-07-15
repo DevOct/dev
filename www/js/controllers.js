@@ -115,16 +115,34 @@ angular.module('starter.controllers', [])
   });
 
   $scope.$on('service.profile', function(){
-    $scope.profile = API.storage.get("profile");
+    users = API.storage.get("profile");
+    for(key in users){
+
+    }
   });
 
-  dataFactory._get(
-    { 
-      _url:"http://app.octantapp.com/api/dl/oct5678093672",
-      _token: "profile",
-      _tokenID: "tc_id"
+  dataFactory._fetch("http://app.octantapp.com/api/donor").
+  then(function(res){
+    usr = API.storage.get("loggedIn").donor_id;
+    d=res.data
+    for(key in lu = d.Users){
+      if(usr === lu[key].donor_id){
+        $scope.profile = lu[key]
+        console.log($scope.profile);
+      }
+      else
+        console.log(usr , lu[key].donor_id)
+
     }
-  );
+  });
+
+  // dataFactory._get(
+  //   { 
+  //     _url:"http://app.octantapp.com/api/donor",
+  //     _token: "profile",
+  //     _tokenID: "Users"
+  //   }
+  // );
 
   $scope.popup = dataFactory._alert;
 })
@@ -212,6 +230,7 @@ angular.module('starter.controllers', [])
         if($scope.user.email==lu[key].email){
           usr = false;
           if($scope.user.password==lu[key].password){
+            API.storage.set("loggedIn",lu[key]);
             $state.go('app.home');
           }
           else{
