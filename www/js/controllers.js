@@ -204,7 +204,7 @@ angular.module('starter.controllers', [])
   });
 
   $scope.login = function(){
-    dataFactory._fetch("http://app.octantapp.com/api/donor").
+    dataFactory._fetch("http://app.octantapp.com/api/donorauth").
     then(function(res){
       usr = true;
       d=res.data
