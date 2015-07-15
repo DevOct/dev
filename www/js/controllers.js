@@ -192,8 +192,37 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginController', function($scope) {
+.controller('LoginController', function($scope, $state, dataFactory) {
+  $scope.user = {
+    email : null,
+    password : null
+  }
 
+ $scope.$on('service.login', function(){
+    $scope.loginUserData = API.storage.get("login");
+    console.log($scope.loginUserData);
+  });
+
+  $scope.login = function(){
+    dataFactory._fetch("http://app.octantapp.com/api/donor").
+    then(function(res){
+      console.log($scope.user);
+      d=res.data
+      for(key in lu = d.Users){
+        if($scope.user.email==lu[key].email){
+          if($scope.user.password==lu[key].password){
+            $state.go('app.home');
+          }
+          else{
+            console.log($scope.user.password,lu[key].password);
+          }
+        }
+        else{console.log($scope.user.email,lu[key].email)}
+            
+        console.log(key,d.Users[key]);
+      }
+    });
+  }
 })
 
 .controller('SignupController', function($scope, $http) {
@@ -295,7 +324,8 @@ angular.module('starter.controllers', [])
       success(function(data, status, headers, config){
 
         API.storage.remove(this._token);
-        // console.log(data, settings._tokenID, data[settings._tokenID]);
+        console.log(data, settings._tokenID, data[settings._tokenID]);
+        lala = data[settings._tokenID];
         this.k = JSON.parse(data[settings._tokenID]);
         if(typeof settings._success === 'function')
           settings._success(this.k);

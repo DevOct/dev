@@ -11,12 +11,12 @@
       <li class="__loginForm">
         <div class="item item-icon-left">
           <i class="icon ion-android-mail"></i>
-          <input type="text" placeholder="First Name">
+          <input type="text" ng-model="user.email" placeholder="First Name">
         </div>
 
         <div class="item item-icon-left">
           <i class="icon ion-android-lock"></i>
-          <input type="password" placeholder="Password">
+          <input type="password" ng-model="user.password" placeholder="Password">
         </div>
 
         <div class="item item-checkbox">
@@ -32,7 +32,7 @@
 
       <li class="__loginButton">
         <br/>
-        <button class="button button-block button-outline button-positive"  ui-sref="app.home">
+        <button class="button button-block button-outline button-positive"  ng-click="login()">
           Login
         </button>
         <br/>
