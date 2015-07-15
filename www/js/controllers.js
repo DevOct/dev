@@ -72,7 +72,7 @@ angular.module('starter.controllers', [])
   });
   dataFactory._get( 
     { 
-      _url:"http://app.octantapp.com/api/feed/oct5678093672",
+      _url:"http://app.octantapp.com/sl/oct5678093672",
       _token: "feeds",
       _tokenID: "feed_id"
     }
@@ -196,7 +196,32 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('SignupController', function($scope) {
+.controller('SignupController', function($scope, $http) {
+  $scope.newuser = {
+    first_name: null,
+    last_name: null,
+    email: null,
+    password: null,
+    image: null,
+    salutation: null,
+    address_1: null,
+    address_2:null,
+    city: null,
+    state: null,
+    zip: null,
+    cellphone:null, 
+    employer: null,
+    position: null,
+    is_terms_accepted: false,
+    t_c_timestamp: null
+  }
+
+  $scope.signup = function() {
+      $http.post("http://app.octantapp.com/api/donor ", $scope.newuser).
+      success(function(data, status) {
+          console.log(data);
+      })
+  }                   
 
   // Triggered in the login modal to close it
 })
@@ -263,7 +288,6 @@ angular.module('starter.controllers', [])
 //   _success = function(){},
 //   _error = function(){}
 // }
-
     _get: function(settings){
       $rootScope.$broadcast('loading.show');
 
@@ -279,9 +303,10 @@ angular.module('starter.controllers', [])
       }).
       error(function(data, status, headers, config){
 
-        this.k = API.storage.get(this._token);
-        if(typeof settings._error === 'function')
-          settings._error(this.k);    
+        this.k = API.storage.get(settings._token);
+        console.log(this.k);
+        // if(typeof settings._error === 'function')
+        //   settings._error(this.k);    
       
       }).
       then(
@@ -298,7 +323,7 @@ angular.module('starter.controllers', [])
         function(){
 //          _update();
           $rootScope.$broadcast("flag.error.conn");
-//          $rootScope.$broadcast('service.'+settings._token);
+          $rootScope.$broadcast('service.'+settings._token);
           $rootScope.$broadcast('loading.hide');
       }).
       finally(
@@ -307,6 +332,7 @@ angular.module('starter.controllers', [])
       
 
     },
+
     _fetch: function(_url){
         return $http.get(_url);
 

@@ -12,29 +12,61 @@
 
       <li class="__signupForm">
         <div class="item item-input">
-          <input type="text" placeholder="Email Address">
+          <input type="file" placeholder="Email Address">
         </div>
 
         <div class="item item-input">
-          <input type="password" placeholder="Password">
+          <input type="text" ng-model="newuser.email" placeholder="Email Address">
         </div>
 
         <div class="item item-input">
-          <input type="text" placeholder="First Name">
+          <input type="password" ng-model="newuser.password" placeholder="Password">
         </div>
 
         <div class="item item-input">
-          <input type="text" placeholder="Last Name">
+          <input type="text" ng-model="newuser.first_name" placeholder="First Name">
         </div>
 
         <div class="item item-input">
-          <input type="text" placeholder="Zip Code">
+          <input type="text" ng-model="newuser.last_name" placeholder="Last Name">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.salutation" placeholder="Salutation">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.address_1" placeholder="Address line 1">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.address_2" placeholder="Address line 2">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.city" placeholder="city">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.state" placeholder="state">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.zip" placeholder="Zip Code">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.cellphone" placeholder="cellphone">
+        </div>
+
+        <div class="item item-input">
+          <input type="text" ng-model="newuser.position" placeholder="position">
         </div>
 
         <div class="item item-icon-left">
           <i class="icon">
            <label class="checkbox">
-             <input type="checkbox">
+             <input type="checkbox" ng-model="newuser.is_terms_accepted">
            </label>
           </i>
            <a href="#" class="Button Button-clear" ng-click="terms()">Terms &amp; Condition</a><br/>
@@ -47,7 +79,7 @@
 
       <li class="__loginButton">
         <br/>
-        <button class="button button-block button-outline button-positive"  ui-sref="app.home">
+        <button class="button button-block button-outline button-positive"  ng-click="signup()">
           Sign Up
         </button>
         <button class="button button-block button-positive icon-left ion-social-facebook"  ui-sref="facebook">
