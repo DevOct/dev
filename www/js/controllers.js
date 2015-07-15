@@ -210,12 +210,12 @@ angular.module('starter.controllers', [])
       d=res.data
       for(key in lu = d.Users){
         if($scope.user.email==lu[key].email){
+          usr = false;
           if($scope.user.password==lu[key].password){
             $state.go('app.home');
           }
           else{
             dataFactory._alert("Incorrect Credentials","Incorrect Password");
-            usr = false;
             break;
           }
         }
@@ -353,7 +353,7 @@ angular.module('starter.controllers', [])
         },
         function(){
 //          _update();
-          $rootScope.$broadcast("flag.error.conn");
+          // $rootScope.$broadcast("flag.error.conn");
           $rootScope.$broadcast('service.'+settings._token);
           $rootScope.$broadcast('loading.hide');
       }).
