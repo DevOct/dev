@@ -72,7 +72,7 @@ angular.module('starter.controllers', [])
   });
   dataFactory._get( 
     { 
-      _url:"http://app.octantapp.com/api/feed/oct5678093672",
+      _url:"http://app.octantapp.com/sl/oct5678093672",
       _token: "feeds",
       _tokenID: "feed_id"
     }
@@ -115,16 +115,34 @@ angular.module('starter.controllers', [])
   });
 
   $scope.$on('service.profile', function(){
-    $scope.profile = API.storage.get("profile");
+    users = API.storage.get("profile");
+    for(key in users){
+
+    }
   });
 
-  dataFactory._get(
-    { 
-      _url:"http://app.octantapp.com/api/dl/oct5678093672",
-      _token: "profile",
-      _tokenID: "tc_id"
+  dataFactory._fetch("http://app.octantapp.com/api/donor").
+  then(function(res){
+    usr = API.storage.get("loggedIn").donor_id;
+    d=res.data
+    for(key in lu = d.Users){
+      if(usr === lu[key].donor_id){
+        $scope.profile = lu[key]
+        console.log($scope.profile);
+      }
+      else
+        console.log(usr , lu[key].donor_id)
+
     }
-  );
+  });
+
+  // dataFactory._get(
+  //   { 
+  //     _url:"http://app.octantapp.com/api/donor",
+  //     _token: "profile",
+  //     _tokenID: "Users"
+  //   }
+  // );
 
   $scope.popup = dataFactory._alert;
 })
@@ -192,11 +210,74 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginController', function($scope) {
+.controller('LoginController', function($scope, $state, dataFactory) {
+  $scope.user = {
+    email : null,
+    password : null
+  }
 
+ $scope.$on('service.login', function(){
+    $scope.loginUserData = API.storage.get("login");
+    console.log($scope.loginUserData);
+  });
+
+  $scope.login = function(){
+    dataFactory._fetch("http://app.octantapp.com/api/donorauth").
+    then(function(res){
+      usr = true;
+      d=res.data
+      for(key in lu = d.Users){
+        if($scope.user.email==lu[key].email){
+          usr = false;
+          if($scope.user.password==lu[key].password){
+            API.storage.set("loggedIn",lu[key]);
+            $state.go('app.home');
+          }
+          else{
+            dataFactory._alert("Incorrect Credentials","Incorrect Password");
+            break;
+          }
+        }
+      }
+      if(usr)
+        dataFactory._alert("Incorrect Credentials","Cannot find User");
+    });
+  }
 })
 
-.controller('SignupController', function($scope) {
+.controller('SignupController', function($scope, $http, transformRequestAsFormPost) {
+  $scope.newuser = {
+    first_name: null,
+    last_name: null,
+    email: null,
+    password: null,
+    image: null,
+    salutation: null,
+    address_1: null,
+    address_2:null,
+    city: null,
+    state: null,
+    zip: null,
+    cellphone:null, 
+    employer: null,
+    position: null,
+    is_terms_accepted: false,
+    t_c_timestamp: null
+  }
+
+  $scope.signup = function() {
+    $http({
+      method: "post",
+      url: "http://app.octantapp.com/api/donor",
+      transformRequest: transformRequestAsFormPost,
+      data: $scope.newuser
+    }).
+    success(function(req){console.log(req);})
+      $http.post("http://app.octantapp.com/api/donor ", $scope.newuser).
+      success(function(data, status) {
+          console.log(data);
+      })
+  }                   
 
   // Triggered in the login modal to close it
 })
@@ -250,6 +331,81 @@ angular.module('starter.controllers', [])
   }
 })
 
+.factory(
+"transformRequestAsFormPost",
+function() {
+
+    // I prepare the request data for the form post.
+    function transformRequest( data, getHeaders ) {
+
+        var headers = getHeaders();
+
+        headers[ "Content-type" ] = "application/x-www-form-urlencoded; charset=utf-8";
+
+        return( serializeData( data ) );
+
+    }
+
+
+    // Return the factory value.
+    return( transformRequest );
+
+
+    // ---
+    // PRVIATE METHODS.
+    // ---
+
+
+    // I serialize the given Object into a key-value pair string. This
+    // method expects an object and will default to the toString() method.
+    // --
+    // NOTE: This is an atered version of the jQuery.param() method which
+    // will serialize a data collection for Form posting.
+    // --
+    // https://github.com/jquery/jquery/blob/master/src/serialize.js#L45
+    function serializeData( data ) {
+
+        // If this is not an object, defer to native stringification.
+        if ( ! angular.isObject( data ) ) {
+
+            return( ( data == null ) ? "" : data.toString() );
+
+        }
+
+        var buffer = [];
+
+        // Serialize each key in the object.
+        for ( var name in data ) {
+
+            if ( ! data.hasOwnProperty( name ) ) {
+
+                continue;
+
+            }
+
+            var value = data[ name ];
+
+            buffer.push(
+                encodeURIComponent( name ) +
+                "=" +
+                encodeURIComponent( ( value == null ) ? "" : value )
+            );
+
+        }
+
+        // Serialize the buffer and clean it up for transportation.
+        var source = buffer
+            .join( "&" )
+            .replace( /%20/g, "+" )
+        ;
+
+        return( source );
+
+    }
+
+}
+)
+
 .factory('dataFactory', function($http,$rootScope,$ionicPopup) {
   obj = null;
 
@@ -263,7 +419,6 @@ angular.module('starter.controllers', [])
 //   _success = function(){},
 //   _error = function(){}
 // }
-
     _get: function(settings){
       $rootScope.$broadcast('loading.show');
 
@@ -271,7 +426,8 @@ angular.module('starter.controllers', [])
       success(function(data, status, headers, config){
 
         API.storage.remove(this._token);
-        // console.log(data, settings._tokenID, data[settings._tokenID]);
+        console.log(data, settings._tokenID, data[settings._tokenID]);
+        lala = data[settings._tokenID];
         this.k = JSON.parse(data[settings._tokenID]);
         if(typeof settings._success === 'function')
           settings._success(this.k);
@@ -279,9 +435,10 @@ angular.module('starter.controllers', [])
       }).
       error(function(data, status, headers, config){
 
-        this.k = API.storage.get(this._token);
-        if(typeof settings._error === 'function')
-          settings._error(this.k);    
+        this.k = API.storage.get(settings._token);
+        console.log(this.k);
+        // if(typeof settings._error === 'function')
+        //   settings._error(this.k);    
       
       }).
       then(
@@ -297,8 +454,8 @@ angular.module('starter.controllers', [])
         },
         function(){
 //          _update();
-          $rootScope.$broadcast("flag.error.conn");
-//          $rootScope.$broadcast('service.'+settings._token);
+          // $rootScope.$broadcast("flag.error.conn");
+          $rootScope.$broadcast('service.'+settings._token);
           $rootScope.$broadcast('loading.hide');
       }).
       finally(
@@ -307,6 +464,7 @@ angular.module('starter.controllers', [])
       
 
     },
+
     _fetch: function(_url){
         return $http.get(_url);
 
