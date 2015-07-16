@@ -46,6 +46,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 })
 
 .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+  
   $stateProvider
 
   .state('login', {
