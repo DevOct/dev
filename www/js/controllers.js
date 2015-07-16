@@ -245,7 +245,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('SignupController', function($scope, $http) {
+.controller('SignupController', function($scope, $http, $state, dataFactory) {
   $scope.newuser = {
     first_name: null,
     last_name: null,
@@ -281,7 +281,7 @@ angular.module('starter.controllers', [])
     }).
     success(
       function(req){
-      console.log(req);
+        console.log(req);
         $http({
           method: "post",
           url: "http://app.octantapp.com/api/donorauth",
@@ -289,9 +289,11 @@ angular.module('starter.controllers', [])
         }).
         success(function(req){
           console.log(req);
+          dataFactory._alert('User Created','User Creation successful, please sign in to continue');
+          $state.go('login');
         }).
         error(function(req){
-            console.log(req);
+          console.log(req);
         });
     }).
     error(function(req){
