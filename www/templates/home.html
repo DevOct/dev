@@ -1,0 +1,27 @@
+<ion-view view-title="Home">
+  <ion-content>
+    <ion-list class="__feed">
+      <ion-item ng-repeat="feed in feeds track by feed.message_id">
+      	<div class="list">
+		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}">
+
+		      <img ng-src="{{feed.pic}}" src="img/ionic.png">
+		      <h2>{{feed.message_title}}</h2>
+		      <p ng-show="lala == true">{{feed.content | limitTo: 100}}{{feed.content.length > 100 ? '...' : ''}}</p>
+		      <p ng-show="lala == false">{{feed.content}}</p>
+		    </a>
+			<div class="actionBar">
+		    	<button class="button button-circle button-small icon ion-cash"></button>
+		    	<button class="button button-circle button-small icon ion-share"></button>
+		      	<a type="button" ng-show="{{feed.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;">see {{lala === false ? 'less': 'more';}}</a>
+		    </div>
+		</div>
+		<div style="clear:both"></div>
+      </ion-item>
+    </ion-list>
+    <br/><br/>
+  </ion-content>
+</ion-view>
+
+
+.................................... ......pppkkjhgfdsaqwertquipm.m.bvcxzz
