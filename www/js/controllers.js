@@ -157,45 +157,75 @@ angular.module('starter.controllers', [])
   $scope.$on('service.terms',function(){
     $scope.terms = API.storage.get("terms");
   });
-  dataFactory._get( 
-    { 
-      _url:"http://app.octantapp.com/api/do/oct5678093672",
-      _token: "terms",
-      _tokenID: "tc_id",
-      _then: function(data, status, headers, config){
-        k = data;
-        var terms = [];
 
-        for (var i = 0; i < k.length; i++) {
+  dataFactory._fetch("http://app.octantapp.com/api/do/oct5678093672").
+  then(function(res){
+    console.log(res.data);
+      k = res.data.tc_id;
+      var terms = [];
 
-          l = document.createElement('div');
-          l.innerHTML = k[i].tc_donor;
+      for (var i = 0; i < k.length; i++) {
 
-          //fetch h1
-          var h = l.getElementsByTagName("h1")[0]
-          head = h.innerHTML;
-          h.remove();
+        l = document.createElement('div');
+        l.innerHTML = k[i].tc_donor;
 
-          //fetch everything else in order
-          for (var j = 0; j < l.childElementCount; j++) {
-            body[j] = {
-                id: j.toString(),
-                html: l.children[j].outerHTML};
-          };
-          //mix them together
-          terms[i] = {head,body};
-          body = [];
+        //fetch h1
+        var h = l.getElementsByTagName("h1")[0]
+        head = h.innerHTML;
+        h.remove();
+
+        //fetch everything else in order
+        for (var j = 0; j < l.childElementCount; j++) {
+          body[j] = {
+              id: j.toString(),
+              html: l.children[j].outerHTML};
         };
-        return terms;
-      },
-      _success: function(data){
-        API.storage.remove(this._token);
-      },
-      _error: function(data){
-        API.storage.get(this._token);
-      }
-    }
-  );
+        //mix them together
+        terms[i] = {head,body};
+        body = [];
+      };
+      $scope.terms = terms;
+
+  })
+  // dataFactory._get( 
+  //   { 
+  //     _url:"http://app.octantapp.com/api/do/oct5678093672",
+  //     _token: "terms",
+  //     _tokenID: "tc_id",
+  //     _then: function(data, status, headers, config){
+  //       k = data;
+  //       var terms = [];
+
+  //       for (var i = 0; i < k.length; i++) {
+
+  //         l = document.createElement('div');
+  //         l.innerHTML = k[i].tc_donor;
+
+  //         //fetch h1
+  //         var h = l.getElementsByTagName("h1")[0]
+  //         head = h.innerHTML;
+  //         h.remove();
+
+  //         //fetch everything else in order
+  //         for (var j = 0; j < l.childElementCount; j++) {
+  //           body[j] = {
+  //               id: j.toString(),
+  //               html: l.children[j].outerHTML};
+  //         };
+  //         //mix them together
+  //         terms[i] = {head,body};
+  //         body = [];
+  //       };
+  //       return terms;
+  //     },
+  //     _success: function(data){
+  //       API.storage.remove(this._token);
+  //     },
+  //     _error: function(data){
+  //       API.storage.get(this._token);
+  //     }
+  //   }
+  // );
 
   $scope.toggleGroup = function(group) {
     if ($scope.isGroupShown(group)) {
