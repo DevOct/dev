@@ -159,7 +159,7 @@ angular.module('starter.controllers', [])
   });
   dataFactory._get( 
     { 
-      _url:"http://app.octantapp.com/api/td/oct5678093672",
+      _url:"http://app.octantapp.com/api/do/oct5678093672",
       _token: "terms",
       _tokenID: "tc_id",
       _then: function(data, status, headers, config){
@@ -247,6 +247,7 @@ angular.module('starter.controllers', [])
 
 .controller('SignupController', function($scope, $http, $state, dataFactory) {
   $scope.newuser = {
+    t_c_timestamp:null,
     first_name: null,
     last_name: null,
     email: null,
@@ -274,31 +275,40 @@ angular.module('starter.controllers', [])
       save_login_info_app: 'y'
     }
 
-    $http({
-      method: "post",
-      url: "http://app.octantapp.com/api/donor",
-      data: $scope.newuser
-    }).
-    success(
-      function(req){
-        console.log(req);
-        $http({
-          method: "post",
-          url: "http://app.octantapp.com/api/donorauth",
-          data: $scope.userauth
-        }).
-        success(function(req){
-          console.log(req);
-          dataFactory._alert('User Created','User Creation successful, please sign in to continue');
-          $state.go('login');
-        }).
-        error(function(req){
-          console.log(req);
-        });
-    }).
-    error(function(req){
-        console.log(req,$scope.newuser,$scope.userauth);
-    });
+    $http({ method: 'Post', url: 'http://app.octantapp.com/api/donor', data: JSON.stringify($scope.newuser) }).
+      success(function (data, status, headers, config) {
+          console.log(data);
+          console.log('success');
+      }).
+      error(function (data, status, headers, config) {
+          console.log('error');
+      });
+
+    // $http({
+    //   method: "post",
+    //   url: "",
+    //   data: $scope.newuser
+    // }).
+    // success(
+    //   function(req){
+    //     console.log(req);
+    //     $http({
+    //       method: "post",
+    //       url: "http://app.octantapp.com/api/donorauth",
+    //       data: $scope.userauth
+    //     }).
+    //     success(function(req){
+    //       console.log(req);
+    //       dataFactory._alert('User Created','User Creation successful, please sign in to continue');
+    //       $state.go('login');
+    //     }).
+    //     error(function(req){
+    //       console.log(req);
+    //     });
+    // }).
+    // error(function(req){
+    //     console.log(req,$scope.newuser,$scope.userauth);
+    // });
   }                   
 
   // Triggered in the login modal to close it
