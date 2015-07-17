@@ -133,7 +133,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ProfileController', function($scope,dataFactory,$ionicHistory) {
+.controller('ProfileController', function($http,$scope,dataFactory,$ionicHistory) {
 
   $ionicHistory.nextViewOptions({
     disableAnimate: true,
@@ -162,6 +162,19 @@ angular.module('starter.controllers', [])
     }
   });
 
+  $scope.updateUser = function(){
+    console.log($scope.profile);
+    $http({ method: 'Put', url: ' http://app.octantapp.com/api/donor', data: $scope.profile }).
+      success(function (data, status, headers, config) {
+        console.log(data);
+        console.log('success');
+        dataFactory._alert('Data Updated','Your new data has been updated');
+      }).
+      error(function (data, status, headers, config) {
+          console.log('error',data,status);
+      });
+  }
+
   // dataFactory._get(
   //   { 
   //     _url:"http://app.octantapp.com/api/donor",
@@ -186,17 +199,19 @@ angular.module('starter.controllers', [])
 
   dataFactory._fetch("http://app.octantapp.com/api/do/oct5678093672").
   then(function(res){
-    console.log(res.data);
       k = res.data.tc_id;
-      var terms = [];
-
+      terms = [];
+      console.log(k);
       for (var i = 0; i < k.length; i++) {
+
+        // console.log(terms);
 
         l = document.createElement('div');
         l.innerHTML = k[i].tc_donor;
 
         //fetch h1
         var h = l.getElementsByTagName("h1")[0]
+        console.log(h.innerHTML,h);
         head = h.innerHTML;
         h.remove();
 
@@ -428,6 +443,33 @@ $scope.showAlert = function() {
 
 .controller('PledgeController', function($scope) {
 
+
+  $scope.items = [{
+    name: '$20'
+  }, {
+    name: '$30'
+  }, {
+    name: '$40'
+    
+  }, {
+    name: '$50'
+    
+  }, {
+    name: 'other',
+    description: '$738'
+    
+  }];
+  $scope.selectedItem = $scope.items[1];
+
+$scope.showAlert = function() {
+     var alertPopup = $ionicPopup.alert({
+       title: 'Thankyou!\n For your pledge',
+       template: '<ul><li>-Organization: American Red Cross</li><li>-Address: 355 Main Street, 5th Street</li><li>-City: Cambridge</li><li>-State: Massachusetts</li><li>-Zip Code: 02142</li><li>-Tax ID: 00386234</li><li>-Organization Telephone: +1857-939-0068</li></ul>'
+     });
+     alertPopup.then(function(res) {
+       console.log('Thank you for not eating my delicious ice cream cone');
+     });
+   };
   // Triggered in the login modal to close it
 })
 
