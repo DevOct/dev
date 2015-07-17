@@ -410,7 +410,7 @@ angular.module('starter.controllers', [])
   // Triggered in the login modal to close it
 })
 
-.controller('DonateController', function($scope) {
+.controller('DonateController', function($scope,$ionicPopup) {
 
   $scope.items = [{
     name: '$20'
@@ -441,7 +441,7 @@ $scope.showAlert = function() {
   // Triggered in the login modal to close it
 })
 
-.controller('PledgeController', function($scope) {
+.controller('PledgeController', function($scope,$ionicPopup) {
 
 
   $scope.items = [{
