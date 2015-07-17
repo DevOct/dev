@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicSlideBoxDelegate) {
   
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -37,6 +37,32 @@ angular.module('starter.controllers', [])
   //     $scope.closeLogin();
   //   }, 1000);
   // };
+
+  var maxSlides = 5;
+  var slideCounter = 2;
+
+  $scope.data = {};
+  $scope.data.slides = [
+      {
+          title : "American Red Cross",
+          data  : "Donations for People",
+          image : "http://www.clipartbest.com/cliparts/ace/ong/aceongEoi.png"
+      },
+      {
+          title : "Circle Trust",
+          data  : "For Truth",
+          image : "http://www.scientiamobile.com/page/wp-content/themes/ScientiaMobile.com-Wordpress/img/scientiamobile_circle.png"
+      }
+  ];
+
+  $ionicSlideBoxDelegate.update();
+  $scope.next = function() {
+      $ionicSlideBoxDelegate.next();
+  };
+  $scope.previous = function() {
+    $ionicSlideBoxDelegate.previous();
+  };
+  
 
   $scope.closeMod = function() {
     $scope.modal.hide();
@@ -306,7 +332,8 @@ angular.module('starter.controllers', [])
       save_login_info_app: 'y'
     }
 
-    $http({ method: 'Post', url: 'http://app.octantapp.com/api/donor', data: $scope.newuser }).
+    prom = $http({ method: 'Post', url: 'http://app.octantapp.com/api/donor', data: $scope.newuser });
+    prom.
       success(function (data, status, headers, config) {
           console.log(data);
           console.log('success');
@@ -357,6 +384,32 @@ angular.module('starter.controllers', [])
 
 .controller('DonateController', function($scope) {
 
+  $scope.items = [{
+    name: '$20'
+  }, {
+    name: '$30'
+  }, {
+    name: '$40'
+    
+  }, {
+    name: '$50'
+    
+  }, {
+    name: 'other',
+    description: '$738'
+    
+  }];
+  $scope.selectedItem = $scope.items[1];
+
+$scope.showAlert = function() {
+     var alertPopup = $ionicPopup.alert({
+       title: 'Thankyou!\n For your pledge',
+       template: 'It might taste good'
+     });
+     alertPopup.then(function(res) {
+       console.log('Thank you for not eating my delicious ice cream cone');
+     });
+   };
   // Triggered in the login modal to close it
 })
 

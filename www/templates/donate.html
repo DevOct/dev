@@ -1,7 +1,56 @@
 <ion-view view-title="Donate">
   <ion-content>
+<div class="list card" style="margin-top:4px">
+   <div class="item item-body">
+            <ion-slide-box show-pager="false">
+              
+              <ion-slide ng-repeat="item in data.slides">
+                  <img ng-src="{{item.image}}" width="130" height="130"/>
+                  <h1>{{item.title}}</h1>
+                  <h2>{{item.data}}</h2>
+              </ion-slide>
 
-  	Donate
-  	
+            </ion-slide-box><br>
+            <label id="amtLb">Amount :</label>
+
+    <label class="item-input-wrapper">
+    <select ng-model="selectedItem" ng-options="item.name for item in items track by item.name"></select>    
+   </label>
+    <input type="text" style="margin-left:10px" ng-model="selectedItem.description" placeholder="{{item.description}}" class="form-control" ng-pattern="" />
+     <a class="button button-icon icon"><img src="img/1.png" ></a>
+          </div>
+   </div>
+<div class="list card" style="margin-top:-16px">
+  <div class="item item-body">
+<div >
+
+<div class="list">
+    
+  
+  <label class="item item-input">
+    <span class="input-label">Billing Address</span>
+    <input type="text" placeholder="Billing Address">
+  </label>
+  <div style="margin-top: 21px;
+margin-left: 20px;">
+  <label style="  position: absolute; margin-left: 66px;">
+    City <br>
+    <input type="text" style="width:60px" placeholder="City">
+  </label>
+  <label style="position: absolute; margin-left: 126px;" >
+    State <br>
+    <input type="text" style="width:60px" placeholder="State">
+  </label>
+  <label>
+    Zip <br>
+    <input type="text" style="width:60px" placeholder="Zip">
+  </label>
+</div>
+</div>
+  <p><b>NOTE:</b>   Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum</p>
+</div>
+</div>
+</div>
+</div>
   </ion-content>
 </ion-view>
