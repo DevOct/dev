@@ -302,37 +302,39 @@ angular.module('starter.controllers', [])
 })
 
 .controller('SignupController', function($scope, $http, $state, dataFactory) {
-  $scope.newuser = {
-    t_c_timestamp:null,
-    first_name: null,
-    last_name: null,
-    email: null,
-    password: null,
-    image: null,
-    salutation: null,
-    address_1: null,
-    address_2:null,
-    city: null,
-    state: null,
-    zip: null,
-    cellphone:null, 
-    employer: null,
-    position: null,
-    is_terms_accepted: false,
-    t_c_timestamp: null
-  }
+    $scope.newuser = {
+      "donor_id": null,
+      "email": null,
+      "password": null,
+      "first_name": null,
+      "last_name": null,
+      "zip": null,
+      "image": null,
+      "salutation": null,
+      "address_1": null,
+      "address_2": null,
+      "city": null,
+      "state": null,
+      "cellphone": null,
+      "employer": null,
+      "position": null,
+      "is_terms_accepted": "n",
+      "t_c_timestamp": null
+    }
 
 
   $scope.signup = function() {
 
     console.log($scope.newuser);
     $scope.userauth = {
-      email: $scope.newuser.email,
-      password: $scope.newuser.password,
-      save_login_info_app: 'y'
+      "donor_authentication_id": 70,
+      "donor_id": 57,
+      "email": $scope.newuser.email,
+      "password": $scope.newuser.password,
+      "save_login_info_app": null
     }
 
-    prom = $http({ method: 'Post', url: 'http://app.octantapp.com/api/donor', data: $scope.newuser });
+    prom = $http({ method: 'Post', url: ' http://app.octantapp.com/api/donor', data: $scope.newuser });
     prom.
       success(function (data, status, headers, config) {
           console.log(data);
@@ -340,6 +342,17 @@ angular.module('starter.controllers', [])
       }).
       error(function (data, status, headers, config) {
           console.log('error');
+      }).
+      then(function(){
+        $http({ method: 'Post', url: ' http://app.octantapp.com/api/donor', data: $scope.userauth }).
+        success(function (data, status, headers, config) {
+            console.log(data);
+            console.log('success');
+        }).
+        error(function (data, status, headers, config) {
+            console.log('error');
+        });
+
       });
 
     // $http({
