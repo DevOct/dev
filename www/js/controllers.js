@@ -97,7 +97,7 @@ angular.module('starter.controllers', [])
 		$scope.feeds = API.storage.get("feeds");
 	});
 
-	$http.post("http://app.octantapp.com/api/feed/123456789",{'donor_id':'80'}).
+	$http.post("http://app.octantapp.com/api/feed/123456789",{'donor_id':'76'}).
 	success(function(data){
 		console.log(data);
 		$scope.feeds = data.feed_id;
@@ -288,7 +288,8 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, $state, dataFactory) {
+.controller('LoginController', function($scope, md5, $state, dataFactory) {
+	$scope.pass = null;
 	$scope.user = {
 		email : null,
 		password : null
@@ -300,6 +301,7 @@ angular.module('starter.controllers', [])
 	});
 
 	$scope.login = function(){
+		$scope.user.password = md5.createHash($scope.pass || '');
 		dataFactory._fetch("http://app.octantapp.com/api/donorauth").
 		then(function(res){
 			usr = true;

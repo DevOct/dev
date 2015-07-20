@@ -178,7 +178,7 @@ $bar-stable-border:               $button-stable-border !default;
 $bar-stable-active-bg:            $button-stable-active-bg !default;
 $bar-stable-active-border:        $button-stable-active-border !default;
 
-$bar-positive-bg:                 rgba(41, 160, 221, 1);
+$bar-positive-bg:                 rgba($button-positive-bg, $bar-transparency) !default;
 $bar-positive-text:               $button-positive-text !default;
 $bar-positive-border:             $button-positive-border !default;
 $bar-positive-active-bg:          $button-positive-active-bg !default;
