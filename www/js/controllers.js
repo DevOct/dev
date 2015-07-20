@@ -101,6 +101,7 @@ angular.module('starter.controllers', [])
 	success(function(data){
 		console.log(data);
 		$scope.feeds = data.feed_id;
+		API.storage.set("feeds",data);
 	})
 
 	// dataFactory._get( 
@@ -125,7 +126,7 @@ angular.module('starter.controllers', [])
 .controller('FeedController', function($scope, $stateParams) {
 	//alert($stateParams.feedid);
 
-	$scope.feed = API.storage.get("feeds");
+	$scope.feed = API.storage.get("feeds",true);
 	console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
 	for(i in $scope.feed){
 		if($scope.feed[i].message_id == $stateParams.message_id){

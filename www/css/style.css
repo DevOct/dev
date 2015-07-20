@@ -43,6 +43,19 @@
   border-top-width: 8px;
 }
 
+.__feed h3{
+	display: inline-block;
+}
+
+.__feed i.social {
+  float: right;
+  display: inline-block;
+  background-color: #0096FF;
+  border-radius: 50%;
+  width: 20px;
+  text-align: center;
+  color: #fff;}
+
 .seemore{
 	float:right;
 }
