@@ -66,6 +66,7 @@
 
 .actionBar .button-circle{
   background-color: #ED8C2B;
+  color: #fff !Important;
 }
 
 .__feed .seemore{

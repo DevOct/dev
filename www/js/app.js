@@ -143,6 +143,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5'])
 
 });
 
+var App_Session = {
+  donor_id : null,
+  org_id   : null
+}
+
 var API = {
   platformCheck : function(){
     return (typeof device !== 'undefined') ? device.platform : '';

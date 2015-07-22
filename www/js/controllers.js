@@ -38,22 +38,22 @@ angular.module('starter.controllers', [])
 	//   }, 1000);
 	// };
 
-	var maxSlides = 5;
-	var slideCounter = 2;
+	// var maxSlides = 5;
+	// var slideCounter = 2;
 
-	$scope.data = {};
-	$scope.data.slides = [
-			{
-					title : "American Red Cross",
-					data  : "Donations for People",
-					image : "http://www.clipartbest.com/cliparts/ace/ong/aceongEoi.png"
-			},
-			{
-					title : "Circle Trust",
-					data  : "For Truth",
-					image : "http://www.scientiamobile.com/page/wp-content/themes/ScientiaMobile.com-Wordpress/img/scientiamobile_circle.png"
-			}
-	];
+	// $scope.data = {};
+	// $scope.data.slides = [
+	// 		{
+	// 				title : "American Red Cross",
+	// 				data  : "Donations for People",
+	// 				image : "http://www.clipartbest.com/cliparts/ace/ong/aceongEoi.png"
+	// 		},
+	// 		{
+	// 				title : "Circle Trust",
+	// 				data  : "For Truth",
+	// 				image : "http://www.scientiamobile.com/page/wp-content/themes/ScientiaMobile.com-Wordpress/img/scientiamobile_circle.png"
+	// 		}
+	// ];
 
 	$ionicSlideBoxDelegate.update();
 	$scope.next = function() {
@@ -97,7 +97,7 @@ angular.module('starter.controllers', [])
 		$scope.feeds = API.storage.get("feeds");
 	});
 
-	$http.post("http://app.octantapp.com/api/feed/123456789",{'donor_id':'76'}).
+	$http.post("http://app.octantapp.com/api/feed/123456789",{'donor_id':App_Session.donor_id}).
 	success(function(data){
 		console.log(data);
 		$scope.feeds = data.feed_id;
@@ -303,27 +303,31 @@ angular.module('starter.controllers', [])
 
 	$scope.login = function(){
 		$scope.user.password = md5.createHash($scope.pass || '');
+
 		dataFactory._fetch("http://app.octantapp.com/api/donorauth").
-		then(function(res){
-			usr = true;
-			d=res.data
-			for(key in lu = d.Users){
-				if($scope.user.email==lu[key].email){
-					usr = false;
-					if($scope.user.password==lu[key].password){
-						API.storage.set("loggedIn",lu[key]);
-						$state.go('app.home');
-					}
-					else{
-						dataFactory._alert("Incorrect Credentials","Incorrect Password");
-						break;
+			then(function(res){
+				usr = true;
+				d=res.data
+				for(key in lu = d.Users){
+					if($scope.user.email==lu[key].email){
+						usr = false;
+						if($scope.user.password==lu[key].password){
+							API.storage.set("loggedIn",lu[key]);
+							App_Session.donor_id = lu[key].donor_id;
+							$state.go('app.home');
+						}
+						else{
+							dataFactory._alert("Incorrect Credentials","Incorrect Password");
+							break;
+						}
 					}
 				}
-			}
-			if(usr)
-				dataFactory._alert("Incorrect Credentials","Cannot find User");
-		});
+				if(usr)
+					dataFactory._alert("Incorrect Credentials","Cannot find User");
+			});
 	}
+
+//
 })
 
 .controller('SignupController', function($scope, $http, $state, dataFactory) {
@@ -573,7 +577,6 @@ $scope.showAlert = function() {
 
 		_fetch: function(_url){
 				return $http.get(_url);
-
 		},
 		_alert: function(alertHead,alertMessage,alertThen){
 				 var alertPopup = $ionicPopup.alert({
