@@ -57,7 +57,7 @@ angular.module('starter.controllers', [])
 
 	$ionicSlideBoxDelegate.update();
 	$scope.next = function() {
-			$ionicSlideBoxDelegate.next();
+		$ionicSlideBoxDelegate.next();
 	};
 	$scope.previous = function() {
 		$ionicSlideBoxDelegate.previous();
@@ -98,7 +98,7 @@ angular.module('starter.controllers', [])
 		$scope.feeds = API.storage.get("feeds");
 	});
 
-	$http.post("http://app.octantapp.com/api/feed/123456789",{'donor_id':App_Session.donor_id}).
+	$http.post("http://app.octantapp.com/api/msg_feeds",{'donor_id':App_Session.donor_id}).
 	success(function(data){
 		console.log(data);
 		$scope.feeds = data.feed_id;
