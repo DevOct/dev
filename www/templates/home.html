@@ -1,14 +1,14 @@
 <ion-view view-title="Home">
   <ion-content>
     <ion-list class="__feed">
-      <ion-item ng-repeat="feed in feeds">
+      <ion-item ng-repeat="feed in feeds" ng-class="readme ? 'read' : 'unread'" ng-click="readme = readme === false ? true: false;">
       	<div class="list">
 		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}">
 
 		      <img ng-src="{{feed.pic}}">
 		      <h2>{{feed.message_title}}</h2>
-		      <div>
-			    <i class="icon ion-cube"></i> <h3>{{feed.name}}</h3>
+		      <div class="org">
+			    <img ng-src="{{feed.logo_full}}"> <h3>{{feed.name}}</h3>
 		      	<i class="icon ion-social-facebook social"></i>
 		      </div>
 		      <p ng-show="lala == true">{{feed.content | limitTo: 100}}{{feed.content.length > 100 ? '...' : ''}}</p>

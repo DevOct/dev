@@ -91,7 +91,8 @@ angular.module('starter.controllers', [])
 .controller('FeedsController', function($scope, $http, dataFactory) {
 
 	$scope.lala = true;
-	$scope.feeds = [];
+	$scope.readme = false;
+	$scope.feeds = API.storage.get("feeds");
 
 	$scope.$on('service.feeds',function(){
 		$scope.feeds = API.storage.get("feeds");
@@ -101,6 +102,7 @@ angular.module('starter.controllers', [])
 	success(function(data){
 		console.log(data);
 		$scope.feeds = data.feed_id;
+		loiyy = $scope.feeds;
 		API.storage.set("feeds",data);
 	})
 
@@ -123,8 +125,17 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('FeedController', function($scope, $stateParams) {
+.controller('FeedController', function($scope, $stateParams, $http) {
 	//alert($stateParams.feedid);
+	var msgid = $stateParams.message_id;
+	var donid = App_Session.donor_id;
+	$http.post('http://app.octantapp.com/api/message_read/123456789', 
+		data= {'msg_id':msgid, 'donor_id':donid}).
+		success(function(data, textStatus, xhr) {
+			console.log(data);
+		});
+
+
 
 	$scope.feed = API.storage.get("feeds",true);
 	console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
@@ -143,6 +154,8 @@ angular.module('starter.controllers', [])
 
 .controller('ProfileController', function($http,$scope,dataFactory,$ionicHistory) {
 
+	$scope.image64 = null;
+
 
 	$scope.$on('service.profile', function(){
 		users = API.storage.get("profile");
@@ -155,14 +168,21 @@ angular.module('starter.controllers', [])
 	then(function(res){
 		usr = API.storage.get("loggedIn").donor_id;
 		d=res.data
+
 		for(key in lu = d.Users){
 			if(usr === lu[key].donor_id){
 				$scope.profile = lu[key]
-				console.log($scope.profile);
+				// console.log($scope.profile);
+
+				if($scope.profile.image!=null)
+					$scope.image64 = "data:image/png;base64, "+API._arrayBufferToBase64($scope.profile.image);
 			}
 			else
-				console.log(usr , lu[key].donor_id)
+				// console.log(usr , lu[key].donor_id)
+			;
 		}
+
+		console.log($scope.image64);
 	});
 
 	$scope.updateUser = function(){
@@ -184,16 +204,9 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.upFile = function() {
-		document.querySelector('.noshow').click();
+		if($scope.profile.image!=null)
+			$scope.image64 = "data:image/png;base64,"+API._arrayBufferToBase64($scope.profile.image);
 	}
-
-	// dataFactory._get(
-	//   { 
-	//     _url:"http://app.octantapp.com/api/donor",
-	//     _token: "profile",
-	//     _tokenID: "Users"
-	//   }
-	// );
 
 	$scope.popup = dataFactory._alert;
 })

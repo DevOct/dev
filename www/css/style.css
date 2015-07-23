@@ -206,3 +206,22 @@
 .noshow{
   display:none;
 }
+
+.__feed .org h3{
+    height: 24px;
+    vertical-align: middle;  
+}
+.__feed .org img{
+  width: 24px;
+  height: 24px  
+}
+
+.unread {
+    background-color: #B7B7B7;
+}
+
+.unread > * {
+    transform: scale(1.02);
+    font-weight: bolder;
+    color: #000 !important;
+}

@@ -6,13 +6,14 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5'])
 
-.run(function($rootScope,$ionicPlatform,$ionicLoading) {
+.run(function($rootScope,$ionicPlatform,$ionicLoading,$window) {
 
   $rootScope.$on('loading.show',function(){
     $ionicLoading.show({
       template: '<ion-spinner icon="lines"></ion-spinner>'
     });
   });
+
 
   $rootScope.$on('loading.hide',function(){
     $ionicLoading.hide();
@@ -143,11 +144,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5'])
 
 });
 
-var App_Session = {
-  donor_id : null,
-  org_id   : null
-}
-
 var API = {
   platformCheck : function(){
     return (typeof device !== 'undefined') ? device.platform : '';
@@ -187,6 +183,15 @@ var API = {
     {
       localStorage.removeItem(key);
     }
+  },
+  _arrayBufferToBase64 : function( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
   }
 };
 
@@ -198,3 +203,7 @@ var API = {
 //   _success : function(){},
 //   _error : function(){}
 // }
+var App_Session = {
+  donor_id : API.storage.get('loggedIn').donor_id,
+  org_id   : null
+}
