@@ -1,5 +1,4 @@
 <ion-content id="__signup">
-<div>
 
   <div class="card __logo">
     <img class="__img" src="img/octant_logo.png">
@@ -13,7 +12,7 @@
 
       <li class="__signupForm">
 <!--         <div class="item item-input">
-          <input type="file" placeholder="Email Address">
+          <input type="file" placeholder="Email Address" ng-model="newuser.image" base-image>
         </div>
  -->
         <div class="item item-input">
@@ -51,7 +50,6 @@
 
 
       <li class="__loginButton">
-        <br/>
         <button class="button button-block button-outline button-positive"  ng-click="signup()">
           Sign Up
         </button>
@@ -64,5 +62,4 @@
 
   </div>
 
-</div>
 </ion-content>

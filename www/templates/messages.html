@@ -1,7 +1,28 @@
 <ion-view view-title="Messages">
   <ion-content>
+    <ion-list class="__feed">
+      <ion-item ng-repeat="msg in messages">
+      	<div class="list">
+		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}">
 
-  	Messages
-  	
+		      <img ng-src="{{msg.pic}}">
+		      <h2>{{msg.message_title}}</h2>
+		      <div>
+			    <i class="icon ion-cube"></i> <h3>{{msg.name}}</h3>
+		      	<i class="icon ion-social-facebook social"></i>
+		      </div>
+		      <p ng-show="lala == true">{{msg.content | limitTo: 100}}{{msg.content.length > 100 ? '...' : ''}}</p>
+		      <p ng-show="lala == false">{{msg.content}}</p>
+		    </a>
+			<div class="actionBar">
+		    	<button class="button button-circle button-small icon ion-cash"></button>
+		    	<button class="button button-circle button-small icon ion-android-share-alt"></button>
+		      	<a type="button" ng-show="{{msg.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;">see {{lala === false ? 'less': 'more';}}</a>
+		    </div>
+		</div>
+		<div style="clear:both"></div>
+      </ion-item>
+    </ion-list>
+    <br/><br/>
   </ion-content>
 </ion-view>

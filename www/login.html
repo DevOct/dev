@@ -1,4 +1,4 @@
-<div id="__login">
+<ion-content id="__login">
 
   <div class="card __logo">
     <img class="__img" src="img/octant_logo.png">
@@ -16,7 +16,7 @@
 
         <div class="item item-icon-left">
           <i class="icon ion-android-lock"></i>
-          <input type="password" ng-model="pass" placeholder="Password">
+          <input type="password" ng-model="user.pass" placeholder="Password">
         </div>
 
         <div class="item item-checkbox">
@@ -48,13 +48,12 @@
 
   </div>
 
-  <div class="bar bar-footer bar-positive __loginFooter">
-    <div class="title">
-      Not a member yet?
-      <button class="button button-balanced button-block" ui-sref="signup">
-        Sign Up now
-      </button>      
-    </div>
+</ion-content>
+<ion-footer-bar class="bar bar-footer bar-positive __loginFooter">
+  <div class="title">
+    Not a member yet?
+    <button class="button button-balanced button-block" ui-sref="signup">
+      Sign Up now
+    </button>      
   </div>
-
-</div>
+</ion-footer-bar>

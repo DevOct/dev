@@ -143,10 +143,6 @@ angular.module('starter.controllers', [])
 
 .controller('ProfileController', function($http,$scope,dataFactory,$ionicHistory) {
 
-	$ionicHistory.nextViewOptions({
-		disableAnimate: true,
-		disableBack: true
-	});
 
 	$scope.$on('service.profile', function(){
 		users = API.storage.get("profile");
@@ -166,21 +162,29 @@ angular.module('starter.controllers', [])
 			}
 			else
 				console.log(usr , lu[key].donor_id)
-
 		}
 	});
 
 	$scope.updateUser = function(){
-		console.log($scope.profile);
-		$http({ method: 'Put', url: ' http://app.octantapp.com/api/donor', data: $scope.profile }).
-			success(function (data, status, headers, config) {
-				console.log(data);
-				console.log('success');
-				dataFactory._alert('Data Updated','Your new data has been updated');
-			}).
-			error(function (data, status, headers, config) {
-					console.log('error',data,status);
-			});
+		if($scope.profile.image.filesize > 5000000)
+			dataFactory._alert("Image Size Error","the file is huge");
+		else{
+			$scope.profile.image = $scope.profile.image.base64;
+			console.log($scope.profile);
+			$http({ method: 'Put', url: ' http://app.octantapp.com/api/donor', data: $scope.profile }).
+				success(function (data, status, headers, config) {
+					console.log(data);
+					console.log('success');
+					dataFactory._alert('Data Updated','Your new data has been updated');
+				}).
+				error(function (data, status, headers, config) {
+						console.log('error',data,status);
+				});
+		}
+	}
+
+	$scope.upFile = function() {
+		document.querySelector('.noshow').click();
 	}
 
 	// dataFactory._get(
@@ -290,10 +294,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('LoginController', function($scope, md5, $state, dataFactory) {
-	$scope.pass = null;
 	$scope.user = {
 		email : null,
-		password : null
+		password : null,
+		pass : null
 	}
 
  $scope.$on('service.login', function(){
@@ -302,16 +306,18 @@ angular.module('starter.controllers', [])
 	});
 
 	$scope.login = function(){
-		$scope.user.password = md5.createHash($scope.pass || '');
 
 		dataFactory._fetch("http://app.octantapp.com/api/donorauth").
 			then(function(res){
+				$scope.user.password = md5.createHash($scope.user.pass || '');
 				usr = true;
 				d=res.data
 				for(key in lu = d.Users){
 					if($scope.user.email==lu[key].email){
 						usr = false;
-						if($scope.user.password==lu[key].password){
+						console.log(lu[key].password);
+						console.log($scope.user.password);
+						if($scope.user.password===lu[key].password){
 							API.storage.set("loggedIn",lu[key]);
 							App_Session.donor_id = lu[key].donor_id;
 							$state.go('app.home');
@@ -331,28 +337,30 @@ angular.module('starter.controllers', [])
 })
 
 .controller('SignupController', function($scope, $http, $state, dataFactory) {
-		$scope.newuser = {
-			"donor_id": null,
-			"email": null,
-			"password": null,
-			"first_name": null,
-			"last_name": null,
-			"zip": null,
-			"image": null,
-			"salutation": null,
-			"address_1": null,
-			"address_2": null,
-			"city": null,
-			"state": null,
-			"cellphone": null,
-			"employer": null,
-			"position": null,
-			"is_terms_accepted": "n",
-			"t_c_timestamp": null
-		}
+	$scope.newuser = {
+		"image": null,
+		"donor_id": null,
+		"email": null,
+		"password": null,
+		"first_name": null,
+		"last_name": null,
+		"zip": null,
+		"image": null,
+		"salutation": null,
+		"address_1": null,
+		"address_2": null,
+		"city": null,
+		"state": null,
+		"cellphone": null,
+		"employer": null,
+		"position": null,
+		"is_terms_accepted": "n",
+		"t_c_timestamp": null
+	}
 
 
 	$scope.signup = function() {
+		k = $scope.newuser;
 		console.log($scope.newuser);
 
 		$scope.userauth = {
@@ -372,16 +380,7 @@ angular.module('starter.controllers', [])
 					console.log('error');
 			}).
 			then(function(){
-				// $http({ method: 'Post', url: ' http://app.octantapp.com/api/donor', data: $scope.userauth }).
-				// success(function (data, status, headers, config) {
-				//     console.log(data);
-				//     console.log('success');
 				dataFactory._alert("Success","User Creation successful");
-				// }).
-				// error(function (data, status, headers, config) {
-				//     console.log('error');
-				// });
-
 			});
 
 		// $http({
@@ -419,9 +418,39 @@ angular.module('starter.controllers', [])
 	// Triggered in the login modal to close it
 })
 
-.controller('MessagesController', function($scope) {
+.controller('MessagesController', function($scope, $http) {
 
-	// Triggered in the login modal to close it
+	$scope.lala = true;
+	$scope.messages = [];
+
+	$scope.$on('service.messages',function(){
+		$scope.messages = API.storage.get("messages");
+	});
+
+	$http.post("http://app.octantapp.com/api/feed/123456789",{'donor_id':App_Session.donor_id}).
+	success(function(data){
+		console.log(data);
+		$scope.messages = data.feed_id;
+		API.storage.set("messages",data);
+	})
+
+	// dataFactory._get( 
+	// 	{ 
+	// 		_url:"http://app.octantapp.com/sl/oct5678093672",
+	// 		_token: "feeds",
+	// 		_tokenID: "feed_id"
+	// 	}
+	// );
+
+	// $scope.feeds = [
+	// 	{ message_title: 'Reggae', message_id: 1, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
+	// 	{ message_title: 'Chill', message_id: 2, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
+	// 	{ message_title: 'Dubstep', message_message_id: 3, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
+	// 	{ message_title: 'Indie', message_id: 4, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
+	// 	{ message_title: 'Rap', message_id: 5, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
+	// 	{ message_title: 'Cowbell', message_id: 6, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }
+	// ];
+
 })
 
 .controller('DonateController', function($scope,$ionicPopup) {
@@ -591,4 +620,44 @@ $scope.showAlert = function() {
 		}
 	}
 
-});
+})
+
+.directive('baseImage', ['$window', function ($window) {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function (scope, elem, attrs, ngModel) {
+      var fileObject = {};
+
+      scope.readerOnload = function(e){
+        var base64 = _arrayBufferToBase64(e.target.result);
+        fileObject.base64 = base64;
+        scope.$apply(function(){
+          ngModel.$setViewValue(fileObject);
+        });
+      };
+
+      var reader = new FileReader();
+      reader.onload = scope.readerOnload;
+
+      elem.on('change', function() {
+        var file = elem[0].files[0];
+        fileObject.filetype = file.type;
+        fileObject.filename = file.name;
+        fileObject.filesize = file.size;
+        reader.readAsArrayBuffer(file);
+      });
+
+      //http://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string
+      function _arrayBufferToBase64( buffer ) {
+        var binary = '';
+        var bytes = new Uint8Array( buffer );
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode( bytes[ i ] );
+        }
+        return $window.btoa( binary );
+      }
+    }
+  };
+}]);
