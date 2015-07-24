@@ -356,9 +356,17 @@ angular.module('starter.controllers', [])
 			dataFactory._alert("Incomplete Form","Please Complete the form <br/>"+error);
 			return;
 		}
-
-
-		return
+		else{
+			var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    		if(!re.test($scope.newuser.email)){
+    			dataFactory._alert("Incomplete Form","Invalid Email");
+    			return;
+    		}
+    		if($scope.newuser.password.length<=8){
+    			dataFactory._alert("Incomplete Form","Password Too Short");
+    			return;
+    		}
+		}
 
 		dataFactory._loading(true);
 
