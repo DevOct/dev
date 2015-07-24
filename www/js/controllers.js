@@ -164,27 +164,27 @@ angular.module('starter.controllers', [])
 
 
 	$scope.updateUser = function(){
-		console.log($scope.pass);	
-		if($scope.pass_1!=null){
-			console.log("pass Exisits");
-			if($scope.pass_2!=null){
-				if($scope.pass_1 === $scope.pass_2){
-					var newpass = md5.createHash($scope.pass_2 || '');
-					$scope.profile.password = newpass;
-				}
-				else{
-					dataFactory._alert("Incorrect Password", "The Password you entered do not match");
-					return;
-				}
-			}
-			else{
-				dataFactory._alert("Incorrect Password","Reenter Password Please!");
-				return;
-			}
-		}
-		else{
-			console.log("why?",$scope.pass_1,$scope.pass_2);	
-		}
+		// console.log($scope.pass);	
+		// if($scope.pass_1!=null){
+		// 	console.log("pass Exisits");
+		// 	if($scope.pass_2!=null){
+		// 		if($scope.pass_1 === $scope.pass_2){
+		// 			var newpass = md5.createHash($scope.pass_2 || '');
+		// 			$scope.profile.password = newpass;
+		// 		}
+		// 		else{
+		// 			dataFactory._alert("Incorrect Password", "The Password you entered do not match");
+		// 			return;
+		// 		}
+		// 	}
+		// 	else{
+		// 		dataFactory._alert("Incorrect Password","Reenter Password Please!");
+		// 		return;
+		// 	}
+		// }
+		// else{
+		// 	console.log("why?",$scope.pass_1,$scope.pass_2);	
+		// }
 
 		$http({ method: 'Put', url: ' http://app.octantapp.com/api/donor', data: $scope.profile }).
 			success(function (data, status, headers, config) {
