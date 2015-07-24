@@ -271,12 +271,20 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, md5, $state, dataFactory) {
+.controller('LoginController', function($scope, md5, dataFactory, $cordovaGeolocation) {
 	$scope.user = {
 		email : null,
 		password : null,
-		pass : null
+		latitude: null,
+		longitude: null
 	}
+	$scope.pass = "";
+
+	dataFactory._coordinates().
+	then(function (position) {
+	    $scope.user.latitude  = position.coords.latitude;
+	    $scope.user.longitude = position.coords.longitude;
+    })
 
 	$scope.$on('service.login', function(){
 		$scope.loginUserData = API.storage.get("login");
@@ -284,31 +292,15 @@ angular.module('starter.controllers', [])
 	});
 
 	$scope.login = function(){
-
-		dataFactory.service('GET',"http://app.octantapp.com/api/donorauth").
+		$scope.user.password = md5.createHash($scope.user.pass || '');
+		dataFactory.service('POST',"http://app.octantapp.com/api/userlogin/123456789",
+			$scope.user).
 			then(function(res){
-				$scope.user.password = md5.createHash($scope.user.pass || '');
-				usr = true;
-				d=res.data
-				for(key in lu = d.Users){
-					if($scope.user.email==lu[key].email){
-						usr = false;
-						console.log(lu[key].password);
-						console.log($scope.user.password);
-						if($scope.user.password===lu[key].password){
-							API.storage.set("loggedIn",lu[key]);
-							App_Session.donor_id = lu[key].donor_id;
-							dataFactory.service('POST','http://app.octantapp.com/api/userlogin/123456789',{donor_login_info:null, lsol_id: null, donor_id: App_Session.donor_id, timestamp: Date().toString(), location:null})
-							$state.go('app.home');
-						}
-						else{
-							dataFactory._alert("Incorrect Credentials","Incorrect Password");
-							break;
-						}
-					}
+				if(res.data.Success = "false"){
+					dataFactory._alert("Error","Cannot Sign in with the given credentials");
+					return;
 				}
-				if(usr)
-					dataFactory._alert("Incorrect Credentials","Cannot find User");
+				App_Session.donor_id = res.data.donor_id;
 			});
 	}
 
@@ -317,28 +309,59 @@ angular.module('starter.controllers', [])
 
 .controller('SignupController', function($scope, $http, $state, dataFactory) {
 	$scope.newuser = {
-		"image": null,
-		"donor_id": null,
-		"email": null,
-		"password": null,
-		"first_name": null,
-		"last_name": null,
-		"zip": null,
-		"image": null,
-		"salutation": null,
-		"address_1": null,
-		"address_2": null,
-		"city": null,
-		"state": null,
-		"cellphone": null,
-		"employer": null,
-		"position": null,
-		"is_terms_accepted": "n",
-		"t_c_timestamp": null
+		"image"				: null,
+		"donor_id"			: null,
+		"email"				: null,
+		"password"			: null,
+		"first_name"		: null,
+		"last_name"			: null,
+		"zip"				: null,
+		"image"				: null,
+		"salutation"		: null,
+		"address_1"			: null,
+		"address_2"			: null,
+		"city"				: null,
+		"state"				: null,
+		"cellphone"			: null,
+		"employer"			: null,
+		"position"			: null,
+		"is_terms_accepted"	: false,
+		"t_c_timestamp"		: null
+	}
+
+	var authFlags = {
+		"email"				: "Email",
+		"password"			: "Password",
+		"first_name"		: "First Name",
+		"last_name"			: "Last Name",
+		"zip"				: "Zip Code",
+		"is_terms_accepted"	: "Terms & Conditions",
 	}
 
 
-	$scope.signup = function() {
+	$scope.signup = function(ev) {
+		var error = "";
+		var errorFlag = false;
+
+		document.getElementById('signup').disabled = true;
+
+		for(key in authFlags){
+			if($scope.newuser[key]==null||!$scope.newuser[key]){
+				error += "-" + authFlags[key] + "<br/>";
+				errorFlag = true;
+			}
+		}
+		document.getElementById('signup').disabled = false;
+		if(errorFlag){
+			dataFactory._alert("Incomplete Form","Please Complete the form <br/>"+error);
+			return;
+		}
+
+
+		return
+
+		dataFactory._loading(true);
+
 		k = $scope.newuser;
 		console.log($scope.newuser);
 
@@ -352,14 +375,19 @@ angular.module('starter.controllers', [])
 
 		dataFactory.service('Post', ' http://app.octantapp.com/api/donor', $scope.newuser).
 			success(function (data, status, headers, config) {
-					console.log(data);
-					console.log('success');
+				console.log(data);
+				console.log('success');
 			}).
 			error(function (data, status, headers, config) {
-					console.log('error');
+				dataFactory._loading(false);
+				dataFactory._alert("Success","User Creation Failed!");
+				console.log('error');
 			}).
 			then(function(){
+				dataFactory._loading(false);
 				dataFactory._alert("Success","User Creation successful");
+				dataFactory._go('app.home');
+				document.getElementById('signup').disabled = true;
 			});
 
 		// $http({
@@ -524,7 +552,7 @@ $scope.showAlert = function() {
 	}
 })
 
-.factory('dataFactory', function($http,$rootScope,$ionicPopup) {
+.factory('dataFactory', function($http, $rootScope, $ionicPopup, $ionicLoading, $state, $cordovaGeolocation) {
 
 	return {
 
@@ -544,6 +572,25 @@ $scope.showAlert = function() {
 							alertThen();
 				 });
 
+		},
+		_loading: function(flag){
+			if(flag){
+				$ionicLoading.show({
+			      template: 'Loading...'
+			    });
+			}
+			else
+			if(!flag){
+				$ionicLoading.hide();
+			}
+		},
+		_go: function(str){
+			$state.go(str);
+		},
+		_coordinates: function(){
+
+			var posOptions = {timeout: 10000, enableHighAccuracy: true};
+			return $cordovaGeolocation.getCurrentPosition(posOptions);
 		}
 	}
 
