@@ -88,31 +88,40 @@ angular.module('starter.controllers', [])
 	};
 })
 
-.controller('FeedsController', function($scope, $http, dataFactory) {
+.controller('FeedsController', function($scope, dataFactory) {
 
 	$scope.lala = true;
 	$scope.readme = false;
 	$scope.feeds = API.storage.get("feeds");
+	var donid = App_Session.donor_id;
 
-	$scope.$on('service.feeds',function(){
-		$scope.feeds = API.storage.get("feeds");
-	});
+	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
+		success(function(data, textStatus, xhr){
+			var feeder = {};
+			var x = data.feed_id;
+			for(i in x){
+				feeder[x[i].message_id] = x[i];
+			}
+			API.storage.set("feeds",feeder);
+		});
 
-	$http.post("http://app.octantapp.com/api/msg_feeds",{'donor_id':App_Session.donor_id}).
-	success(function(data){
-		console.log(data);
-		$scope.feeds = data.feed_id;
-		loiyy = $scope.feeds;
-		API.storage.set("feeds",data);
-	})
-
-	// dataFactory._get( 
-	// 	{ 
-	// 		_url:"http://app.octantapp.com/sl/oct5678093672",
-	// 		_token: "feeds",
-	// 		_tokenID: "feed_id"
-	// 	}
-	// );
+	$scope.platforms = function(id){
+		CS = "";
+		switch(id){
+			case 3:
+				CS = "ion\-social\-facebook";
+				break;
+			case 4:
+				CS = "ion\-social\-twitter";
+				break;
+			case 5:
+				CS = "ion\-android\-mail";
+				break;
+			default:
+				break;
+		}
+		return CS;
+	}
 
 	// $scope.feeds = [
 	// 	{ message_title: 'Reggae', message_id: 1, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
@@ -125,36 +134,32 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('FeedController', function($scope, $stateParams, $http) {
+.controller('FeedController', function($scope, $stateParams, dataFactory) {
 	//alert($stateParams.feedid);
 	var msgid = $stateParams.message_id;
 	var donid = App_Session.donor_id;
-	$http.post('http://app.octantapp.com/api/message_read/123456789', 
-		data= {'msg_id':msgid, 'donor_id':donid}).
-		success(function(data, textStatus, xhr) {
-			console.log(data);
-		});
+	$scope.feed = null;
+	var AllFeeds = API.storage.get("feeds");
 
-
-
-	$scope.feed = API.storage.get("feeds",true);
-	console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
-	for(i in $scope.feed){
-		if($scope.feed[i].message_id == $stateParams.message_id){
-			temp = $scope.feed[i];
-			$scope.feed = null;
-			$scope.feed = temp;
-			console.log("foundFeed:",$scope.feed)
-			break;
-		}
-
+	if(AllFeeds[msgid]||AllFeeds[msgid]!=undefined){
+		$scope.feed = AllFeeds[msgid];
+		console.log("foundFeed:",$scope.feed)
+		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
+			success(function(data, textStatus, xhr) {
+				console.log(data);
+			});
 	}
+	else{
+		console.log("Not Found");
+	}
+	// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
 
 })
 
 .controller('ProfileController', function($http,$scope,dataFactory,$ionicHistory) {
 
 	$scope.image64 = null;
+	donid = App_Session.donor_id;
 
 
 	$scope.$on('service.profile', function(){
@@ -164,15 +169,14 @@ angular.module('starter.controllers', [])
 		}
 	});
 
-	dataFactory._fetch("http://app.octantapp.com/api/donor").
+	dataFactory.service('GET',"http://app.octantapp.com/api/donor").
 	then(function(res){
-		usr = API.storage.get("loggedIn").donor_id;
-		d=res.data
+		d = res.data
 
-		for(key in lu = d.Users){
+		for(key in usr = lu = d.Users){
 			if(usr === lu[key].donor_id){
 				$scope.profile = lu[key]
-				// console.log($scope.profile);
+				console.log($scope.profile);
 
 				if($scope.profile.image!=null)
 					$scope.image64 = "data:image/png;base64, "+API._arrayBufferToBase64($scope.profile.image);
@@ -222,8 +226,8 @@ angular.module('starter.controllers', [])
 		$scope.terms = API.storage.get("terms");
 	});
 
-	dataFactory._fetch("http://app.octantapp.com/api/do/oct5678093672").
-	then(function(res){
+	dataFactory.service('GET',"http://app.octantapp.com/api/do/oct5678093672").
+		then(function(res){
 			k = res.data.tc_id;
 			terms = [];
 			console.log(k);
@@ -252,46 +256,7 @@ angular.module('starter.controllers', [])
 			};
 			$scope.terms = terms;
 
-	})
-	// dataFactory._get( 
-	//   { 
-	//     _url:"http://app.octantapp.com/api/do/oct5678093672",
-	//     _token: "terms",
-	//     _tokenID: "tc_id",
-	//     _then: function(data, status, headers, config){
-	//       k = data;
-	//       var terms = [];
-
-	//       for (var i = 0; i < k.length; i++) {
-
-	//         l = document.createElement('div');
-	//         l.innerHTML = k[i].tc_donor;
-
-	//         //fetch h1
-	//         var h = l.getElementsByTagName("h1")[0]
-	//         head = h.innerHTML;
-	//         h.remove();
-
-	//         //fetch everything else in order
-	//         for (var j = 0; j < l.childElementCount; j++) {
-	//           body[j] = {
-	//               id: j.toString(),
-	//               html: l.children[j].outerHTML};
-	//         };
-	//         //mix them together
-	//         terms[i] = {head,body};
-	//         body = [];
-	//       };
-	//       return terms;
-	//     },
-	//     _success: function(data){
-	//       API.storage.remove(this._token);
-	//     },
-	//     _error: function(data){
-	//       API.storage.get(this._token);
-	//     }
-	//   }
-	// );
+		})
 
 	$scope.toggleGroup = function(group) {
 		if ($scope.isGroupShown(group)) {
@@ -313,14 +278,14 @@ angular.module('starter.controllers', [])
 		pass : null
 	}
 
- $scope.$on('service.login', function(){
+	$scope.$on('service.login', function(){
 		$scope.loginUserData = API.storage.get("login");
 		console.log($scope.loginUserData);
 	});
 
 	$scope.login = function(){
 
-		dataFactory._fetch("http://app.octantapp.com/api/donorauth").
+		dataFactory.service('GET',"http://app.octantapp.com/api/donorauth").
 			then(function(res){
 				$scope.user.password = md5.createHash($scope.user.pass || '');
 				usr = true;
@@ -333,6 +298,7 @@ angular.module('starter.controllers', [])
 						if($scope.user.password===lu[key].password){
 							API.storage.set("loggedIn",lu[key]);
 							App_Session.donor_id = lu[key].donor_id;
+							dataFactory.service('POST','http://app.octantapp.com/api/userlogin/123456789',{donor_login_info:null, lsol_id: null, donor_id: App_Session.donor_id, timestamp: Date().toString(), location:null})
 							$state.go('app.home');
 						}
 						else{
@@ -384,7 +350,7 @@ angular.module('starter.controllers', [])
 			"save_login_info_app": null
 		}
 
-		$http({ method: 'Post', url: ' http://app.octantapp.com/api/donor', data: $scope.newuser }).
+		dataFactory.service('Post', ' http://app.octantapp.com/api/donor', $scope.newuser).
 			success(function (data, status, headers, config) {
 					console.log(data);
 					console.log('success');
@@ -440,7 +406,7 @@ angular.module('starter.controllers', [])
 		$scope.messages = API.storage.get("messages");
 	});
 
-	$http.post("http://app.octantapp.com/api/feed/123456789",{'donor_id':App_Session.donor_id}).
+	dataFactory.service('POST',"http://app.octantapp.com/api/feed/123456789",{'donor_id':App_Session.donor_id}).
 	success(function(data){
 		console.log(data);
 		$scope.messages = data.feed_id;
@@ -486,13 +452,13 @@ angular.module('starter.controllers', [])
 	$scope.selectedItem = $scope.items[1];
 
 	$scope.showAlert = function() {
-		 var alertPopup = $ionicPopup.alert({
-			 title: 'Thankyou!\n For your pledge',
-			 template: 'It might taste good'
-		 });
-		 alertPopup.then(function(res) {
-			 console.log('Thank you for not eating my delicious ice cream cone');
-		 });
+		var alertPopup = $ionicPopup.alert({
+			title: 'Thankyou!\n For your pledge',
+			template: 'It might taste good'
+		});
+			alertPopup.then(function(res) {
+			console.log('Thank you for not eating my delicious ice cream cone');
+		});
 	 };
 	// Triggered in the login modal to close it
 })
@@ -559,67 +525,15 @@ $scope.showAlert = function() {
 })
 
 .factory('dataFactory', function($http,$rootScope,$ionicPopup) {
-	obj = null;
 
 	return {
 
-// settings = {
-//   _url = "",
-//   _token = "",
-//   _tokenID = "",
-//   _then = function(){},
-//   _success = function(){},
-//   _error = function(){}
-// }
-		_get: function(settings){
-			$rootScope.$broadcast('loading.show');
-
-			this._fetch(settings._url).
-			success(function(data, status, headers, config){
-
-				API.storage.remove(this._token);
-				console.log(data, settings._tokenID, data[settings._tokenID]);
-				lala = data[settings._tokenID];
-				this.k = JSON.parse(data[settings._tokenID]);
-				if(typeof settings._success === 'function')
-					settings._success(this.k);
-
-			}).
-			error(function(data, status, headers, config){
-
-				this.k = API.storage.get(settings._token);
-				console.log(this.k);
-				// if(typeof settings._error === 'function')
-				//   settings._error(this.k);    
-			
-			}).
-			then(
-				function(){
-					if(typeof settings._then === 'function')
-						this.k = settings._then(this.k);
-					API.storage.set(
-						settings._token,
-						this.k
-					);
-					$rootScope.$broadcast('service.'+settings._token);
-					$rootScope.$broadcast('loading.hide');
-				},
-				function(){
-//          _update();
-					// $rootScope.$broadcast("flag.error.conn");
-					$rootScope.$broadcast('service.'+settings._token);
-					$rootScope.$broadcast('loading.hide');
-			}).
-			finally(
-				function(){
-			});
-			
-
+		service: function(_method, _url, _data){
+			if(!_data||_data==undefined)
+				data=null;
+			return $http({ method: _method, url: _url, data: _data });
 		},
 
-		_fetch: function(_url){
-				return $http.get(_url);
-		},
 		_alert: function(alertHead,alertMessage,alertThen){
 				 var alertPopup = $ionicPopup.alert({
 					 title: alertHead,

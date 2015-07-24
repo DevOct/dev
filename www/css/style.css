@@ -64,10 +64,6 @@
   padding-left: 106px;
 }
 
-.actionBar .button-circle{
-  background-color: #ED8C2B;
-  color: #fff !Important;
-}
 
 .__feed .seemore{
   min-height: initial;
@@ -159,12 +155,18 @@
   position: absolute;
 }
 
-.button-circle {
-  border-radius: 50%;
-  background-color: #11bbbb;
-  overflow: hidden;
+.button-circle img{
   width: 40px;
-  height: 40px;
+  
+}
+.button-circle {
+  background-color: transparent;
+  border: none;
+}
+
+.actionBar .button-circle{
+//  background-color: #ED8C2B;
+  color: #fff !Important;
 }
 
 .__profile .item-avatar{
@@ -224,4 +226,8 @@
     transform: scale(1.02);
     font-weight: bolder;
     color: #000 !important;
+}
+
+.clearfix {
+  clear: both;
 }
