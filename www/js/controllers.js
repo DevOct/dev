@@ -293,14 +293,19 @@ angular.module('starter.controllers', [])
 
 	$scope.login = function(){
 		$scope.user.password = md5.createHash($scope.user.pass || '');
+		console.log($scope.user);
 		dataFactory.service('POST',"http://app.octantapp.com/api/userlogin/123456789",
 			$scope.user).
 			then(function(res){
-				if(res.data.Success = "false"){
+				console.log(res)
+				if(res.data.Sucess == "true" && res.data.donor_id){
+					App_Session.donor_id = res.data.donor_id;
+					dataFactory._go('app.home');
+				}
+				else{
 					dataFactory._alert("Error","Cannot Sign in with the given credentials");
 					return;
 				}
-				App_Session.donor_id = res.data.donor_id;
 			});
 	}
 
