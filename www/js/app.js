@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCordova'])
 
-.run(function($rootScope,$ionicPlatform,$ionicLoading,$window) {
+.run(function($rootScope,$ionicPlatform,$ionicModal,$window) {
 
   $rootScope.$on('loading.show',function(){
     $ionicLoading.show({
@@ -19,6 +19,30 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     $ionicLoading.hide();
   });
   
+
+  // Open the login modal
+  $rootScope.terms = function() {
+    $ionicModal.fromTemplateUrl('templates/terms.html', {
+      scope: $rootScope
+    }).then(function(modal) {
+      $rootScope.modal = modal;
+      $rootScope.modal.show();
+    });
+  };
+
+  $rootScope.privacy = function() {
+    $ionicModal.fromTemplateUrl('templates/privacy.html', {
+      scope: $rootScope
+    }).then(function(modal) {
+      $rootScope.modal = modal;
+      $rootScope.modal.show();
+    });
+  };
+
+  $rootScope.closeMod = function() {
+    $rootScope.modal.hide();
+  };
+
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -204,6 +228,6 @@ var API = {
 //   _error : function(){}
 // }
 var App_Session = {
-  donor_id : API.storage.get('loggedIn').donor_id,
+  donor_id : API.storage.get('donorId'),
   org_id   : null
 }

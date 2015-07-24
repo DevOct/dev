@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicSlideBoxDelegate) {
+.controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate) {
 	
 	// With the new view caching in Ionic, Controllers are only called
 	// when they are recreated or on app start, instead of every page change.
@@ -63,29 +63,6 @@ angular.module('starter.controllers', [])
 		$ionicSlideBoxDelegate.previous();
 	};
 	
-
-	$scope.closeMod = function() {
-		$scope.modal.hide();
-	};
-
-	// Open the login modal
-	$scope.terms = function() {
-		$ionicModal.fromTemplateUrl('templates/terms.html', {
-			scope: $scope
-		}).then(function(modal) {
-			$scope.modal = modal;
-			$scope.modal.show();
-		});
-	};
-
-	$scope.privacy = function() {
-		$ionicModal.fromTemplateUrl('templates/privacy.html', {
-			scope: $scope
-		}).then(function(modal) {
-			$scope.modal = modal;
-			$scope.modal.show();
-		});
-	};
 })
 
 .controller('FeedsController', function($scope, dataFactory) {
@@ -102,8 +79,15 @@ angular.module('starter.controllers', [])
 			for(i in x){
 				feeder[x[i].message_id] = x[i];
 			}
+			$scope.feeds = feeder;
 			API.storage.set("feeds",feeder);
+		}).
+		error(function() {
+			console.log("NO INTERNET");
+			// dataFactory._alert("");
+			$scope.feeds = API.storage.get("feeds");
 		});
+		
 
 	$scope.platforms = function(id){
 		CS = "";
@@ -156,66 +140,117 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ProfileController', function($http,$scope,dataFactory,$ionicHistory) {
+.controller('ProfileController', function($http,$scope,dataFactory,$ionicPopup,md5) {
 
 	$scope.image64 = null;
+	$scope.image;
+
+	$scope.pass_1;
+	$scope.pass_2;
+
 	donid = App_Session.donor_id;
 
-
-	$scope.$on('service.profile', function(){
-		users = API.storage.get("profile");
-		for(key in users){
-
-		}
-	});
+	profchk = null;
 
 	dataFactory.service('GET',"http://app.octantapp.com/api/donor").
 	then(function(res){
-		d = res.data
-
-		for(key in usr = lu = d.Users){
-			if(usr === lu[key].donor_id){
-				$scope.profile = lu[key]
-				console.log($scope.profile);
-
-				if($scope.profile.image!=null)
-					$scope.image64 = "data:image/png;base64, "+API._arrayBufferToBase64($scope.profile.image);
-			}
-			else
-				// console.log(usr , lu[key].donor_id)
-			;
+		d = res.data.Users
+		for(key in d){
+			if(d[key].donor_id == donid)
+				$scope.profile = d[key];
 		}
-
-		console.log($scope.image64);
+		profchk = $scope.profile;
 	});
 
+
 	$scope.updateUser = function(){
-		if($scope.profile.image.filesize > 5000000)
-			dataFactory._alert("Image Size Error","the file is huge");
-		else{
-			$scope.profile.image = $scope.profile.image.base64;
-			console.log($scope.profile);
-			$http({ method: 'Put', url: ' http://app.octantapp.com/api/donor', data: $scope.profile }).
-				success(function (data, status, headers, config) {
-					console.log(data);
-					console.log('success');
-					dataFactory._alert('Data Updated','Your new data has been updated');
-				}).
-				error(function (data, status, headers, config) {
-						console.log('error',data,status);
-				});
+		console.log($scope.pass);	
+		if($scope.pass_1!=null){
+			console.log("pass Exisits");
+			if($scope.pass_2!=null){
+				if($scope.pass_1 === $scope.pass_2){
+					var newpass = md5.createHash($scope.pass_2 || '');
+					$scope.profile.password = newpass;
+				}
+				else{
+					dataFactory._alert("Incorrect Password", "The Password you entered do not match");
+					return;
+				}
+			}
+			else{
+				dataFactory._alert("Incorrect Password","Reenter Password Please!");
+				return;
+			}
 		}
+		else{
+			console.log("why?",$scope.pass_1,$scope.pass_2);	
+		}
+
+		$http({ method: 'Put', url: ' http://app.octantapp.com/api/donor', data: $scope.profile }).
+			success(function (data, status, headers, config) {
+				console.log(data);
+				console.log('success');
+				dataFactory._alert('Data Updated','Your new data has been updated');
+			}).
+			error(function (data, status, headers, config) {
+					console.log('error',data,status);
+			});
 	}
 
-	$scope.upFile = function() {
-		if($scope.profile.image!=null)
-			$scope.image64 = "data:image/png;base64,"+API._arrayBufferToBase64($scope.profile.image);
-	}
+	// $scope.upFile = function() {
+	// 	if($scope.profile.image!=null)
+	// 		$scope.image64 = "data:image/png;base64,"+API._arrayBufferToBase64($scope.profile.image);
+	// }
 
 	$scope.popup = dataFactory._alert;
+
+	$scope.cont = function(){
+		$scope.data = {}
+		console.log($scope.pass);	
+
+		  // An elaborate, custom popup
+		var myPopup = $ionicPopup.show({
+		    template: '<input type="password" ng-model="data.pass">',
+		    title: 'Enter Old Password',
+		    scope: $scope,
+		    buttons: [
+		      { 
+		      	text: 'Cancel',
+		      	onTap: function(e){
+		      		return "cancel";
+		      	}
+		      },
+		      {
+		        text: '<b>Confirm</b>',
+		        type: 'button-positive',
+		        onTap: function(e) {
+		          if (!$scope.data.pass) {
+		            e.preventDefault();
+		          } else {
+		            return $scope.data.pass;
+		          }
+		        }
+		      }
+		    ]
+		});
+		myPopup.then(function(res) {
+			if(res==="cancel")
+				return;
+
+			var oldPass = $scope.profile.password,
+				match   = md5.createHash(res || '');
+
+			if(match===oldPass)
+				$scope.updateUser();
+			else
+				dataFactory._alert("Incorrect Password","The Password you Entered was Incorrect, try again!");
+
+			console.log(res,oldPass,match);
+		});
+  	}
 })
 
-.controller('ModalController', function($scope, dataFactory) {
+.controller('tncController', function($scope, dataFactory) {
 	k = null;
 
 	head = null;
@@ -293,13 +328,15 @@ angular.module('starter.controllers', [])
 
 	$scope.login = function(){
 		$scope.user.password = md5.createHash($scope.user.pass || '');
-		console.log($scope.user);
+		// console.log($scope.user);
 		dataFactory.service('POST',"http://app.octantapp.com/api/userlogin/123456789",
 			$scope.user).
 			then(function(res){
-				console.log(res)
+				// console.log(res)
 				if(res.data.Sucess == "true" && res.data.donor_id){
+					console.log(res.data);
 					App_Session.donor_id = res.data.donor_id;
+					API.storage.set('donorId',res.data.donor_id);
 					dataFactory._go('app.home');
 				}
 				else{
