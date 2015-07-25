@@ -286,7 +286,7 @@ angular.module('starter.controllers', [])
 			if($scope.forgot.sec_answer.length>6){
 				var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 	    		if(re.test($scope.forgot.email)){
-	    			dataFactory.service('POST','http://app.octantapp.com/forgetpassword/123456789',$scope.forgot).
+	    			dataFactory.service('POST','http://app.octantapp.com/api/forgetpassword/123456789',$scope.forgot).
 	    				success(function(data, textStatus, xhr){
 	    					console.log(data);
 	    				}).
