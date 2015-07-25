@@ -1,7 +1,9 @@
 angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate) {
-	
+	$scope.Donor = {
+		Name: App_Session.donor_name
+	}
 	// With the new view caching in Ionic, Controllers are only called
 	// when they are recreated or on app start, instead of every page change.
 	// To listen for when this page is active (for example, to refresh data),
@@ -128,8 +130,11 @@ angular.module('starter.controllers', [])
 	if(AllFeeds[msgid]||AllFeeds[msgid]!=undefined){
 		$scope.feed = AllFeeds[msgid];
 		console.log("foundFeed:",$scope.feed)
-		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
+		dataFactory.service('PUT','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
+				console.log(data);
+			}).
+			error(function(data, textStatus, xhr) {
 				console.log(data);
 			});
 	}
@@ -254,16 +259,63 @@ angular.module('starter.controllers', [])
   	}
 })
 
+.controller('forgotController', function($scope, dataFactory) {
+	$scope.forgot = {
+		email: "",
+		sec_question: "none",
+		sec_answer: ""
+	}
+
+	$scope.questions = null;
+
+	dataFactory.service('GET','http://app.octantapp.com/api/sec_quest').
+		success(function(data, textStatus, xhr){
+			$scope.questions = data.feed_id;
+			console.log($scope.questions);
+	})
+
+	$scope.forgotsub = function(){
+		qCheck = false;
+		for(key in $scope.questions){
+			if($scope.questions[key].question == $scope.forgot.sec_question){
+				qCheck = true;
+				break;
+			}
+		}
+		if(qCheck){
+			if($scope.forgot.sec_answer.length>6){
+				var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+	    		if(re.test($scope.forgot.email)){
+	    			dataFactory.service('POST','http://app.octantapp.com/forgetpassword/123456789',$scope.forgot).
+	    				success(function(data, textStatus, xhr){
+	    					console.log(data);
+	    				}).
+	    				error(function(status){
+	    					console.log(status);
+	    				})
+	    		}
+	    		else{
+	    			dataFactory._alert("Invalid Entry","Please input a valid Email");
+	    			return;
+	    		}
+	    	}
+			else{
+				dataFactory._alert("Invalid Entry","Answer Length too short, ("+$scope.forgot.sec_answer.length+") characters");
+				return;
+			}
+		} else {
+			dataFactory._alert("Invalid Entry","Please Select a Question from the dropdown");
+			return;
+		}
+	}
+})
+
 .controller('tncController', function($scope, dataFactory) {
 	k = null;
 
 	head = null;
 	body = [];
-
-
-	$scope.$on('service.terms',function(){
-		$scope.terms = API.storage.get("terms");
-	});
+	$scope.terms = API.storage.get("terms");
 
 	dataFactory.service('GET',"http://app.octantapp.com/api/do/oct5678093672").
 		then(function(res){
@@ -331,6 +383,7 @@ angular.module('starter.controllers', [])
 	});
 
 	$scope.login = function(){
+		dataFactory._loading(true);
 		$scope.user.password = md5.createHash($scope.user.pass || '');
 		// console.log($scope.user);
 		dataFactory.service('POST',"http://app.octantapp.com/api/userlogin/123456789",
@@ -341,12 +394,14 @@ angular.module('starter.controllers', [])
 					console.log(res.data);
 					App_Session.donor_id = res.data.donor_id;
 					API.storage.set('donorId',res.data.donor_id);
+					API.storage.set('donorName',"Sumair Roudani");
 					dataFactory._go('app.home');
 				}
 				else{
 					dataFactory._alert("Error","Cannot Sign in with the given credentials");
 					return;
 				}
+				dataFactory._loading(false);
 			});
 	}
 
@@ -479,7 +534,7 @@ angular.module('starter.controllers', [])
 	// Triggered in the login modal to close it
 })
 
-.controller('MessagesController', function($scope, $http) {
+.controller('MessagesController', function($scope, dataFactory) {
 
 	$scope.lala = true;
 	$scope.messages = [];

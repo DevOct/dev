@@ -23,6 +23,12 @@
 .__sideList .list .item h1{
 	color:#fff;
 	text-align: center;
+  font-size: 18pt;
+}
+
+.__sideList a{
+  color: #fff;
+  text-decoration: none;
 }
 
 #__user img {

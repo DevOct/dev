@@ -39,6 +39,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     });
   };
 
+  $rootScope.forgot = function() {
+    $ionicModal.fromTemplateUrl('templates/forgot.html', {
+      scope: $rootScope
+    }).then(function(modal) {
+      $rootScope.modal = modal;
+      $rootScope.modal.show();
+    });
+  };
+
   $rootScope.closeMod = function() {
     $rootScope.modal.hide();
   };
@@ -228,6 +237,7 @@ var API = {
 //   _error : function(){}
 // }
 var App_Session = {
-  donor_id : API.storage.get('donorId'),
-  org_id   : null
+  donor_id    : API.storage.get('donorId'),
+  donor_name  : API.storage.get('donorName'),
+  org_id      : null
 }
