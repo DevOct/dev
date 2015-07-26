@@ -145,17 +145,18 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ProfileController', function($http,$scope,dataFactory,$ionicPopup,md5) {
+.controller('ProfileController', function($scope,dataFactory,$ionicPopup,md5) {
 
-	$scope.image64 = null;
-	$scope.image;
+	// $scope.image64 = null;
+	$scope.image = {
+		img64: null,
+		img: null		
+	}
 
 	$scope.pass = {
 		pass_1 : null,
 		pass_2 : null
 	}
-	// $scope.imad = "pass";
-	// $scope.pass_2;
 
 	donid = App_Session.donor_id;
 
@@ -165,15 +166,21 @@ angular.module('starter.controllers', [])
 	then(function(res){
 		d = res.data.Users
 		for(key in d){
-			if(d[key].donor_id == donid)
+			if(d[key].donor_id == donid){
+				d[key].image = API._arrayBufferToBase64(d[key].image);
 				$scope.profile = d[key];
+			}
 		}
+		// $scope.profile.image = API._arrayBufferToBase64($scope.profile.image);
 		profchk = $scope.profile;
+		$scope.image.img64 = $scope.profile.image;
 	});
 
 
 
 	$scope.updateUser = function(){
+		if($scope.image.img64)
+			$scope.profile.image = $scope.image.img64;
 		if($scope.pass.pass_1!=null){
 			console.log("pass Exisits");
 			if($scope.pass.pass_2!=null){
@@ -195,7 +202,7 @@ angular.module('starter.controllers', [])
 			
 		}
 
-		$http({ method: 'Put', url: ' http://app.octantapp.com/api/donor', data: $scope.profile }).
+		dataFactory.service('PUT','http://app.octantapp.com/api/donor',$scope.profile).
 			success(function (data, status, headers, config) {
 				console.log(data);
 				console.log('success');
@@ -206,10 +213,15 @@ angular.module('starter.controllers', [])
 			});
 	}
 
-	// $scope.upFile = function() {
-	// 	if($scope.profile.image!=null)
-	// 		$scope.image64 = "data:image/png;base64,"+API._arrayBufferToBase64($scope.profile.image);
-	// }
+
+	$scope.swapimage = function(){
+		$scope.image.img64 = $scope.image.img.base64;
+		console.log($scope.image.img64);
+	}
+
+	$scope.upFile = function() {
+		document.querySelector('input.noshow').click();
+	}
 
 	$scope.popup = dataFactory._alert;
 
@@ -267,12 +279,12 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.questions = null;
-
+	dataFactory._loading(true);
 	dataFactory.service('GET','http://app.octantapp.com/api/sec_quest').
 		success(function(data, textStatus, xhr){
 			$scope.questions = data.feed_id;
 			console.log($scope.questions);
-	})
+	}).finally(function(){dataFactory._loading(false);})
 
 	$scope.forgotsub = function(){
 		qCheck = false;
@@ -286,13 +298,14 @@ angular.module('starter.controllers', [])
 			if($scope.forgot.sec_answer.length>6){
 				var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 	    		if(re.test($scope.forgot.email)){
+					dataFactory._loading(true);
 	    			dataFactory.service('POST','http://app.octantapp.com/api/forgetpassword/123456789',$scope.forgot).
 	    				success(function(data, textStatus, xhr){
 	    					console.log(data);
 	    				}).
 	    				error(function(status){
 	    					console.log(status);
-	    				})
+	    				}).finally(function(){dataFactory._loading(false);})
 	    		}
 	    		else{
 	    			dataFactory._alert("Invalid Entry","Please input a valid Email");
@@ -401,8 +414,7 @@ angular.module('starter.controllers', [])
 					dataFactory._alert("Error","Cannot Sign in with the given credentials");
 					return;
 				}
-				dataFactory._loading(false);
-			});
+			}).finally(function(){dataFactory._loading(false);});
 	}
 
 //

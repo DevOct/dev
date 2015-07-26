@@ -2,29 +2,10 @@
   <ion-content class="__profile">
   	<div class="card">
 		<div class="item item-avatar ">
-	    	<img src="{{image64}}" class="lala">
+	    	<img data-ng-src="data:image/jpg;base64,{{image.img64}}" class="lala">
 	    	<p>Change Profile Photo</p>
 
-<!-- 			<div class="fileUpload">
-				<span class="custom-span">+</span>
-				<p class="custom-para">Add Images</p>
-				<input id="uploadBtn" type="file" class="upload" />
-			</div>
-			<input id="uploadFile" placeholder="0 files selected" disabled="disabled" />
- -->
-
-<!-- 			<div class="fileUpload button button-smallx button-positive">
-			    <span>Upload</span>
-			    <input type="file" class="upload" />
-			</div>
- --><!-- 	         <div class="item item-input">
-	          <input type="file" class="button button-positive" placeholder="Email Address" ng-model="newuser.image" base-image>
-	        </div>
- -->		
-<!-- <div>
-    <p>Taken from wikpedia</p>
-    <img src="data:image/jpg;base64, " alt="Red dot" />
-</div> -->			<input type="file" class="noshow" ng-model="image" ng-change="swapimage()" base-image accept="jpg">
+			<input type="file" class="noshow" ng-model="image.img" ng-change="swapimage()" base-image accept="jpg">
  			<button type="button" class="button button-positive" ng-click="upFile()">Upload</button>
 		</div>
 
@@ -92,11 +73,11 @@
 				</label>
 				<label class="item item-input item-stacked-label">
 					<span class="input-label">Security Question</span>
-					<input type="text" ng-model="profile.squestion" placeholder=""/>
+					<input type="text" ng-model="profile.sec_question" placeholder=""/>
 				</label>
 				<label class="item item-input item-stacked-label">
 					<span class="input-label">Security Answer</span>
-					<input type="text" ng-model="profile.sanswer" placeholder=""/>
+					<input type="text" ng-model="profile.sec_answer" placeholder=""/>
 				</label>
 				<label class="item item-input item-stacked-label">
 					<span>Facebook</span>
