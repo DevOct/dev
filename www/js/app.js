@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCordova'])
 
-.run(function($rootScope,$ionicPlatform,$ionicModal,$window) {
+.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory) {
 
   $rootScope.$on('loading.show',function(){
     $ionicLoading.show({
@@ -18,7 +18,17 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
   $rootScope.$on('loading.hide',function(){
     $ionicLoading.hide();
   });
-  
+
+  $rootScope.sec_q = function(){
+    var questions;
+    dataFactory._loading(true);
+    dataFactory.service('GET','http://app.octantapp.com/api/sec_quest').
+      success(function(data, textStatus, xhr){
+        questions = data.feed_id;
+        console.log(questions);
+    }).finally(function(){dataFactory._loading(false);})
+    return questions;
+  }  
 
   // Open the login modal
   $rootScope.terms = function() {

@@ -161,24 +161,30 @@ angular.module('starter.controllers', [])
 	donid = App_Session.donor_id;
 
 	profchk = null;
-
+	dataFactory._loading(true);
 	dataFactory.service('GET',"http://app.octantapp.com/api/donor").
 	then(function(res){
 		d = res.data.Users
 		for(key in d){
 			if(d[key].donor_id == donid){
-				d[key].image = API._arrayBufferToBase64(d[key].image);
+				// d[key].image = String.fromCharCode.apply(null, new Uint16Array(d[key].image));
 				$scope.profile = d[key];
 			}
 		}
 		// $scope.profile.image = API._arrayBufferToBase64($scope.profile.image);
 		profchk = $scope.profile;
 		$scope.image.img64 = $scope.profile.image;
+	},function(res){
+		console.log(res);
+	}).
+	finally(function(){
+		dataFactory._loading(false);
 	});
 
 
 
 	$scope.updateUser = function(){
+		dataFactory._loading(true);
 		if($scope.image.img64)
 			$scope.profile.image = $scope.image.img64;
 		if($scope.pass.pass_1!=null){
@@ -210,13 +216,16 @@ angular.module('starter.controllers', [])
 			}).
 			error(function (data, status, headers, config) {
 					console.log('error',data,status);
+			}).finally(function(){
+				dataFactory._loading(false);
 			});
 	}
 
 
-	$scope.swapimage = function(){
+	$scope.swapimage = function(obj){
+		console.log($scope.image);
 		$scope.image.img64 = $scope.image.img.base64;
-		console.log($scope.image.img64);
+		// console.log($scope.image.img64);
 	}
 
 	$scope.upFile = function() {
@@ -278,13 +287,7 @@ angular.module('starter.controllers', [])
 		sec_answer: ""
 	}
 
-	$scope.questions = null;
-	dataFactory._loading(true);
-	dataFactory.service('GET','http://app.octantapp.com/api/sec_quest').
-		success(function(data, textStatus, xhr){
-			$scope.questions = data.feed_id;
-			console.log($scope.questions);
-	}).finally(function(){dataFactory._loading(false);})
+	$scope.questions = $scope.sec_q();
 
 	$scope.forgotsub = function(){
 		qCheck = false;
