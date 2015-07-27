@@ -286,6 +286,80 @@ angular.module('starter.controllers', [])
   	}
 })
 
+.controller('orgController', function($scope, dataFactory) {
+	$scope.organizaions = API.storage.get('organizaions');
+	$scope.checkedOrgs = {};
+	clength = 0
+	checkProto = {is_checked:false}
+
+	dataFactory._loading(true);
+	dataFactory.service('GET','http://app.octantapp.com/api/organization').
+	then(function(res){
+		ob = res.data.feed_id;
+		co = {}
+		for(key in ob){
+			angular.extend(ob[key], checkProto);
+			co[ob[key].org_id] = ob[key];
+		}
+		$scope.organizaions = co;
+		API.storage.set('organizaions',$scope.organizaions);
+	}).
+	finally(function(){
+		dataFactory._loading(false);
+	})
+
+	$scope.checkOrg = function(org_id){
+		if($scope.organizaions[org_id].is_checked){
+			$scope.checkedOrgs[org_id] = $scope.organizaions[org_id];
+			clength++;
+			console.log($scope.checkedOrgs);
+		}
+		else{
+			delete $scope.checkedOrgs[org_id];
+			clength--;
+			$scope.organizaions[org_id].is_checked = false;
+		}
+	}
+
+	$scope.conferOrgs = function(){
+		lak = $scope.checkedOrgs;
+		var succ = false;
+		$scope.data = {
+			donor_id: App_Session.donor_id,
+			org_id:null
+		}
+		if(clength>0){
+			for(key in $scope.checkedOrgs){
+				$scope.data.org_id = key;
+				dataFactory._loading(true);
+				dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
+				then(function(res){
+					if(!res.error){
+						succ = true;
+						console.log($scope.data,res);
+					} else {
+						succ = false;
+					}
+				}).
+				finally(function(){
+					dataFactory._loading(false);
+					if(succ){
+						dataFactory._alert('Successful','organizaions Selected Successfully');
+						dataFactory._go('app.home');
+					}
+				})
+			}
+			// for(i=0;i<clength;i++){
+			// }
+		}
+		else{
+			dataFactory._alert('No Organization Selected','Please Select atleast 1 Organization');
+			console.log(clength);
+		}
+			
+	}
+
+})
 .controller('forgotController', function($scope, dataFactory, $ionicPopup) {
 	$scope.forgot = {
 		email: "",
@@ -627,7 +701,7 @@ angular.module('starter.controllers', [])
 			then(function(){
 				dataFactory._loading(false);
 				dataFactory._alert("Success","User Creation successful");
-				dataFactory._go('app.home');
+				dataFactory._go('app.org');
 				document.getElementById('signup').disabled = true;
 			});
 

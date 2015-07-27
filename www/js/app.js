@@ -36,12 +36,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     $ionicLoading.hide();
   });
 
-  $rootScope.sec_q = function(){
-    dataFactory._loading(true);
-    return dataFactory.service('GET','http://app.octantapp.com/api/sec_quest').
-    finally(function(){dataFactory._loading(false);})
-  }  
-
   // Open the login modal
   $rootScope.terms = function() {
     $ionicModal.fromTemplateUrl('templates/terms.html', {
@@ -146,6 +140,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
         'menuContent': {
           templateUrl: "templates/feed.html",
           controller: 'FeedController'
+        }
+      }
+    })
+    .state('app.org', {
+      url: "/org",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/org.html",
+          controller: 'orgController'
         }
       }
     })

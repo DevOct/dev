@@ -221,7 +221,7 @@
 }
 .__feed .org img{
   width: 24px;
-  height: 24px  
+  height: 24px    
 }
 
 .unread {
@@ -236,4 +236,12 @@
 
 .clearfix {
   clear: both;
+}
+
+.__org .item img{
+  z-index: 3;
+}
+
+.__org .item .item-content {
+    padding-top: 33px;
 }
