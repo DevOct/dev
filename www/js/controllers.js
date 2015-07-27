@@ -285,14 +285,19 @@ angular.module('starter.controllers', [])
   	}
 })
 
-.controller('forgotController', function($scope, dataFactory) {
+.controller('forgotController', function($scope, dataFactory, $ionicPopup) {
 	$scope.forgot = {
 		email: "",
 		sec_question: "none",
 		sec_answer: ""
 	}
 
-	$scope.questions = $scope.sec_q();
+	dataFactory._loading(true);
+	dataFactory.sec_question().then(function(res){
+		$scope.questions = res.data.feed_id;
+		console.log($scope.questions);
+	}).
+	finally(function(){dataFactory._loading(false);})
 
 	$scope.forgotsub = function(){
 		qCheck = false;
@@ -307,9 +312,22 @@ angular.module('starter.controllers', [])
 				var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 	    		if(re.test($scope.forgot.email)){
 					dataFactory._loading(true);
-	    			dataFactory.service('POST','http://app.octantapp.com/api/forgetpassword/123456789',$scope.forgot).
+	    			dataFactory.service('POST','http://app.octantapp.com/api/reset_pswrd',$scope.forgot).
 	    				success(function(data, textStatus, xhr){
-	    					console.log(data);
+	    					$scope.getPass().then(function(d){
+	    						if(d==false)
+	    							return;
+
+	    						$scope.data.donor_id = data.donor_id;
+	    						console.log(d);
+
+	    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data).
+	    						then(function(res){
+	    							// console.log(res);
+	    							dataFactory._alert('Updated Successfully');
+	    						})
+	    					});
+	    					// dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data)
 	    				}).
 	    				error(function(status){
 	    					console.log(status);
@@ -328,6 +346,37 @@ angular.module('starter.controllers', [])
 			dataFactory._alert("Invalid Entry","Please Select a Question from the dropdown");
 			return;
 		}
+	}
+
+
+	$scope.getPass = function(){
+		$scope.data = {}
+		return myPopup = $ionicPopup.show({
+		    template: '<input type="password" ng-model="data.password"><span class="err"></span>',
+		    title: 'Match Found',
+		    subTitle: 'Enter New Password',
+		    scope: $scope,
+		    buttons: [
+		      { 
+		      	text: 'Cancel',
+		      	onTap: function(e){
+		      		return false;
+		      	}
+		      },
+		      {
+		        text: '<b>Confirm</b>',
+		        type: 'button-positive',
+		        onTap: function(e) {
+		          if (!$scope.data.password || ($scope.data.password.length<8)) {
+		          	document.querySelector('span.err').innerHTML = 'Password Too Short';
+		            e.preventDefault();
+		          } else {
+		            return $scope.data.password;
+		          }
+		        }
+		      }
+		    ]
+		});
 	}
 })
 
@@ -782,6 +831,9 @@ $scope.showAlert = function() {
 
 			var posOptions = {timeout: 10000, enableHighAccuracy: true};
 			return $cordovaGeolocation.getCurrentPosition(posOptions);
+		},
+		sec_question: function(){
+		    return this.service('GET','http://app.octantapp.com/api/sec_quest')
 		}
 	}
 
