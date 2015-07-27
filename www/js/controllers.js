@@ -164,7 +164,7 @@ angular.module('starter.controllers', [])
 
 	profchk = null;
 	dataFactory._loading(true);
-	dataFactory.service('POST',"http://app.octantapp.com/api/donor/",{donor_id:App_Session.donor_id}).
+	dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
 	then(function(res){
 		console.log(res.data);
 		$scope.profile = res.data.Users;
@@ -269,6 +269,7 @@ angular.module('starter.controllers', [])
 		    ]
 		});
 		myPopup.then(function(res) {
+			console.log(res)
 			if(res==="cancel")
 				return;
 
