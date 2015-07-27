@@ -37,14 +37,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
   });
 
   $rootScope.sec_q = function(){
-    var questions;
     dataFactory._loading(true);
-    dataFactory.service('GET','http://app.octantapp.com/api/sec_quest').
-      success(function(data, textStatus, xhr){
-        questions = data.feed_id;
-        console.log(questions);
-    }).finally(function(){dataFactory._loading(false);})
-    return questions;
+    return dataFactory.service('GET','http://app.octantapp.com/api/sec_quest').
+    finally(function(){dataFactory._loading(false);})
   }  
 
   // Open the login modal

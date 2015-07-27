@@ -145,6 +145,10 @@ angular.module('starter.controllers', [])
 
 .controller('ProfileController', function($scope,dataFactory,$ionicPopup,md5) {
 
+	$scope.sec_q().then(function(res){
+		$scope.questions = res.data.feed_id;
+		console.log(res.data,$scope.questions)
+	});
 	// $scope.image64 = null;
 	$scope.image = {
 		img64: null,
@@ -160,7 +164,7 @@ angular.module('starter.controllers', [])
 
 	profchk = null;
 	dataFactory._loading(true);
-	dataFactory.service('GET',"http://app.octantapp.com/api/donor/"+App_Session.donor_id).
+	dataFactory.service('POST',"http://app.octantapp.com/api/donor/",{donor_id:App_Session.donor_id}).
 	then(function(res){
 		console.log(res.data);
 		$scope.profile = res.data.Users;
