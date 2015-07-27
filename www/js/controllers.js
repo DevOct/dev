@@ -160,19 +160,21 @@ angular.module('starter.controllers', [])
 
 	profchk = null;
 	dataFactory._loading(true);
-	dataFactory.service('GET',"http://app.octantapp.com/api/donor").
+	dataFactory.service('GET',"http://app.octantapp.com/api/donor/"+App_Session.donor_id).
 	then(function(res){
-		d = res.data.Users
-		for(key in d){
-			if(d[key].donor_id == donid){
-				if(d[key].image)
-					d[key].image = 'data:image/jpg;base64,'+String.fromCharCode.apply(null, new Uint16Array(d[key].image));
-				$scope.profile = d[key];
-			}
-		}
+		console.log(res.data);
+		$scope.profile = res.data.Users;
+		// for(key in d){
+		// 	if(d[key].donor_id == donid){
+		// 		if(d[key].image)
+		// 			d[key].image = String.fromCharCode.apply(null, new Uint16Array(d[key].image));
+		// 		$scope.profile = d[key];
+		// 	}
+		// }
 		// $scope.profile.image = API._arrayBufferToBase64($scope.profile.image);
 		profchk = $scope.profile;
-		$scope.image.img64 = $scope.profile.image;
+		if($scope.profile.image)
+			$scope.image.img64 = $scope.profile.image;
 	},function(res){
 		console.log(res);
 	}).
@@ -223,7 +225,7 @@ angular.module('starter.controllers', [])
 
 	$scope.swapimage = function(obj){
 		console.log($scope.image);
-		$scope.image.img64 = $scope.image.img.base64;
+		$scope.image.img64 = 'data:image/jpg;base64,'+$scope.image.img.base64;
 		// console.log($scope.image.img64);
 	}
 
