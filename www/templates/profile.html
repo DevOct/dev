@@ -2,7 +2,7 @@
   <ion-content class="__profile">
   	<div class="card">
 		<div class="item item-avatar ">
-	    	<img data-ng-src="data:image/jpg;base64,{{image.img64}}" class="lala">
+	    	<img ng-src="{{image.img64}}" src="img/dummy.jpg" class="lala">
 	    	<p>Change Profile Photo</p>
 
 			<input type="file" class="noshow" ng-model="image.img" ng-change="swapimage()" base-image accept="jpg">

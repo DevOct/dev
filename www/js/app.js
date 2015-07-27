@@ -8,12 +8,29 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
 
 .run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory) {
 
+  $rootScope.Donor = {
+    _name: App_Session.donor_name
+  }
+
+  $rootScope.updateSession= function(){
+
+      App_Session = {
+        donor_id    : API.storage.get('donorId'),
+        donor_name  : API.storage.get('donorName'),
+        donor_image  : API.storage.get('donorName'),
+        org_id      : null
+      }
+
+    $rootScope.Donor = {
+      _name: App_Session.donor_name
+    }
+  }
+
   $rootScope.$on('loading.show',function(){
     $ionicLoading.show({
       template: '<ion-spinner icon="lines"></ion-spinner>'
     });
   });
-
 
   $rootScope.$on('loading.hide',function(){
     $ionicLoading.hide();
@@ -249,5 +266,6 @@ var API = {
 var App_Session = {
   donor_id    : API.storage.get('donorId'),
   donor_name  : API.storage.get('donorName'),
+  donor_image  : API.storage.get('donorName'),
   org_id      : null
 }

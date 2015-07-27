@@ -1,9 +1,7 @@
 angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate) {
-	$scope.Donor = {
-		Name: App_Session.donor_name
-	}
+
 	// With the new view caching in Ionic, Controllers are only called
 	// when they are recreated or on app start, instead of every page change.
 	// To listen for when this page is active (for example, to refresh data),
@@ -71,7 +69,7 @@ angular.module('starter.controllers', [])
 
 	$scope.lala = true;
 	$scope.readme = false;
-	$scope.feeds = API.storage.get("feeds");
+	$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
 	var donid = App_Session.donor_id;
 
 	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
@@ -82,12 +80,12 @@ angular.module('starter.controllers', [])
 				feeder[x[i].message_id] = x[i];
 			}
 			$scope.feeds = feeder;
-			API.storage.set("feeds",feeder);
+			API.storage.set("feeds_"+App_Session.donor_id,feeder);
 		}).
 		error(function() {
 			console.log("NO INTERNET");
 			// dataFactory._alert("");
-			$scope.feeds = API.storage.get("feeds");
+			$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
 		});
 		
 
@@ -125,7 +123,7 @@ angular.module('starter.controllers', [])
 	var msgid = $stateParams.message_id;
 	var donid = App_Session.donor_id;
 	$scope.feed = null;
-	var AllFeeds = API.storage.get("feeds");
+	var AllFeeds = API.storage.get("feeds_"+App_Session.donor_id);
 
 	if(AllFeeds[msgid]||AllFeeds[msgid]!=undefined){
 		$scope.feed = AllFeeds[msgid];
@@ -167,7 +165,8 @@ angular.module('starter.controllers', [])
 		d = res.data.Users
 		for(key in d){
 			if(d[key].donor_id == donid){
-				// d[key].image = String.fromCharCode.apply(null, new Uint16Array(d[key].image));
+				if(d[key].image)
+					d[key].image = 'data:image/jpg;base64,'+String.fromCharCode.apply(null, new Uint16Array(d[key].image));
 				$scope.profile = d[key];
 			}
 		}
@@ -378,6 +377,60 @@ angular.module('starter.controllers', [])
 
 })
 
+.controller('privacyController', function($scope, dataFactory) {
+	k = null;
+
+	head = null;
+	body = [];
+	$scope.privacy = API.storage.get("privacy");
+
+	dataFactory.service('GET',"http://app.octantapp.com/api/pr/oct5678093672").
+		then(function(res){
+			k = res.data.tc_id;
+			privacy = [];
+			console.log(k);
+			for (var i = 0; i < k.length; i++) {
+
+				console.log(k[i]);
+
+				l = document.createElement('div');
+				l.innerHTML = k[i].privacy_terms;
+
+				//fetch h1
+				var h = l.getElementsByTagName("h1")[0]
+				console.log(h.innerHTML,h);
+				head = h.innerHTML;
+				h.remove();
+
+				//fetch everything else in order
+				for (var j = 0; j < l.childElementCount; j++) {
+					body[j] = {
+							id: j.toString(),
+							html: l.children[j].outerHTML};
+				};
+				//mix them together
+				privacy[i] = {head,body};
+				body = [];
+			};
+			API.storage.set('privacy',privacy);
+			console.log(privacy);
+			$scope.privacy = privacy;
+
+		})
+
+	$scope.toggleGroup = function(group) {
+		if ($scope.isGroupShown(group)) {
+				$scope.shownGroup = null;
+		} else {
+			$scope.shownGroup = group;
+		}
+	};
+	$scope.isGroupShown = function(group) {
+		return $scope.shownGroup === group;
+	};
+
+})
+
 .controller('LoginController', function($scope, md5, dataFactory, $cordovaGeolocation) {
 	$scope.user = {
 		email : null,
@@ -405,19 +458,27 @@ angular.module('starter.controllers', [])
 		dataFactory.service('POST',"http://app.octantapp.com/api/userlogin/123456789",
 			$scope.user).
 			then(function(res){
-				// console.log(res)
-				if(res.data.Sucess == "true" && res.data.donor_id){
-					console.log(res.data);
-					App_Session.donor_id = res.data.donor_id;
-					API.storage.set('donorId',res.data.donor_id);
-					API.storage.set('donorName',"Sumair Roudani");
+				var uid = res.data.Sucess;
+				// console.log(uid)
+				if(uid != "false"){
+					// console.log(uid);
+					App_Session.donor_id = uid.donor_id;
+					API.storage.set('donorId',uid.donor_id);
+					API.storage.set('donorName',uid.first_name+" "+uid.last_name);
+					API.storage.set('donorImage',uid.image);
+					$scope.updateSession();
 					dataFactory._go('app.home');
 				}
 				else{
 					dataFactory._alert("Error","Cannot Sign in with the given credentials");
+					console.log(uid);
 					return;
 				}
-			}).finally(function(){dataFactory._loading(false);});
+			},function(res){
+				console.log(res);
+			}).finally(function(){
+				dataFactory._loading(false);
+			});
 	}
 
 //
