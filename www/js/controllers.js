@@ -89,6 +89,8 @@ angular.module('starter.controllers', [])
 		});
 		
 	$scope.isreadchk = function(message_id){
+		// console.log(message_id);
+		// console.log($scope.feeds[message_id])
 		$scope.feeds[message_id].is_read = true;
 	}
 
@@ -328,35 +330,53 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.conferOrgs = function(){
-		lak = $scope.checkedOrgs;
-		var succ = false;
-		$scope.data = {
-			donor_id: App_Session.donor_id,
-			org_id:null
+		$scope.checkedOrgs;
+		$scope.data = []
+		// {
+		// 	donor_id: App_Session.donor_id,
+		// 	org_id: $scope.checkedOrgs[0]
+		// }
+
+		for(key in $scope.checkedOrgs){
+			var temp = [
+				App_Session.donor_id,
+				$scope.checkedOrgs[key].org_id
+			]
+			$scope.data.push(temp);
 		}
+
 		if(clength>0){
-			for(key in $scope.checkedOrgs){
-				console.log(key);
-				$scope.data.org_id = key;
-				dataFactory._loading(true);
-				dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
+
+			console.log($scope.data);
+
+			dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
 				then(function(res){
-					if(!res.error){
-						clength=0;
-						succ = true;
-						console.log($scope.data,res);
-					} else {
-						succ = false;
-					}
-				}).
-				finally(function(){
-					if(succ && clength==0){
-						dataFactory._go('app.home');
-					}
+					console.log(res);
 				})
-			}
+			// for(key in $scope.checkedOrgs){
+			// 	console.log(key);
+			// 	dataFactory._loading(true);
+			// 	dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
+			// 	then(function(res){
+			// 		if(!res.error){
+			// 			clength=0;
+			// 			succ = true;
+			// 			console.log($scope.data,res);
+			// 		} else {
+			// 			succ = false;
+			// 		}
+			// 	}).
+			// 	finally(function(){
+			// 		if($scope.checkedOrgs[key+1])
+			// 			$scope.data.org_id = key;
+
+			// 		if(succ && clength==0){
+			// 			dataFactory._go('app.home');
+			// 		}
+			// 	})
+			// }
 						dataFactory._alert('Successful','organizaions Selected Successfully');
-					dataFactory._loading(false);
+					// dataFactory._loading(false);
 			// for(i=0;i<clength;i++){
 			// }
 		}
