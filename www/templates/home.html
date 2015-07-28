@@ -1,7 +1,7 @@
 <ion-view view-title="Home">
   <ion-content>
     <ion-list class="__feed">
-      <ion-item ng-repeat="feed in feeds" ng-class="feed.is_read ? 'read' : 'unread'">
+      <ion-item ng-repeat="feed in feeds" ng-class="feed.is_read ? 'read' : 'unread'" ng-click="isreadchk({{feed.message_id}})">
       	<div class="list">
 		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}">
 

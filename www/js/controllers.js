@@ -88,6 +88,9 @@ angular.module('starter.controllers', [])
 			$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
 		});
 		
+	$scope.isreadchk = function(message_id){
+		$scope.feeds[message_id].is_read = true;
+	}
 
 	$scope.platforms = function(id){
 		CS = "";
