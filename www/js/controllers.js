@@ -145,10 +145,13 @@ angular.module('starter.controllers', [])
 
 .controller('ProfileController', function($scope,dataFactory,$ionicPopup,md5) {
 
-	$scope.sec_q().then(function(res){
+	dataFactory._loading(true);
+	dataFactory.sec_question().then(function(res){
 		$scope.questions = res.data.feed_id;
-		console.log(res.data,$scope.questions)
-	});
+		console.log($scope.questions);
+	}).
+	finally(function(){dataFactory._loading(false);})
+
 	// $scope.image64 = null;
 	$scope.image = {
 		img64: null,
@@ -330,11 +333,13 @@ angular.module('starter.controllers', [])
 		}
 		if(clength>0){
 			for(key in $scope.checkedOrgs){
+				console.log(key);
 				$scope.data.org_id = key;
 				dataFactory._loading(true);
 				dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
 				then(function(res){
 					if(!res.error){
+						clength=0;
 						succ = true;
 						console.log($scope.data,res);
 					} else {
@@ -342,13 +347,13 @@ angular.module('starter.controllers', [])
 					}
 				}).
 				finally(function(){
-					dataFactory._loading(false);
-					if(succ){
-						dataFactory._alert('Successful','organizaions Selected Successfully');
+					if(succ && clength==0){
 						dataFactory._go('app.home');
 					}
 				})
 			}
+						dataFactory._alert('Successful','organizaions Selected Successfully');
+					dataFactory._loading(false);
 			// for(i=0;i<clength;i++){
 			// }
 		}
@@ -692,6 +697,9 @@ angular.module('starter.controllers', [])
 			success(function (data, status, headers, config) {
 				console.log(data);
 				console.log('success');
+				API.storage.set('donorId',data.donor_id);
+				API.storage.set('donorName',data.donor_first_name+" "+data.donor_last_name);
+
 			}).
 			error(function (data, status, headers, config) {
 				dataFactory._loading(false);
@@ -699,6 +707,7 @@ angular.module('starter.controllers', [])
 				console.log('error');
 			}).
 			then(function(){
+				$scope.updateSession();
 				dataFactory._loading(false);
 				dataFactory._alert("Success","User Creation successful");
 				dataFactory._go('app.org');
