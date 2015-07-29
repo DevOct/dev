@@ -245,3 +245,11 @@
 .__org .item .item-content {
     padding-top: 33px;
 }
+
+.organizaionsC:before {
+  content: "O" !important;
+}
+
+.eventsC:before {
+  content: "E" !important;
+}

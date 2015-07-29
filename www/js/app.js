@@ -9,7 +9,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
 .run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory) {
 
   $rootScope.Donor = {
-    _name: App_Session.donor_name
   }
 
   $rootScope.updateSession= function(){
@@ -17,12 +16,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
       App_Session = {
         donor_id    : API.storage.get('donorId'),
         donor_name  : API.storage.get('donorName'),
-        donor_image  : API.storage.get('donorName'),
-        org_id      : null
+        donor_image  : API.storage.get('donorImage'),
       }
 
     $rootScope.Donor = {
-      _name: App_Session.donor_name
+      _name: App_Session.donor_name,
+      _image: App_Session.donor_image
     }
   }
 

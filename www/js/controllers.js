@@ -2,6 +2,8 @@ angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate) {
 
+	$scope.updateSession();
+
 	// With the new view caching in Ionic, Controllers are only called
 	// when they are recreated or on app start, instead of every page change.
 	// To listen for when this page is active (for example, to refresh data),
@@ -97,6 +99,12 @@ angular.module('starter.controllers', [])
 	$scope.platforms = function(id){
 		CS = "";
 		switch(id){
+			case 1:
+				CS = "ion\-ionic organizaionsC";
+				break;
+			case 2:
+				CS = "ion\-ionic eventsC";
+				break;
 			case 3:
 				CS = "ion\-social\-facebook";
 				break;
@@ -111,15 +119,6 @@ angular.module('starter.controllers', [])
 		}
 		return CS;
 	}
-
-	// $scope.feeds = [
-	// 	{ message_title: 'Reggae', message_id: 1, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Chill', message_id: 2, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Dubstep', message_message_id: 3, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Indie', message_id: 4, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Rap', message_id: 5, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Cowbell', message_id: 6, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }
-	// ];
 
 })
 
@@ -226,6 +225,10 @@ angular.module('starter.controllers', [])
 				console.log(data);
 				console.log('success');
 				dataFactory._alert('Data Updated','Your new data has been updated');
+				API.storage.set('donorId',$scope.profile.donor_id);
+				API.storage.set('donorName',$scope.profile.first_name+" "+$scope.profile.last_name);
+				API.storage.set('donorImage',$scope.profile.image);
+				$scope.updateSession();
 			}).
 			error(function (data, status, headers, config) {
 					console.log('error',data,status);
@@ -620,7 +623,6 @@ angular.module('starter.controllers', [])
 				// console.log(uid)
 				if(uid != "false"){
 					// console.log(uid);
-					App_Session.donor_id = uid.donor_id;
 					API.storage.set('donorId',uid.donor_id);
 					API.storage.set('donorName',uid.first_name+" "+uid.last_name);
 					API.storage.set('donorImage',uid.image);
@@ -735,33 +737,7 @@ angular.module('starter.controllers', [])
 				dataFactory._alert("Success","User Creation successful");
 				dataFactory._go('app.org');
 				document.getElementById('signup').disabled = true;
-			});
-
-		// $http({
-		//   method: "post",
-		//   url: "",
-		//   data: $scope.newuser
-		// }).
-		// success(
-		//   function(req){
-		//     console.log(req);
-		//     $http({
-		//       method: "post",
-		//       url: "http://app.octantapp.com/api/donorauth",
-		//       data: $scope.userauth
-		//     }).
-		//     success(function(req){
-		//       console.log(req);
-		//       dataFactory._alert('User Created','User Creation successful, please sign in to continue');
-		//       $state.go('login');
-		//     }).
-		//     error(function(req){
-		//       console.log(req);
-		//     });
-		// }).
-		// error(function(req){
-		//     console.log(req,$scope.newuser,$scope.userauth);
-		// });
+		});
 	}                   
 
 	// Triggered in the login modal to close it
@@ -787,23 +763,6 @@ angular.module('starter.controllers', [])
 		$scope.messages = data.feed_id;
 		API.storage.set("messages",data);
 	})
-
-	// dataFactory._get( 
-	// 	{ 
-	// 		_url:"http://app.octantapp.com/sl/oct5678093672",
-	// 		_token: "feeds",
-	// 		_tokenID: "feed_id"
-	// 	}
-	// );
-
-	// $scope.feeds = [
-	// 	{ message_title: 'Reggae', message_id: 1, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Chill', message_id: 2, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Dubstep', message_message_id: 3, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Indie', message_id: 4, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Rap', message_id: 5, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
-	// 	{ message_title: 'Cowbell', message_id: 6, content:"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }
-	// ];
 
 })
 

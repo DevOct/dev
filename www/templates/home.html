@@ -17,7 +17,7 @@
 			<div class="actionBar">
 		    	<button class="button button-circle button-small "><img src="img/1.png" /></button>
 		    	<button class="button button-circle button-small "><img src="img/share.png" /></button>
-		      	<a type="button" ng-show="{{feed.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;">see {{lala === false ? 'less': 'more';}}</a>
+		      	<a type="button" ng-show="{{feed.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;isreadchk({{feed.message_id}})">see {{lala === false ? 'less': 'more';}}</a>
 		    </div>
 		</div>
 		<div style="clear:both"></div>
