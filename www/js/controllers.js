@@ -60,9 +60,11 @@ angular.module('starter.controllers', [])
 	$ionicSlideBoxDelegate.update();
 	$scope.next = function() {
 		$ionicSlideBoxDelegate.next();
+		$rootScope.$broadcast("slideChange");
 	};
 	$scope.previous = function() {
 		$ionicSlideBoxDelegate.previous();
+		$rootScope.$broadcast("slideChange");
 	};
 	
 })
@@ -90,11 +92,16 @@ angular.module('starter.controllers', [])
 			// dataFactory._alert("");
 			$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
 		});
-		
+
 	$scope.isreadchk = function(message_id){
-		// console.log(message_id);
-		// console.log($scope.feeds[message_id])
 		$scope.feeds[message_id].is_read = true;
+		dataFactory.service('PUT','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
+			success(function(data, textStatus, xhr) {
+				console.log(data);
+			}).
+			error(function(data, textStatus, xhr) {
+				console.log(data);
+			});
 	}
 
 	$scope.donatetoorg = function(orgid){
@@ -902,7 +909,11 @@ angular.module('starter.controllers', [])
 		console.log($scope.data);
 	}
 
-$scope.showAlert = function() {
+	$Scope.on('slideChange',function(){
+		console.log($scope.slides[$ionicSlideBoxDelegate.currentIndex()]);
+	})
+
+	$scope.showAlert = function() {
 		 var alertPopup = $ionicPopup.alert({
 			 title: 'Thankyou!\n For your pledge',
 			 template: '<ul><li>-Organization: American Red Cross</li><li>-Address: 355 Main Street, 5th Street</li><li>-City: Cambridge</li><li>-State: Massachusetts</li><li>-Zip Code: 02142</li><li>-Tax ID: 00386234</li><li>-Organization Telephone: +1857-939-0068</li></ul>'
