@@ -811,65 +811,9 @@ angular.module('starter.controllers', [])
 
 .controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory) {
 
-	$scope.data = {selectedItem:30 };
-	slto = 0
-
-	$scope.slides = []
-	$scope.organizaions = {}
-	dataFactory._loading(true);
-	dataFactory.service('GET','http://app.octantapp.com/api/organization').
-	then(function(res){
-		ob = res.data.feed_id;
-		$scope.organizaions = ob
-		count = 0;
-		for(key in ob){
-			count++;
-			$scope.slides.push({
-				image: ob[key].logo_full,
-				org_id: ob[key].org_id,
-				title: ob[key].name,
-				data: ob[key].descrip
-			});
-			if($stateParams.orgid==ob[key].org_id)
-				slto = count;
-		}
-		console.log($scope.slides);
-    	$ionicSlideBoxDelegate.update();
-    	// console.log(slto);
-    		// API.storage.set('organizaions',$scope.organizaions);
-	}).
-	finally(function(){
-    	angular.element(document).ready(function () {
-	    	$ionicSlideBoxDelegate.slide(slto);
-		    // console.log('page loading completed');
-		});
-		dataFactory._loading(false);
-	})
-
-
-	$scope.showAlert = function() {
-		var alertPopup = $ionicPopup.alert({
-			title: 'Thankyou!\n For your pledge',
-			template: 'It might taste good'
-		});
-			alertPopup.then(function(res) {
-			console.log('Thank you for not eating my delicious ice cream cone');
-		});
-	 };
-
-	 $scope.oct_donate = function(){
-	 	org = $scope.slides[$ionicSlideBoxDelegate.currentIndex()];
-	 	console.log(org);
-	 }
-
-})
-
-.controller('PledgeController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,dataFactory,$stateParams) {
-
-
 	$scope.data = {
 		selectedItem:30, 
-		val:30,
+		amount:30,
 		slide: null
 	};
 	slto = 0
@@ -933,13 +877,13 @@ angular.module('starter.controllers', [])
 	})
 
 	$scope.dataChanged = function(selectedItem){
-		$scope.data.val = selectedItem;
+		$scope.data.amount = selectedItem;
 	}
-	$scope.oct_pledge = function(){
+	$scope.oct_donate = function(){
 
 		if($scope.data.slide>0){
 			$scope.showAlert();
-			if($scope.data.val>20){
+			if($scope.data.amount>20){
 				
 			}
 			else{
@@ -969,11 +913,128 @@ angular.module('starter.controllers', [])
 		console.log(index);
 	}
 
+})
+
+.controller('PledgeController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,dataFactory,$stateParams) {
+
+
+	$scope.data = {
+		selectedItem:30, 
+		amount:30,
+		donor_id: App_Session.donor_id,
+		org_id: null,
+		slide: null
+	};
+	slto = 0
+
+	$scope.slides = []
+	$scope.organizaions = {}
+	$scope.billing = {}
+
+	dataFactory._loading(true);
+	dataFactory.service('GET','http://app.octantapp.com/api/organization').
+	then(function(res){
+		ob = res.data.feed_id;
+		$scope.organizaions = ob
+		count = 0;
+		console.log(ob);
+		for(key in ob){
+			count++;
+			$scope.slides.push({
+				image: ob[key].logo_full,
+				org_id: ob[key].org_id,
+				title: ob[key].name,
+				desc: ob[key].descrip,
+				address: ob[key].address_1 + " " + ob[key].address_2,
+				city: ob[key].city,
+				zip: ob[key].zip,
+				state: ob[key].state,
+				tel: "+92 321 9579365",
+
+			});
+			if($stateParams.orgid==ob[key].org_id)
+				slto = count;
+		}
+		console.log($scope.slides);
+    	$ionicSlideBoxDelegate.update();
+    	// console.log(slto);
+    		// API.storage.set('organizaions',$scope.organizaions);
+	}).
+	finally(function(){
+    	angular.element(document).ready(function () {
+	    	$ionicSlideBoxDelegate.slide(slto);
+	    	if(slto>0){
+	    		$scope.billing = $scope.slides[slto];
+	    		$scope.data.slide = slto;
+	    	}
+		    else
+		    	$scope.billing = {
+					image: null,
+					org_id: null,
+					title: null,
+					desc: null,
+					address: null,
+					city: null,
+					zip: null,
+					state: null,
+					tel: null,
+				}
+
+		    // console.log('page loading completed');
+		});
+		dataFactory._loading(false);
+	})
+
+	$scope.dataChanged = function(selectedItem){
+		$scope.data.amount = selectedItem;
+	}
+	$scope.oct_pledge = function(){
+
+		if($scope.data.slide>0){
+		$scope.data.org_id= $scope.slides[$scope.data.slide].org_id
+			if($scope.data.amount>20){
+				dataFactory.service('POST','http://app.octantapp.com/api/pledge',$scope.data).
+				then(function(res){
+					console.log(res);
+					$scope.showAlert();
+				})
+				
+			}
+			else{
+				dataFactory._alert('Amount Error','Kindly Enter a Number Greater than the Min Amount ($20)');
+			}
+		}
+		else{
+			dataFactory._alert('Organization Error','No Organizaions Selected');
+		}
+		console.log($scope.data);
+	}
+
+	$scope.slideC = function(index){
+		$scope.data.slide = index;
+		if(index>0){
+	    	$scope.billing = $scope.slides[index-1];
+	    }
+	    else
+	    	$scope.billing = {
+				image: null,
+				org_id: null,
+				title: null,
+				data: null,
+				address: null,
+				city: null,
+				zip: null,
+				state: null,
+				tel: null
+			}
+		console.log(index);
+	}
+
 	$scope.showAlert = function() {
 		x = $scope.billing;
 		console.log(x)
 		dataFactory._alert('Thankyou!\n For your pledge',
-			'<ul><li>-Organization: '+x.title+'</li><li>-Address: '+x.address+'</li><li>-City: '+x.city+'</li><li>-State: '+x.state+'</li><li>-Zip Code: '+x.zip+'</li><li>-Organization Telephone: '+x.tel+'</li></ul>')
+			'<ul><li>-Organization: '+x.title+'</li><li>-Address: '+x.address+'</li><li>-City: '+x.city+'</li><li>-State: '+x.state+'</li><li>-Zip: '+x.zip+'</li><li>-Tel: '+x.tel+'</li></ul>')
 	};
 	// Triggered in the login modal to close it
 })
