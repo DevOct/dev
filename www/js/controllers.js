@@ -83,6 +83,7 @@ angular.module('starter.controllers', [])
 			}
 			$scope.feeds = feeder;
 			API.storage.set("feeds_"+App_Session.donor_id,feeder);
+			console.log($scope.feeds);
 		}).
 		error(function() {
 			console.log("NO INTERNET");
@@ -94,6 +95,10 @@ angular.module('starter.controllers', [])
 		// console.log(message_id);
 		// console.log($scope.feeds[message_id])
 		$scope.feeds[message_id].is_read = true;
+	}
+
+	$scope.donatetoorg = function(orgid){
+		dataFactory._go('app.donate',{'orgid':orgid})
 	}
 
 	$scope.platforms = function(id){
@@ -120,6 +125,11 @@ angular.module('starter.controllers', [])
 		return CS;
 	}
 
+	$scope.datify = function(dt){
+		return new Date(dt).toISOString().slice(0, 19).replace('T', ' ');
+		// return dty;
+	}
+
 })
 
 .controller('FeedController', function($scope, $stateParams, dataFactory) {
@@ -131,6 +141,7 @@ angular.module('starter.controllers', [])
 
 	if(AllFeeds[msgid]||AllFeeds[msgid]!=undefined){
 		$scope.feed = AllFeeds[msgid];
+		$scope.feed.is_read = true;
 		console.log("foundFeed:",$scope.feed)
 		dataFactory.service('PUT','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
@@ -297,7 +308,8 @@ angular.module('starter.controllers', [])
   	}
 })
 
-.controller('orgController', function($scope, dataFactory) {
+.controller('orgController', function($scope, dataFactory,$stateParams) {
+	console.log($stateParams.orgid);
 	$scope.organizaions = API.storage.get('organizaions');
 	$scope.checkedOrgs = {};
 	clength = 0
@@ -751,39 +763,82 @@ angular.module('starter.controllers', [])
 .controller('MessagesController', function($scope, dataFactory) {
 
 	$scope.lala = true;
-	$scope.messages = [];
+	$scope.readme = false;
+	$scope.messages = API.storage.get("feeds_"+App_Session.donor_id);
+	var donid = App_Session.donor_id;
 
-	$scope.$on('service.messages',function(){
-		$scope.messages = API.storage.get("messages");
-	});
+	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
+		success(function(data, textStatus, xhr){
+			var feeder = {};
+			var x = data.feed_id;
+			for(i in x){
+				if(x[i].msg_type_id==5)
+					feeder[x[i].message_id] = x[i];
+			}
+			$scope.messages = feeder;
+			API.storage.set("feeds_"+App_Session.donor_id,feeder);
+			console.log($scope.messages);
+		}).
+		error(function() {
+			console.log("NO INTERNET");
+			// dataFactory._alert("");
+			$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
+		});
+		
+	$scope.isreadchk = function(message_id){
+		// console.log(message_id);
+		// console.log($scope.feeds[message_id])
+		$scope.messages[message_id].is_read = true;
+	}
 
-	dataFactory.service('POST',"http://app.octantapp.com/api/feed/123456789",{'donor_id':App_Session.donor_id}).
-	success(function(data){
-		console.log(data);
-		$scope.messages = data.feed_id;
-		API.storage.set("messages",data);
-	})
+	$scope.donatetoorg = function(orgid){
+		dataFactory._go('app.donate',{'orgid':orgid})
+	}
+
+	$scope.datify = function(dt){
+		return new Date(dt).toISOString().slice(0, 19).replace('T', ' ');
+		// return dty;
+	}
 
 })
 
-.controller('DonateController', function($scope,$ionicPopup) {
+.controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory) {
 
-	$scope.items = [{
-		name: '$20'
-	}, {
-		name: '$30'
-	}, {
-		name: '$40'
-		
-	}, {
-		name: '$50'
-		
-	}, {
-		name: 'other',
-		description: '$738'
-		
-	}];
-	$scope.selectedItem = $scope.items[1];
+	$scope.data = {selectedItem:30 };
+	slto = 0
+
+	$scope.slides = []
+	$scope.organizaions = {}
+	dataFactory._loading(true);
+	dataFactory.service('GET','http://app.octantapp.com/api/organization').
+	then(function(res){
+		ob = res.data.feed_id;
+		$scope.organizaions = ob
+		count = 0;
+		for(key in ob){
+			count++;
+			$scope.slides.push({
+				image: ob[key].logo_full,
+				org_id: ob[key].org_id,
+				title: ob[key].name,
+				data: ob[key].descrip
+			});
+			if($stateParams.orgid==ob[key].org_id)
+				slto = count;
+		}
+		console.log($scope.slides);
+    	$ionicSlideBoxDelegate.update();
+    	// console.log(slto);
+    		// API.storage.set('organizaions',$scope.organizaions);
+	}).
+	finally(function(){
+    	angular.element(document).ready(function () {
+	    	$ionicSlideBoxDelegate.slide(slto);
+		    // console.log('page loading completed');
+		});
+		dataFactory._loading(false);
+	})
+
 
 	$scope.showAlert = function() {
 		var alertPopup = $ionicPopup.alert({
@@ -794,28 +849,58 @@ angular.module('starter.controllers', [])
 			console.log('Thank you for not eating my delicious ice cream cone');
 		});
 	 };
-	// Triggered in the login modal to close it
+
+	 $scope.oct_donate = function(){
+	 	org = $scope.slides[$ionicSlideBoxDelegate.currentIndex()];
+	 	console.log(org);
+	 }
+
 })
 
-.controller('PledgeController', function($scope,$ionicPopup) {
+.controller('PledgeController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,dataFactory,$stateParams) {
 
 
-	$scope.items = [{
-		name: '$20'
-	}, {
-		name: '$30'
-	}, {
-		name: '$40'
-		
-	}, {
-		name: '$50'
-		
-	}, {
-		name: 'other',
-		description: '$738'
-		
-	}];
-	$scope.selectedItem = $scope.items[1];
+	$scope.data = {selectedItem:30, val:30 };
+	slto = 0
+
+	$scope.slides = []
+	$scope.organizaions = {}
+	dataFactory._loading(true);
+	dataFactory.service('GET','http://app.octantapp.com/api/organization').
+	then(function(res){
+		ob = res.data.feed_id;
+		$scope.organizaions = ob
+		count = 0;
+		for(key in ob){
+			count++;
+			$scope.slides.push({
+				image: ob[key].logo_full,
+				org_id: ob[key].org_id,
+				title: ob[key].name,
+				data: ob[key].descrip
+			});
+			if($stateParams.orgid==ob[key].org_id)
+				slto = count;
+		}
+		console.log($scope.slides);
+    	$ionicSlideBoxDelegate.update();
+    	// console.log(slto);
+    		// API.storage.set('organizaions',$scope.organizaions);
+	}).
+	finally(function(){
+    	angular.element(document).ready(function () {
+	    	$ionicSlideBoxDelegate.slide(slto);
+		    // console.log('page loading completed');
+		});
+		dataFactory._loading(false);
+	})
+
+	$scope.dataChanged = function(selectedItem){
+		$scope.data.val = selectedItem;
+	}
+	$scope.oct_pledge = function(){
+		console.log($scope.data);
+	}
 
 $scope.showAlert = function() {
 		 var alertPopup = $ionicPopup.alert({
@@ -890,8 +975,8 @@ $scope.showAlert = function() {
 				$ionicLoading.hide();
 			}
 		},
-		_go: function(str){
-			$state.go(str);
+		_go: function(str,params){
+			$state.go(str,params);
 		},
 		_coordinates: function(){
 

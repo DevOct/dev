@@ -1,34 +1,38 @@
 <ion-view view-title="Donate">
 <ion-content>
-<div class="list card" style="margin-top:4px">
-	<div class="item item-body">
-		<ion-slide-box show-pager="false">
+	<div class="list card" style="margin-top:4px">
+		<div class="item item-body">
+			<ion-slide-box show-pager="false" class="__Slide">
+			  <ion-slide>
+			  	<h1>Select An Organization ></h1>
+			  </ion-slide>
+			  <ion-slide ng-repeat="item in slides">
+			  	<img ng-src="{{item.image}}" />
+			  </ion-slide>
+			</ion-slide-box>
+		</ion-slide-box><br>
+		</div>
 
-		<ion-slide ng-repeat="item in data.slides">
-		<img ng-src="{{item.image}}" width="130" height="130"/>
-		<h1>{{item.title}}</h1>
-		<h2>{{item.data}}</h2>
-	</ion-slide>
-
-</ion-slide-box><br>
-<div class="list">
-
-  <label class="item item-input item-select">
-    <div class="input-label">
-      Amount:
-    </div>
-    <select>
-      <option>$20</option>
-      <option selected>$30</option>
-      <option>$40</option>
-      <option>Other</option>
-    </select>
-  </label>
-
-</div>
-<a class="button button-icon icon"><img src="img/1.png" ></a>
-</div>
-</div>
+		<div class="list">
+		  <label class="item item-input item-select" onclick="return">
+		    <div class="input-label">
+		      Amount:
+		    </div>
+		    <label ng-show="data.selectedItem == 0" class="item-input-wrapper">
+		    	<i class="icon  placeholder-icon">$</i>
+		    	<input type="number" placeholder="375">
+		  	</label>
+		    <select ng-model="data.selectedItem">
+		      <option value="20">$20</option>
+		      <option selected value="30">$30</option>
+		      <option value="40">$40</option>
+		      <option value="0">Other</option>
+		    </select>
+		  </label>
+		</div>
+		
+		<a class="button button-icon icon" ng-click="oct_donate()"><img src="img/1.png" ></a>
+	</div>
 <div class="list card" style="margin-top:-16px">
 	<div class="item item-body">
 		<div class="list">

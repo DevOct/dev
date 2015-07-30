@@ -224,6 +224,19 @@
   height: 24px    
 }
 
+.__feed .dt{
+  font-size: 10pt;
+  font-weight: normal;
+}
+
+.__Slide ion-slide{
+  width: 100vw;
+  min-height: 300px;
+}
+.__Slide ion-slide img {
+    margin: auto;
+    display: block;
+}
 .unread {
     background-color: #B7B7B7;
 }
@@ -246,10 +259,14 @@
     padding-top: 33px;
 }
 
+.organizaionsC:before,
+.eventsC:before {
+  font-family: arial;
+}
 .organizaionsC:before {
-  content: "O" !important;
+  content: "o" !important;
 }
 
 .eventsC:before {
-  content: "E" !important;
+  content: "e" !important;
 }

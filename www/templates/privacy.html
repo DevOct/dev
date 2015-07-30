@@ -14,9 +14,10 @@
       </ion-item>
       <ion-item class="item-accordion item-text-wrap"
                 ng-show="isGroupShown(term)">
-        <span ng-repeat="item in term.body" ng-bind-html="item.html"> 
-        {{item+ '&nbsp;'}} 
+        <span ng-repeat-start="item in term.body" ng-bind-html="item.html"> 
+        {{item}} 
         </span>
+        <span ng-repeat-end></span>
       </ion-item>
     </div>
 

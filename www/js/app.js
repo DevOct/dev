@@ -144,6 +144,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     })
     .state('app.org', {
       url: "/org",
+      // param: {orgid:0},
       views: {
         'menuContent': {
           templateUrl: "templates/org.html",
@@ -170,7 +171,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
       }
     })
     .state('app.donate', {
-      url: "/donate",
+      url: "/donate/:orgid",
       views: {
         'menuContent': {
           templateUrl: "templates/donate.html",
@@ -214,7 +215,7 @@ var API = {
   {
     get: function(key, skipParse)
     {
-      var data = localStorage.getItem(key);
+      var data = window.localStorage.getItem(key);
 
       if (data)
       {
@@ -234,11 +235,11 @@ var API = {
         value = JSON.stringify(value);
       }
 
-      localStorage.setItem(key, value);
+      window.localStorage.setItem(key, value);
     },
     remove: function(key)
     {
-      localStorage.removeItem(key);
+      window.localStorage.removeItem(key);
     }
   },
   _arrayBufferToBase64 : function( buffer ) {
