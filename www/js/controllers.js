@@ -891,12 +891,13 @@ angular.module('starter.controllers', [])
 				image: ob[key].logo_full,
 				org_id: ob[key].org_id,
 				title: ob[key].name,
-				data: ob[key].descrip,
+				desc: ob[key].descrip,
 				address: ob[key].address_1 + ";" + ob[key].address_2,
 				city: ob[key].city,
 				zip: ob[key].zip,
 				state: ob[key].state,
-				tel: "+92 321 9579365"
+				tel: "+92 321 9579365",
+
 			});
 			if($stateParams.orgid==ob[key].org_id)
 				slto = count;
@@ -918,12 +919,12 @@ angular.module('starter.controllers', [])
 					image: null,
 					org_id: null,
 					title: null,
-					data: null,
+					desc: null,
 					address: null,
 					city: null,
 					zip: null,
 					state: null,
-					tel: null
+					tel: null,
 				}
 
 		    // console.log('page loading completed');
