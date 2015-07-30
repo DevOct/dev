@@ -867,24 +867,36 @@ angular.module('starter.controllers', [])
 .controller('PledgeController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,dataFactory,$stateParams) {
 
 
-	$scope.data = {selectedItem:30, val:30 };
+	$scope.data = {
+		selectedItem:30, 
+		val:30,
+		slide: null
+	};
 	slto = 0
 
 	$scope.slides = []
 	$scope.organizaions = {}
+	$scope.billing = {}
+
 	dataFactory._loading(true);
 	dataFactory.service('GET','http://app.octantapp.com/api/organization').
 	then(function(res){
 		ob = res.data.feed_id;
 		$scope.organizaions = ob
 		count = 0;
+		console.log(ob);
 		for(key in ob){
 			count++;
 			$scope.slides.push({
 				image: ob[key].logo_full,
 				org_id: ob[key].org_id,
 				title: ob[key].name,
-				data: ob[key].descrip
+				data: ob[key].descrip,
+				address: ob[key].address_1 + ";" + ob[key].address_2,
+				city: ob[key].city,
+				zip: ob[key].zip,
+				state: ob[key].state,
+				tel: "+92 321 9579365"
 			});
 			if($stateParams.orgid==ob[key].org_id)
 				slto = count;
@@ -897,6 +909,23 @@ angular.module('starter.controllers', [])
 	finally(function(){
     	angular.element(document).ready(function () {
 	    	$ionicSlideBoxDelegate.slide(slto);
+	    	if(slto>0){
+	    		$scope.billing = $scope.slides[slto];
+	    		$scope.data.slide = slto;
+	    	}
+		    else
+		    	$scope.billing = {
+					image: null,
+					org_id: null,
+					title: null,
+					data: null,
+					address: null,
+					city: null,
+					zip: null,
+					state: null,
+					tel: null
+				}
+
 		    // console.log('page loading completed');
 		});
 		dataFactory._loading(false);
@@ -906,22 +935,45 @@ angular.module('starter.controllers', [])
 		$scope.data.val = selectedItem;
 	}
 	$scope.oct_pledge = function(){
+
+		if($scope.data.slide>0){
+			$scope.showAlert();
+			if($scope.data.val>20){
+				
+			}
+			else{
+				dataFactory._alert('Amount Error','Kindly Enter a Number Greater than the Min Amount ($20)');
+			}
+		}
 		console.log($scope.data);
 	}
 
-	$Scope.on('slideChange',function(){
-		console.log($scope.slides[$ionicSlideBoxDelegate.currentIndex()]);
-	})
+	$scope.slideC = function(index){
+		$scope.data.slide = slto;
+		if(index>0){
+	    	$scope.billing = $scope.slides[index-1];
+	    }
+	    else
+	    	$scope.billing = {
+				image: null,
+				org_id: null,
+				title: null,
+				data: null,
+				address: null,
+				city: null,
+				zip: null,
+				state: null,
+				tel: null
+			}
+		console.log(index);
+	}
 
 	$scope.showAlert = function() {
-		 var alertPopup = $ionicPopup.alert({
-			 title: 'Thankyou!\n For your pledge',
-			 template: '<ul><li>-Organization: American Red Cross</li><li>-Address: 355 Main Street, 5th Street</li><li>-City: Cambridge</li><li>-State: Massachusetts</li><li>-Zip Code: 02142</li><li>-Tax ID: 00386234</li><li>-Organization Telephone: +1857-939-0068</li></ul>'
-		 });
-		 alertPopup.then(function(res) {
-			 console.log('Thank you for not eating my delicious ice cream cone');
-		 });
-	 };
+		x = $scope.billing;
+		console.log(x)
+		dataFactory._alert('Thankyou!\n For your pledge',
+			'<ul><li>-Organization: '+x.title+'</li><li>-Address: '+x.address+'</li><li>-City: '+x.city+'</li><li>-State: '+x.state+'</li><li>-Zip Code: '+x.zip+'</li><li>-Organization Telephone: '+x.tel+'</li></ul>')
+	};
 	// Triggered in the login modal to close it
 })
 
