@@ -6,13 +6,15 @@
 		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}" ng-click="isreadchk({{feed.message_id}})">
 
 		      <img ng-src="{{feed.pic}}">
-		      <h2>{{feed.message_title}}</h2>
 		      <div class="org">
 			    <img ng-src="{{feed.logo_full}}"> <h3>{{feed.name}}</h3>
+		      <h2>{{feed.message_title}}</h2>
 		      	<i class="icon social {{platforms(feed.msg_type_id)}}"></i>
 		      	<div class="dt" ng-show="{{feed.msg_type_id=='2'}}">
-		      		<span>Start Date: {{datify(feed.start_date)}}</span><br/>
-		      		<span>End Date: {{datify(feed.end_date)}}</span>
+		      		<span>Event Date: {{datify(feed.event_date)}}</span><br/>
+		      		<span>Event Title: {{feed.message_title}}</span><br/>
+		      		<span>Event Location: {{feed.event_location}}</span>
+		      		<span>Event Time: {{feed.event_time}}</span>
 		      	</div>
 		      </div>
 		      <p ng-show="lala == true">{{feed.content | limitTo: 100}}{{feed.content.length > 100 ? '...' : ''}}</p>
@@ -20,7 +22,7 @@
 		    </a>
 			<div class="actionBar">
 		    	<button class="button button-circle button-small" ng-click="donatetoorg(feed.org_id)"><img src="img/1.png" /></button>
-		    	<button class="button button-circle button-small" href="{{feed.event_link}}" ng-show="{{feed.msg_type_id=='2'}}"><img src="img/2.png" /></button>
+		    	<a class="button button-circle button-small" href="{{feed.event_link}}" target="_blank" ng-show="{{feed.msg_type_id=='2'}}"><img src="img/2.png" /></a>
 		    	<button class="button button-circle button-small"><img src="img/share.png" /></button>
 		      	<a type="button" ng-show="{{feed.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;isreadchk({{feed.message_id}})">see {{lala === false ? 'less': 'more';}}</a>
 		    </div>

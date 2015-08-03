@@ -124,7 +124,7 @@ angular.module('starter.controllers', [])
 				CS = "ion\-social\-twitter";
 				break;
 			case 5:
-				CS = "ion\-android\-mail";
+				CS = "ion\-ionic msgs";
 				break;
 			default:
 				break;
@@ -621,10 +621,11 @@ angular.module('starter.controllers', [])
 	$scope.pass = "";
 
 	dataFactory._coordinates().
-	then(function (position) {
-	    $scope.user.latitude  = position.coords.latitude;
-	    $scope.user.longitude = position.coords.longitude;
-    })
+		then(function (position) {
+		    $scope.user.latitude  = position.coords.latitude;
+		    $scope.user.longitude = position.coords.longitude;
+		    console.log(position);
+	    })
 
 	$scope.$on('service.login', function(){
 		$scope.loginUserData = API.storage.get("login");
@@ -639,7 +640,7 @@ angular.module('starter.controllers', [])
 			$scope.user).
 			then(function(res){
 				var uid = res.data.Sucess;
-				// console.log(uid)
+				console.log(res.data)
 				if(uid != "false"){
 					// console.log(uid);
 					API.storage.set('donorId',uid.donor_id);
@@ -762,7 +763,49 @@ angular.module('starter.controllers', [])
 	// Triggered in the login modal to close it
 })
 
-.controller('EventsController', function($scope) {
+.controller('EventsController', function($scope, dataFactory) {
+
+	$scope.lala = true;
+	$scope.readme = false;
+	$scope.events = API.storage.get("event_"+App_Session.donor_id);
+	var donid = App_Session.donor_id;
+
+	dataFactory._loading(true);
+	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
+		success(function(data, textStatus, xhr){
+			var feeder = {};
+			var x = data.feed_id;
+			for(i in x){
+				if(x[i].msg_type_id==2)
+					feeder[x[i].message_id] = x[i];
+			}
+			$scope.events = feeder;
+			API.storage.set("event_"+App_Session.donor_id,feeder);
+			console.log($scope.events);
+		}).
+		error(function() {
+			console.log("NO INTERNET");
+			$scope.events = API.storage.get("event_"+App_Session.donor_id);
+			console.log($scope.events);
+		}).
+		finally(function(){
+			dataFactory._loading(false);
+		});
+		
+	$scope.isreadchk = function(message_id){
+		// console.log(message_id);
+		// console.log($scope.feeds[message_id])
+		$scope.events[message_id].is_read = true;
+	}
+
+	$scope.donatetoorg = function(orgid){
+		dataFactory._go('app.donate',{'orgid':orgid})
+	}
+
+	$scope.datify = function(dt){
+		return new Date(dt).toISOString().slice(0, 19).replace('T', ' ');
+		// return dty;
+	}
 
 	// Triggered in the login modal to close it
 })
@@ -771,7 +814,7 @@ angular.module('starter.controllers', [])
 
 	$scope.lala = true;
 	$scope.readme = false;
-	$scope.messages = API.storage.get("feeds_"+App_Session.donor_id);
+	$scope.messages = API.storage.get("msg_"+App_Session.donor_id);
 	var donid = App_Session.donor_id;
 
 	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
@@ -783,13 +826,13 @@ angular.module('starter.controllers', [])
 					feeder[x[i].message_id] = x[i];
 			}
 			$scope.messages = feeder;
-			API.storage.set("feeds_"+App_Session.donor_id,feeder);
+			API.storage.set("msg_"+App_Session.donor_id,feeder);
 			console.log($scope.messages);
 		}).
 		error(function() {
 			console.log("NO INTERNET");
 			// dataFactory._alert("");
-			$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
+			$scope.feeds = API.storage.get("msg_"+App_Session.donor_id);
 		});
 		
 	$scope.isreadchk = function(message_id){
@@ -1106,7 +1149,9 @@ angular.module('starter.controllers', [])
 		_coordinates: function(){
 
 			var posOptions = {timeout: 10000, enableHighAccuracy: true};
-			return $cordovaGeolocation.getCurrentPosition(posOptions);
+			var gps = $cordovaGeolocation.getCurrentPosition(posOptions);
+			console.log(gps);
+			return gps
 		},
 		sec_question: function(){
 		    return this.service('GET','http://app.octantapp.com/api/sec_quest')

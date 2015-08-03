@@ -9,7 +9,7 @@
 		      <h2>{{msg.message_title}}</h2>
 		      <div>
 			    <i class="icon ion-cube"></i> <h3>{{msg.name}}</h3>
-		      	<i class="icon ion-social-facebook social"></i>
+		      	<i class="icon social {{platforms(feed.msg_type_id)}}"></i>
 		      </div>
 		      <p ng-show="lala == true">{{msg.content | limitTo: 100}}{{msg.content.length > 100 ? '...' : ''}}</p>
 		      <p ng-show="lala == false">{{msg.content}}</p>

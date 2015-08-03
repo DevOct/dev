@@ -170,9 +170,29 @@
   border: none;
 }
 
+.actionBarE .button-circle,
 .actionBar .button-circle{
 //  background-color: #ED8C2B;
   color: #fff !Important;
+}
+
+.itCont{
+  padding: 0;
+  height: 200px;
+}
+
+.itCont h2{
+    padding: 5px;
+    font-size: 20pt;
+    background-color: rgba(255, 255, 255, 0.78);
+}
+.itCont div{
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.78);
+    left: 0;
+    right: 0;
+    padding: 3px 15px;
 }
 
 .__profile .item-avatar{
@@ -184,10 +204,25 @@
   left: initial;
 }
 
+.__feed ion-item{
+  padding:0
+}
+
+.img-cov{
+  height: 150px;
+  padding: 0;
+}
+
+.img-cov img{
+  width: 100%;
+}
+
 .list .item.item-accordion {
   line-height: 38px;
-  padding-top: 0;
+  padding-top: 6px;
   padding-bottom: 0;
+  padding-left: 16px;
+  padding-right: 16px;
   transition: 0.09s all linear;
 }
 .list .item.item-accordion.ng-hide {
@@ -259,6 +294,7 @@
     padding-top: 33px;
 }
 
+.msgs:before,
 .organizaionsC:before,
 .eventsC:before {
   font-family: arial;
@@ -266,7 +302,9 @@
 .organizaionsC:before {
   content: "o" !important;
 }
-
+.msgs:before{
+  content: "m" !important;
+}
 .eventsC:before {
   content: "e" !important;
 }
