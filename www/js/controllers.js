@@ -831,7 +831,7 @@ angular.module('starter.controllers', [])
 			var feeder = {};
 			var x = data.feed_id;
 			for(i in x){
-				if(x[i].msg_type_id==5)
+				if(x[i].msg_type_id==1)
 					feeder[x[i].message_id] = x[i];
 			}
 			$scope.messages = feeder;
