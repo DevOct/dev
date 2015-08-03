@@ -58,7 +58,6 @@ angular.module('starter.controllers', [])
 	// ];
 
 	$scope.datify = function(dt,param){
-		console.log(dt,param);
 		date = new Date(dt);
 		// str = date.toISOString().slice(0, 19).replace('T', ' ')
 		switch(param){
@@ -98,16 +97,22 @@ angular.module('starter.controllers', [])
 			var feeder = {};
 			var x = data.feed_id;
 			for(i in x){
+				if(x[i].pic == ""){
+					x[i].pic = "img/_octant_logo.png";
+				}
 				feeder[x[i].message_id] = x[i];
 			}
 			$scope.feeds = feeder;
 			API.storage.set("feeds_"+App_Session.donor_id,feeder);
 			console.log($scope.feeds);
+			locale = $scope.feeds;
+
 		}).
 		error(function() {
 			console.log("NO INTERNET");
 			// dataFactory._alert("");
 			$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
+			locale = $scope.feeds;
 		});
 
 	$scope.isreadchk = function(message_id){
