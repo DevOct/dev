@@ -57,6 +57,23 @@ angular.module('starter.controllers', [])
 	// 		}
 	// ];
 
+	$scope.datify = function(dt,param){
+		console.log(dt,param);
+		date = new Date(dt);
+		// str = date.toISOString().slice(0, 19).replace('T', ' ')
+		switch(param){
+			case 'date':
+				return date.toLocaleDateString()	;
+				break;
+			case 'time':
+				return date.toLocaleTimeString();
+				break;
+			default:
+				return date.toLocaleString();
+				break;
+		}
+	}
+
 	$ionicSlideBoxDelegate.update();
 	$scope.next = function() {
 		$ionicSlideBoxDelegate.next();
@@ -130,11 +147,6 @@ angular.module('starter.controllers', [])
 				break;
 		}
 		return CS;
-	}
-
-	$scope.datify = function(dt){
-		return new Date(dt).toISOString().slice(0, 19).replace('T', ' ');
-		// return dty;
 	}
 
 })
@@ -765,6 +777,8 @@ angular.module('starter.controllers', [])
 
 .controller('EventsController', function($scope, dataFactory) {
 
+	console.log($scope.datify(0),'date');
+
 	$scope.lala = true;
 	$scope.readme = false;
 	$scope.events = API.storage.get("event_"+App_Session.donor_id);
@@ -800,11 +814,6 @@ angular.module('starter.controllers', [])
 
 	$scope.donatetoorg = function(orgid){
 		dataFactory._go('app.donate',{'orgid':orgid})
-	}
-
-	$scope.datify = function(dt){
-		return new Date(dt).toISOString().slice(0, 19).replace('T', ' ');
-		// return dty;
 	}
 
 	// Triggered in the login modal to close it

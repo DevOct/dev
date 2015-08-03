@@ -11,10 +11,10 @@
 		      <h2>{{feed.message_title}}</h2>
 		      	<i class="icon social {{platforms(feed.msg_type_id)}}"></i>
 		      	<div class="dt" ng-show="{{feed.msg_type_id=='2'}}">
-		      		<span>Event Date: {{datify(feed.event_date)}}</span><br/>
+		      		<span>Event Date: {{datify(feed.event_date,'date')}}</span><br/>
 		      		<span>Event Title: {{feed.message_title}}</span><br/>
 		      		<span>Event Location: {{feed.event_location}}</span><br/>
-		      		<span>Event Time: {{feed.event_time}}</span>
+		      		<span>Event Time: {{datify(feed.event_date,'time')}}</span>
 		      	</div>
 		      </div>
 		      <p ng-show="lala == true">{{feed.content | limitTo: 100}}{{feed.content.length > 100 ? '...' : ''}}</p>

@@ -6,8 +6,8 @@
 			    <h2>{{msg.message_title}}</h2>
 			    <div>
 			    	<h3>{{msg.name}}</h3><br/>
-			    	<span><strong>Event Date:</strong> {{msg.event_date}}</span><br/>
-			    	<span><strong>Event Time:</strong> {{msg.event_time}}</span><br/>
+			    	<span><strong>Event Date:</strong> {{datify(msg.event_date,'date')}}</span><br/>
+			    	<span><strong>Event Time:</strong> {{datify(msg.event_date,'time')}}</span><br/>
 			    	<span><strong>Event Location:</strong> {{msg.event_location}}</span>
 			    </div>
 			</a>

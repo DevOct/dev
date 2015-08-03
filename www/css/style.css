@@ -68,6 +68,7 @@
 
 .actionBar {
   padding-left: 106px;
+  padding-right: 15px;
 }
 
 
@@ -179,6 +180,9 @@
 .itCont{
   padding: 0;
   height: 200px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .itCont h2{
