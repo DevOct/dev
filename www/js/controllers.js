@@ -310,7 +310,6 @@ angular.module('starter.controllers', [])
 
 	$scope.organizaions = null;
 	$scope.checkedOrgs = {};
-	clength = 0
 	checkProto = {is_checked:false}
 
 	dataFactory._loading(true);
@@ -354,12 +353,10 @@ angular.module('starter.controllers', [])
 	$scope.checkOrg = function(org_id){
 		if($scope.organizaions[org_id].is_checked){
 			$scope.checkedOrgs[org_id] = $scope.organizaions[org_id];
-			clength++;
 			console.log($scope.checkedOrgs);
 		}
 		else{
 			delete $scope.checkedOrgs[org_id];
-			clength--;
 			$scope.organizaions[org_id].is_checked = false;
 		}
 	}
@@ -367,6 +364,7 @@ angular.module('starter.controllers', [])
 	$scope.conferOrgs = function(){
 		$scope.checkedOrgs;
 		$scope.data = []
+		clength = 0;
 		// {
 		// 	donor_id: App_Session.donor_id,
 		// 	org_id: $scope.checkedOrgs[0]
@@ -378,8 +376,10 @@ angular.module('starter.controllers', [])
 				$scope.checkedOrgs[key].org_id
 			]
 			$scope.data.push(temp);
+			clength++
 		}
 
+		console.log(clength)
 		if(clength>0){
 
 			console.log($scope.data);
@@ -972,12 +972,39 @@ angular.module('starter.controllers', [])
 	$scope.dataChanged = function(selectedItem){
 		$scope.data.amount = selectedItem;
 	}
+	
+	var handler = StripeCheckout.configure({
+	    key: 'pk_test_yAch4iGInNrTdxsL77KqwEtg',
+	    // image: '/img/documentation/checkout/marketplace.png',
+	    token: function(token) {
+    		dataFactory._loading(true)
+	    	dataFactory.service('POST','http://app.octantapp.com/charge',{stripeToken:token.id,amount:$scope.data.amountCent,donor_id:App_Session.donor_id,org_id:$scope.billing.org_id}).
+	    	then(function(res){
+	    		console.log(res);
+	    	}).
+	    	finally(function(){
+	    		dataFactory._loading(false)
+	    	})
+	    	console.log(token)
+	      // Use the token to create the charge with a server-side script.
+	      // You can access the token ID with `token.id`
+	    }
+	  });
+
 	$scope.oct_donate = function(){
+		$scope.data.amountCent = $scope.data.amount*100;
+    	console.log($scope.data.amountCent);
 
 		if($scope.data.slide>0){
-			$scope.showAlert();
+			// $scope.showAlert();
 			if($scope.data.amount>20){
-				
+			// Open Checkout with further options
+			    handler.open({
+			      name: 'Octant',
+			      description: '2 widgets',
+			      amount: $scope.data.amountCent
+			    });
+			    // e.preventDefault();
 			}
 			else{
 				dataFactory._alert('Amount Error','Kindly Enter a Number Greater than the Min Amount ($20)');
@@ -987,7 +1014,8 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.slideC = function(index){
-		$scope.data.slide = slto;
+		$scope.data.slide = index;
+		console.log($scope.data,index);
 		if(index>0){
 	    	$scope.billing = $scope.slides[index-1];
 	    }
