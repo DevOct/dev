@@ -4,11 +4,11 @@ angular.module('starter.controllers', [])
 
 	$scope.$on('$locationChangeStart', function(next, current) { 
 		active    = document.querySelector('.__navtabs .active');
-			if(active)
-			    active.classList.remove('active')
 		activated = document.querySelector('.__navtabs .activated');
-			if(activated)
+			if(active && activated){
+			    active.classList.remove('active')
 				activated.classList.add('active')
+			}
 	});
 
 	$scope.updateSession();
@@ -323,7 +323,6 @@ angular.module('starter.controllers', [])
 			co[ob[key].org_id] = ob[key];
 		}
 		$scope.organizaions = co;
-		con
 
 		dataFactory._loading(true);
 		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id}).
@@ -431,6 +430,10 @@ angular.module('starter.controllers', [])
 		sec_answer: ""
 	}
 
+	$scope.data = {
+		email: false
+	}
+
 	dataFactory._loading(true);
 	dataFactory.sec_question().then(function(res){
 		$scope.questions = res.data.feed_id;
@@ -453,24 +456,33 @@ angular.module('starter.controllers', [])
 					dataFactory._loading(true);
 	    			dataFactory.service('POST','http://app.octantapp.com/api/reset_pswrd',$scope.forgot).
 	    				success(function(data, textStatus, xhr){
-	    					$scope.getPass().then(function(d){
-	    						if(d==false)
-	    							return;
+	    					console.log(data);
+	    					if(!data.Error){
+		    					$scope.getPass().then(function(d){
+		    						if(d==false)
+		    							return;
 
-	    						$scope.data.donor_id = data.donor_id;
-	    						console.log(d);
+		    						$scope.data.donor_id = data.donor_id;
+		    						console.log(d);
 
-	    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data).
-	    						then(function(res){
-	    							// console.log(res);
-	    							dataFactory._alert('Updated Successfully');
-	    						})
-	    					});
-	    					// dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data)
+		    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data).
+		    						then(function(res){
+		    							// console.log(res);
+		    							dataFactory._alert('Updated Successfully');
+		    						})
+		    					});
+		    					// dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data)
+		    				}
+		    				else{
+		    					dataFactory._alert("Error","The credentials do not match");
+		    					$scope.data.email = true;
+		    				}
 	    				}).
 	    				error(function(status){
 	    					console.log(status);
-	    				}).finally(function(){dataFactory._loading(false);})
+	    				}).finally(function(){
+	    					dataFactory._loading(false);
+	    				})
 	    		}
 	    		else{
 	    			dataFactory._alert("Invalid Entry","Please input a valid Email");
@@ -487,6 +499,13 @@ angular.module('starter.controllers', [])
 		}
 	}
 
+	$scope.EmailCreds = function(){
+		dataFactory._loading(true);
+		dataFactory.service('POST','http://app.octantapp.com/forgetpassword/123456789',$scope.forgot).
+		then(function(res){
+			console.log(res.data);
+		})	
+	}
 
 	$scope.getPass = function(){
 		$scope.data = {}
