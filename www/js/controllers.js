@@ -1,61 +1,31 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate) {
+.controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate, dataFactory) {
+
+	$scope.$on('$locationChangeStart', function(next, current) { 
+		active    = document.querySelector('.active');
+				    active.classList.remove('active')
+		activated = document.querySelector('.activated');
+					activated.classList.add('active')
+	});
 
 	$scope.updateSession();
+	$scope.data = {}
+	dataFactory._loading(true);
+	dataFactory.service('POST','http://app.octantapp.com/api/message_count',{donor_id:App_Session.donor_id}).
+	then(function(res){
+		console.log(res.data['count(*)']);
+		$scope.data.unread = {msgs:res.data['count(*)']}
+	}).
+	finally(function(){
+		dataFactory._loading(false);
+	})
 
-	// With the new view caching in Ionic, Controllers are only called
-	// when they are recreated or on app start, instead of every page change.
-	// To listen for when this page is active (for example, to refresh data),
-	// listen for the $ionicView.enter event:
-	//$scope.$on('$ionicView.enter', function(e) {
-	//});
-	
-	// Form data for the login modal
 
-	// $scope.$on('tab.shown', function() {
-
-	//     $state.go('tabs.contact');
-			
-	// });
-
-	// Triggered in the login modal to close it
-	// $scope.closeLogin = function() {
-	//   $scope.modal.hide();
-	// };
-
-	// // Open the login modal
-	// $scope.login = function() {
-	//   $scope.modal.show();
-	// };
-
-	// // Perform the login action when the user submits the login form
-	// $scope.doLogin = function() {
-	//   console.log('Doing login', $scope.loginData);
-
-	//   // Simulate a login delay. Remove this and replace with your login
-	//   // code if using a login system
-	//   $timeout(function() {
-	//     $scope.closeLogin();
-	//   }, 1000);
-	// };
-
-	// var maxSlides = 5;
-	// var slideCounter = 2;
-
-	// $scope.data = {};
-	// $scope.data.slides = [
-	// 		{
-	// 				title : "American Red Cross",
-	// 				data  : "Donations for People",
-	// 				image : "http://www.clipartbest.com/cliparts/ace/ong/aceongEoi.png"
-	// 		},
-	// 		{
-	// 				title : "Circle Trust",
-	// 				data  : "For Truth",
-	// 				image : "http://www.scientiamobile.com/page/wp-content/themes/ScientiaMobile.com-Wordpress/img/scientiamobile_circle.png"
-	// 		}
-	// ];
+	ionic.DomUtil.ready(function(){
+		active = document.querySelector('active');
+		activated = document.querySelector('activated');
+	})
 
 	$scope.datify = function(dt,param){
 		date = new Date(dt);
