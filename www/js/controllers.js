@@ -3,9 +3,9 @@ angular.module('starter.controllers', [])
 .controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate, dataFactory) {
 
 	$scope.$on('$locationChangeStart', function(next, current) { 
-		active    = document.querySelector('.active');
+		active    = document.querySelector('.__navtabs .active');
 				    active.classList.remove('active')
-		activated = document.querySelector('.activated');
+		activated = document.querySelector('.__navtabs .activated');
 					activated.classList.add('active')
 	});
 
@@ -71,12 +71,10 @@ angular.module('starter.controllers', [])
 					x[i].pic = "img/_octant_logo.png";
 				}
 				x[i].contentPrev = x[i].content.slice(0,100);
-				console.log("C:"+x[i].content, "Clite:"+x[i].content.slice(0,100))
 				feeder[x[i].message_id] = x[i];
 			}
 			$scope.feeds = feeder;
 			API.storage.set("feeds_"+App_Session.donor_id,feeder);
-			console.log($scope.feeds);
 			locale = $scope.feeds;
 
 		}).
@@ -700,11 +698,15 @@ angular.module('starter.controllers', [])
 		"position"				: null,
 		"is_terms_accepted"		: false,
 		"t_c_timestamp"			: null,
+
 		"device_type"			: null,
 		"device_identification"	: null, 
 		"device_os"				: null, 
 		"octant_donor_version"	: null, 
-		"updated_on"			: null
+		"updated_on"			: null,
+
+		"latitude"				: null,
+		"longitude"				: null
 	}
 
 	var authFlags = {
@@ -715,6 +717,14 @@ angular.module('starter.controllers', [])
 		"zip"				: "Zip Code",
 		"is_terms_accepted"	: "Terms & Conditions",
 	}
+
+
+	dataFactory._coordinates().
+		then(function (position) {
+		    $scope.newuser.latitude  = position.coords.latitude;
+		    $scope.newuser.longitude = position.coords.longitude;
+		    console.log(position);
+	    })
 
 
 	$scope.signup = function(ev) {
@@ -840,6 +850,7 @@ angular.module('starter.controllers', [])
 			var feeder = {};
 			var x = data.feed_id;
 			for(i in x){
+				console.log(x[i].msg_type_id)
 				if(x[i].msg_type_id==1)
 					feeder[x[i].message_id] = x[i];
 			}
