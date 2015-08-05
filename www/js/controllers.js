@@ -16,7 +16,7 @@ angular.module('starter.controllers', [])
 	dataFactory._loading(true);
 	dataFactory.service('POST','http://app.octantapp.com/api/message_count',{donor_id:App_Session.donor_id}).
 	then(function(res){
-		console.log(res.data['count(*)']);
+		console.log(res.data);
 		$scope.data.unread = {msgs:res.data['count(*)']}
 	}).
 	finally(function(){
@@ -978,7 +978,7 @@ angular.module('starter.controllers', [])
 	    // image: '/img/documentation/checkout/marketplace.png',
 	    token: function(token) {
     		dataFactory._loading(true)
-	    	dataFactory.service('POST','http://app.octantapp.com/charge',{stripeToken:token.id,amount:$scope.data.amountCent,donor_id:App_Session.donor_id,org_id:$scope.billing.org_id}).
+	    	dataFactory.service('POST','http://app.octantapp.com/charge',{stripeToken:token.id,refToken:token,amount:$scope.data.amountCent,donor_id:App_Session.donor_id,org_id:$scope.billing.org_id}).
 	    	then(function(res){
 	    		console.log(res);
 	    	}).
