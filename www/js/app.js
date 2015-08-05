@@ -6,7 +6,14 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCordova'])
 
-.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory) {
+.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice) {
+
+  document.addEventListener("deviceready", function () {
+
+    $scope.device = $cordovaDevice.getDevice();
+    console.log("Dev:",$scope.device);
+
+  }, false);
 
   $rootScope.Donor = {
   }
@@ -105,6 +112,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
 
   .state('login', {
     url: "/login",
+    cache: false,
     templateUrl: "login.html",
     controller: 'LoginController'
   })
