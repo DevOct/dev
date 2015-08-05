@@ -4,9 +4,11 @@ angular.module('starter.controllers', [])
 
 	$scope.$on('$locationChangeStart', function(next, current) { 
 		active    = document.querySelector('.__navtabs .active');
-				    active.classList.remove('active')
+			if(active)
+			    active.classList.remove('active')
 		activated = document.querySelector('.__navtabs .activated');
-					activated.classList.add('active')
+			if(activated)
+				activated.classList.add('active')
 	});
 
 	$scope.updateSession();
