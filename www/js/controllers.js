@@ -196,10 +196,10 @@ angular.module('starter.controllers', [])
 		img64: null,
 		img: null		
 	}
-
 	$scope.pass = {
 		pass_1 : null,
-		pass_2 : null
+		pass_2 : null,
+		oldPass: null
 	}
 
 	donid = App_Session.donor_id;
@@ -219,6 +219,9 @@ angular.module('starter.controllers', [])
 		// }
 		// $scope.profile.image = API._arrayBufferToBase64($scope.profile.image);
 		profchk = $scope.profile;
+		
+		$scope.pass.oldPass = $scope.profile.password;
+		console.log($scope.pass.oldPass);
 		if($scope.profile.image)
 			$scope.image.img64 = $scope.profile.image;
 	},function(res){
@@ -319,22 +322,21 @@ angular.module('starter.controllers', [])
 			if(res==="cancel")
 				return;
 
-			var oldPass = $scope.profile.password,
-				match   = md5.createHash(res || '');
+			match   = md5.createHash(res || '');
 
-			if(match===oldPass)
+			if(match===$scope.pass.oldPass)
 				$scope.updateUser();
 			else
 				dataFactory._alert("Incorrect Password","The Password you Entered was Incorrect, try again!");
 
-			console.log(res,oldPass,match);
+			console.log(res,$scope.pass.oldPass,match);
 		});
   	}
 })
 
 .controller('orgController', function($scope, dataFactory,$stateParams) {
-	console.log($stateParams.orgid);
-	$scope.organizaions = API.storage.get('organizaions');
+
+	$scope.organizaions = null;
 	$scope.checkedOrgs = {};
 	clength = 0
 	checkProto = {is_checked:false}
@@ -349,11 +351,34 @@ angular.module('starter.controllers', [])
 			co[ob[key].org_id] = ob[key];
 		}
 		$scope.organizaions = co;
-		API.storage.set('organizaions',$scope.organizaions);
+		con
+
+		dataFactory._loading(true);
+		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id}).
+		then(function(res){
+			// console.log(res.data);
+			for(key in res.data){
+				console.log(res.data[key]);
+				$scope.organizaions[res.data[key]].is_checked = true;
+				$scope.checkOrg(res.data[key])
+				console.log($scope.organizaions);
+				console.log($scope.checkedOrgs);
+
+			}
+		}).
+		finally(function(){
+			dataFactory._loading(false);
+		})
+
+	},
+	function(res){
+		dataFactory._alert("No Internet",res.err)
 	}).
 	finally(function(){
 		dataFactory._loading(false);
+
 	})
+
 
 	$scope.checkOrg = function(org_id){
 		if($scope.organizaions[org_id].is_checked){
@@ -533,7 +558,7 @@ angular.module('starter.controllers', [])
 		then(function(res){
 			k = res.data.tc_id;
 			terms = [];
-			console.log(k);
+			// console.log(k);
 			for (var i = 0; i < k.length; i++) {
 
 				// console.log(terms);
@@ -543,18 +568,20 @@ angular.module('starter.controllers', [])
 
 				//fetch h1
 				var h = l.getElementsByTagName("h1")[0]
-				console.log(h.innerHTML,h);
-				head = h.innerHTML;
+				// console.log(h.innerHTML,h);
+				hd = {"head":h.innerHTML};
 				h.remove();
 
 				//fetch everything else in order
 				for (var j = 0; j < l.childElementCount; j++) {
 					body[j] = {
-							id: j.toString(),
-							html: l.children[j].outerHTML};
+						id: j.toString(),
+						html: l.children[j].outerHTML
+					}
 				};
 				//mix them together
-				terms[i] = {head,body};
+				terms[i] = {"head":hd.head,"body":body};
+				console.log(terms[i]);
 				body = [];
 			};
 			$scope.terms = terms;
@@ -683,24 +710,29 @@ angular.module('starter.controllers', [])
 
 .controller('SignupController', function($scope, $http, $state, dataFactory) {
 	$scope.newuser = {
-		"image"				: null,
-		"donor_id"			: null,
-		"email"				: null,
-		"password"			: null,
-		"first_name"		: null,
-		"last_name"			: null,
-		"zip"				: null,
-		"image"				: null,
-		"salutation"		: null,
-		"address_1"			: null,
-		"address_2"			: null,
-		"city"				: null,
-		"state"				: null,
-		"cellphone"			: null,
-		"employer"			: null,
-		"position"			: null,
-		"is_terms_accepted"	: false,
-		"t_c_timestamp"		: null
+		"image"					: null,
+		"donor_id"				: null,
+		"email"					: null,
+		"password"				: null,
+		"first_name"			: null,
+		"last_name"				: null,
+		"zip"					: null,
+		"image"					: null,
+		"salutation"			: null,
+		"address_1"				: null,
+		"address_2"				: null,
+		"city"					: null,
+		"state"					: null,
+		"cellphone"				: null,
+		"employer"				: null,
+		"position"				: null,
+		"is_terms_accepted"		: false,
+		"t_c_timestamp"			: null,
+		"device_type"			: null,
+		"device_identification"	: null, 
+		"device_os"				: null, 
+		"octant_donor_version"	: null, 
+		"updated_on"			: null
 	}
 
 	var authFlags = {
