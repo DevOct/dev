@@ -18,7 +18,7 @@
 		      	</div>
 		      </div>
 		      <span>
-			      <div ng-show="lala == true" ng-bind-html-unsafe="feed.content">{{feed.content | limitTo: 100}}{{feed.content.length > 100 ? '...' : ''}}</div>
+			      <div ng-show="lala == true" ng-bind-html-unsafe="feed.content">{{feed.contentPrev}}{{ feed.contentPrev || feed.contentPrev.length>0 ? '...' : ''}}</div>
 			      <div ng-show="lala == false" ng-bind-html-unsafe="feed.content">{{feed.content}}</div>		      	
 		      </span>
 		    </a>

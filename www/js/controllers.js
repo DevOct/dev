@@ -70,6 +70,8 @@ angular.module('starter.controllers', [])
 				if(x[i].pic == ""){
 					x[i].pic = "img/_octant_logo.png";
 				}
+				x[i].contentPrev = x[i].content.slice(0,100);
+				console.log("C:"+x[i].content, "Clite:"+x[i].content.slice(0,100))
 				feeder[x[i].message_id] = x[i];
 			}
 			$scope.feeds = feeder;
