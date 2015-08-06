@@ -71,6 +71,9 @@
   padding-right: 15px;
 }
 
+.__navtabs a.tab-item{
+  position: relative;
+}
 
 .__feed .seemore{
   min-height: initial;

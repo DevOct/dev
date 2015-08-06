@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $timeout, $ionicSlideBoxDelegate, dataFactory) {
+.controller('AppCtrl', function($scope, $timeout, $window, $ionicSlideBoxDelegate, dataFactory) {
 
 	$scope.$on('$locationChangeStart', function(next, current) { 
 		active    = document.querySelector('.__navtabs .active');
@@ -13,15 +13,20 @@ angular.module('starter.controllers', [])
 
 	$scope.updateSession();
 	$scope.data = {}
-	dataFactory._loading(true);
-	dataFactory.service('POST','http://app.octantapp.com/api/message_count',{donor_id:App_Session.donor_id}).
-	then(function(res){
-		console.log(res.data);
-		$scope.data.unread = {msgs:res.data['count(*)']}
-	}).
-	finally(function(){
-		dataFactory._loading(false);
-	})
+	$scope.asyncCount = function(){
+		
+		dataFactory._loading(true);
+		dataFactory.service('POST','http://app.octantapp.com/api/message_count',{donor_id:App_Session.donor_id}).
+		then(function(res){
+			console.log(res.data);
+			$scope.data.unread = {msgs:res.data.msg,feed:res.data.feed}
+		}).
+		finally(function(){
+			dataFactory._loading(false);
+		})
+
+	}
+	$scope.asyncCount();
 
 
 	ionic.DomUtil.ready(function(){
@@ -34,7 +39,7 @@ angular.module('starter.controllers', [])
 		// str = date.toISOString().slice(0, 19).replace('T', ' ')
 		switch(param){
 			case 'date':
-				return date.toLocaleDateString()	;
+				return date.toLocaleDateString();
 				break;
 			case 'time':
 				return date.toLocaleTimeString();
@@ -130,6 +135,8 @@ angular.module('starter.controllers', [])
 
 .controller('FeedController', function($scope, $stateParams, dataFactory) {
 	//alert($stateParams.feedid);
+	$scope.asyncCount();
+
 	var msgid = $stateParams.message_id;
 	var donid = App_Session.donor_id;
 	$scope.feed = null;
@@ -387,33 +394,13 @@ angular.module('starter.controllers', [])
 			dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
 				then(function(res){
 					console.log(res);
+					dataFactory._alert('Successful','organizaions Selected Successfully');				
+				}, function(){
+					dataFactory._alert('Failed','Some Error occured');
 				})
-			// for(key in $scope.checkedOrgs){
-			// 	console.log(key);
-			// 	dataFactory._loading(true);
-			// 	dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
-			// 	then(function(res){
-			// 		if(!res.error){
-			// 			clength=0;
-			// 			succ = true;
-			// 			console.log($scope.data,res);
-			// 		} else {
-			// 			succ = false;
-			// 		}
-			// 	}).
-			// 	finally(function(){
-			// 		if($scope.checkedOrgs[key+1])
-			// 			$scope.data.org_id = key;
-
-			// 		if(succ && clength==0){
-			// 			dataFactory._go('app.home');
-			// 		}
-			// 	})
-			// }
-						dataFactory._alert('Successful','organizaions Selected Successfully');
-					// dataFactory._loading(false);
-			// for(i=0;i<clength;i++){
-			// }
+				.finally(function(){
+					dataFactory._go('app.home');
+				})
 		}
 		else{
 			dataFactory._alert('No Organization Selected','Please Select atleast 1 Organization');
@@ -501,10 +488,13 @@ angular.module('starter.controllers', [])
 
 	$scope.EmailCreds = function(){
 		dataFactory._loading(true);
-		dataFactory.service('POST','http://app.octantapp.com/forgetpassword/123456789',$scope.forgot).
+		dataFactory.service('POST','http://app.octantapp.com/api/forgetpassword/123456789',$scope.forgot).
 		then(function(res){
 			console.log(res.data);
-		})	
+		}).
+		finally(function(){
+			dataFactory._loading(false);
+		})
 	}
 
 	$scope.getPass = function(){
@@ -646,7 +636,9 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, md5, dataFactory, $cordovaGeolocation) {
+.controller('LoginController', function($scope, facebookService, md5, dataFactory, $cordovaGeolocation) {
+
+
 	$scope.user = {
 		email : null,
 		password : null,
@@ -975,7 +967,7 @@ angular.module('starter.controllers', [])
 	
 	var handler = StripeCheckout.configure({
 	    key: 'pk_test_yAch4iGInNrTdxsL77KqwEtg',
-	    // image: '/img/documentation/checkout/marketplace.png',
+	    image: '/img/_octant_logo.png',
 	    token: function(token) {
     		dataFactory._loading(true)
 	    	dataFactory.service('POST','http://app.octantapp.com/charge',{stripeToken:token.id,refToken:token,amount:$scope.data.amountCent,donor_id:App_Session.donor_id,org_id:$scope.billing.org_id}).
@@ -1001,7 +993,7 @@ angular.module('starter.controllers', [])
 			// Open Checkout with further options
 			    handler.open({
 			      name: 'Octant',
-			      description: '2 widgets',
+			      description: 'Thankyou for the donation',
 			      amount: $scope.data.amountCent
 			    });
 			    // e.preventDefault();
@@ -1178,15 +1170,23 @@ angular.module('starter.controllers', [])
 	});
 
 })
-.factory('_Global', function($ionicLoading){
-	return {
-		showloading: function(){
-			$ionicLoading.show();
-		},
-		hideloading: function(){
-			$ionicLoading.hide();
-		}
-	}
+
+.factory('facebookService', function($q) {
+    return {
+        getMyLastName: function() {
+            var deferred = $q.defer();
+            FB.api('/me', {
+                fields: 'last_name'
+            }, function(response) {
+                if (!response || response.error) {
+                    deferred.reject('Error occured');
+                } else {
+                    deferred.resolve(response);
+                }
+            });
+            return deferred.promise;
+        }
+    }
 })
 
 .factory('dataFactory', function($http, $rootScope, $ionicPopup, $ionicLoading, $state, $cordovaGeolocation) {

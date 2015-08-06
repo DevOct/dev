@@ -13,17 +13,20 @@
   <div class="tabs-striped tabs-color-positive __navtabs">
     <div class="tabs tabs-icon-top">
       <a class="tab-item active" ui-sref="app.home" ng-class="{'tab-item-active': isTabActive()}">
-        <i class="icon ion-home"></i>
+        <i class="icon ion-home">
+        </i>
         Home
+          <span class="badge badge-assertive bcount">{{data.unread.feed}}</span>
       </a>
       <a class="tab-item" ui-sref="app.events">
         <i class="icon ion-calendar"></i>
         Events
       </a>
       <a class="tab-item" ui-sref="app.messages">
-        <i class="icon ion-chatbubbles"></i>
+        <i class="icon ion-chatbubbles">
+        </i>
         Messages
-        <span class="badge badge-assertive">{{data.unread.msgs}}</span>
+          <span class="badge badge-assertive bcount">{{data.unread.msgs}}</span>
       </a>
       <a class="tab-item" ui-sref="app.donate">
         <i class="icon"><img src="img/1.png" style="width:24px"></i>
