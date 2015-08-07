@@ -219,6 +219,10 @@ angular.module('starter.controllers', [])
 		if($scope.pass.pass_1!=null){
 			console.log("pass Exisits");
 			if($scope.pass.pass_2!=null){
+				if(!($scope.pass.pass_2.length > 8)){
+					dataFactory._alert("Incorrect Password", "The length should be 9 characters");
+					return;
+				}
 				if($scope.pass.pass_1 === $scope.pass.pass_2){
 					var newpass = md5.createHash($scope.pass.pass_2 || '');
 					$scope.profile.password = newpass;
@@ -448,6 +452,11 @@ angular.module('starter.controllers', [])
 		    					$scope.getPass().then(function(d){
 		    						if(d==false)
 		    							return;
+
+									if(!($scope.pass.pass_2.length > 8)){
+										dataFactory._alert("Incorrect Password", "The length should be 9 characters");
+										return;
+									}
 
 		    						$scope.data.donor_id = data.donor_id;
 		    						console.log(d);
