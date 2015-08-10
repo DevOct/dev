@@ -1,0 +1,51 @@
+<ion-view view-title="Feed" ng-controller="StripeController">
+  <ion-header-bar class='bar bar-header bar-positive'>
+    <h1 class="title">Stripe Checkout</h1>
+  </ion-header-bar>
+  <ion-content>
+  	
+	<div class="list card">
+		<div class="item item-image"><br/>
+			<img ng-src="{{billing.image}}" style="width:150px;margin:0 auto"><br/><br/>
+			<p>Thankyou For your kind Donation Mr/Mrs {{Donor._name}}</p>
+			<p>Please proceed with the checkout to complete the process</p>
+			<br/><br/>
+		</div>
+		<div class="item">
+			<div id="stripe-form">
+			  <label class="item item-input">
+				<span class="input-label">Organization </span>
+			    <input id="c_email" disabled value="{{billing.title}}" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">Amount </span>
+			    <input id="c_email" disabled value="{{data.amount}}" type="text">
+			  </label>
+			</div>			
+		</div>
+		<div class="item">
+			<h4>Card Information</h4>
+			<div id="stripe-form">
+			  <label class="item item-input">
+				<span class="input-label">Email </span>
+			    <input id="c_email" ng-model="data.email" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">Card Number </span>
+			    <input id="c_number" ng-model="data.number" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">Expiry </span>
+			    <input id="c_exp" ng-model="data.expiry" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">CVC </span>
+			    <input id="c_cvc" ng-model="data.cvc" type="text">
+			  </label>
+			</div>			
+		</div>
+	</div>
+
+  	<button class="button button-block button-positive" ng-click="checkout()">Donate ${{data.amount}}</button>
+  </ion-content>
+</ion-view>

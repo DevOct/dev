@@ -10,8 +10,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
 
   document.addEventListener("deviceready", function () {
 
-    $scope.device = $cordovaDevice.getDevice();
-    console.log("Dev:",$scope.device);
+    $rootScope.device = $cordovaDevice.getDevice();
+    console.log("Dev:",$rootScope.device);
 
   }, false);
 
@@ -109,12 +109,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
     // $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $stateProvider
-
-  .state('fb', {
-    url: "/fb",
-    templateUrl: "templates/fbtest.html",
-    controller: 'fb_signupController'
-  })
 
   .state('login', {
     url: "/login",

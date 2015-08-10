@@ -3,7 +3,7 @@
     <ion-list class="__feed">
       <ion-item ng-repeat="msg in messages">
       	<div class="list">
-		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}">
+		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{msg.message_id}}">
 
 		      <img ng-src="{{msg.pic}}">
 		      <h2>{{msg.message_title}}</h2>

@@ -94,7 +94,7 @@ angular.module('starter.controllers', [])
 
 	$scope.isreadchk = function(message_id){
 		$scope.feeds[message_id].is_read = true;
-		dataFactory.service('PUT','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
+		dataFactory.service('PUT','http://app.octantapp.com/api/msg_read',{'msg_id':message_id, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
 				console.log(data);
 			}).
@@ -146,7 +146,7 @@ angular.module('starter.controllers', [])
 		$scope.feed = AllFeeds[msgid];
 		$scope.feed.is_read = true;
 		console.log("foundFeed:",$scope.feed)
-		dataFactory.service('PUT','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
+		dataFactory.service('PUT','http://app.octantapp.com/api/msg_read',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
 				console.log(data);
 			}).
@@ -213,7 +213,6 @@ angular.module('starter.controllers', [])
 
 
 	$scope.updateUser = function(){
-		dataFactory._loading(true);
 		if($scope.image.img64)
 			$scope.profile.image = $scope.image.img64;
 		if($scope.pass.pass_1!=null){
@@ -241,6 +240,12 @@ angular.module('starter.controllers', [])
 			
 		}
 
+		if($scope.profile.sec_answer)
+			if(!($scope.profile.sec_answer.length>8)){
+				dataFactory._alert('Security Answer','Security Answer too short, Please enter more than 8 characters')
+				return
+			}
+		dataFactory._loading(true);
 		dataFactory.service('PUT','http://app.octantapp.com/api/donor',$scope.profile).
 			success(function (data, status, headers, config) {
 				console.log(data);
@@ -453,10 +458,11 @@ angular.module('starter.controllers', [])
 		    						if(d==false)
 		    							return;
 
-									if(!($scope.pass.pass_2.length > 8)){
-										dataFactory._alert("Incorrect Password", "The length should be 9 characters");
-										return;
-									}
+		    						if(d)
+										if(!(d.length > 8)){
+											dataFactory._alert("Incorrect Password", "The length should be 9 characters");
+											return;
+										}
 
 		    						$scope.data.donor_id = data.donor_id;
 		    						console.log(d);
@@ -663,11 +669,6 @@ angular.module('starter.controllers', [])
 		    console.log(position);
 	    })
 
-	$scope.$on('service.login', function(){
-		$scope.loginUserData = API.storage.get("login");
-		console.log($scope.loginUserData);
-	});
-
 	$scope.login = function(){
 		dataFactory._loading(true);
 		$scope.user.password = md5.createHash($scope.user.pass || '');
@@ -799,21 +800,24 @@ angular.module('starter.controllers', [])
 				API.storage.set('donorName',data.donor_first_name+" "+data.donor_last_name);
 
 			}).
-			error(function (data, status, headers, config) {
-				dataFactory._loading(false);
-				dataFactory._alert("Success","User Creation Failed!");
+			error(function (res) {
+				if(res.data.Message.code == "ER_DUP_ENTRY")
+					dataFactory._alert("Error","Duplicate Email Found")
+				else
+					dataFactory._alert("Error","User Creation Failed!");
 				console.log('error');
 			}).
-			then(function(){
+			then(function(res){
 				$scope.updateSession();
-				dataFactory._loading(false);
 				dataFactory._alert("Success","User Creation successful");
 				dataFactory._go('app.org');
 				document.getElementById('signup').disabled = true;
+			}).
+			finally(function(){
+				dataFactory._loading(false);
 		});
-	}                   
+	} 
 
-	// Triggered in the login modal to close it
 })
 
 .controller('EventsController', function($scope, dataFactory) {
@@ -857,7 +861,6 @@ angular.module('starter.controllers', [])
 		dataFactory._go('app.donate',{'orgid':orgid})
 	}
 
-	// Triggered in the login modal to close it
 })
 
 .controller('MessagesController', function($scope, dataFactory) {
@@ -903,13 +906,14 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory) {
+.controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal) {
 
 	$scope.data = {
 		selectedItem:30, 
 		amount:30,
 		slide: null
 	};
+	$scope.postData = {}
 	slto = 0
 
 	$scope.slides = []
@@ -974,42 +978,30 @@ angular.module('starter.controllers', [])
 		$scope.data.amount = selectedItem;
 	}
 	
-	var handler = StripeCheckout.configure({
-	    key: 'pk_test_yAch4iGInNrTdxsL77KqwEtg',
-	    image: '/img/_octant_logo.png',
-	    token: function(token) {
-    		dataFactory._loading(true)
-	    	dataFactory.service('POST','http://app.octantapp.com/charge',{stripeToken:token.id,refToken:token,amount:$scope.data.amountCent,donor_id:App_Session.donor_id,org_id:$scope.billing.org_id}).
-	    	then(function(res){
-	    		console.log(res);
-	    	}).
-	    	finally(function(){
-	    		dataFactory._loading(false)
-	    	})
-	    	console.log(token)
-	      // Use the token to create the charge with a server-side script.
-	      // You can access the token ID with `token.id`
-	    }
-	  });
+	$scope.stripe = function() {
+	    $ionicModal.fromTemplateUrl('templates/checkout.html', {
+	    	scope: $scope
+	    }).then(function(modal) {
+	    	$scope.modal = modal;
+	    	$scope.modal.show();
+	    });
+	};
 
 	$scope.oct_donate = function(){
 		$scope.data.amountCent = $scope.data.amount*100;
     	console.log($scope.data.amountCent);
 
+
 		if($scope.data.slide>0){
-			// $scope.showAlert();
-			if($scope.data.amount>20){
-			// Open Checkout with further options
-			    handler.open({
-			      name: 'Octant',
-			      description: 'Thankyou for the donation',
-			      amount: $scope.data.amountCent
-			    });
-			    // e.preventDefault();
+			if($scope.data.amount>19){
+		    	$scope.stripe();
 			}
 			else{
 				dataFactory._alert('Amount Error','Kindly Enter a Number Greater than the Min Amount ($20)');
 			}
+		}
+		else{
+			dataFactory._alert('Organization','Please Select an Organization');
 		}
 		console.log($scope.data);
 	}
@@ -1037,6 +1029,87 @@ angular.module('starter.controllers', [])
 
 })
 
+.controller('StripeController', function($scope,dataFactory) {
+	$scope.postData = {}
+
+	ionic.DomUtil.ready(function(){
+		$('input#c_number').payment('formatCardNumber');
+		$('input#c_cvc').payment('formatCardCVC');
+		$('input#c_exp').payment('formatCardExpiry')		
+	})
+
+
+	console.log($scope.data);
+	console.log($scope.billing);
+
+	$scope.checkout = function(){
+		if(
+			$scope.data.expiry 	&&
+			$scope.data.number 	&&
+			$scope.data.cvc 	&&
+			$scope.data.email			
+		){
+			$scope.postData.exp_month = $scope.data.expiry.slice(0,2) 
+			$scope.postData.exp_year = $scope.data.expiry.slice(5,$scope.data.expiry.length)
+			$scope.postData.amount = $scope.data.amountCent
+			$scope.postData.number = $scope.data.number
+			$scope.postData.cvc = $scope.data.cvc
+			$scope.postData.donor_id = App_Session.donor_id
+			$scope.postData.org_id = $scope.billing.org_id
+			$scope.postData.email = $scope.data.email			
+		}
+		else{
+			dataFactory._alert("Missing Feilds","Please Fill up the missing feilds");
+			return;
+		}
+
+		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+
+		console.log($scope.postData);
+		// console.log($scope.data)
+		if(! re.test($scope.postData.email)){
+			dataFactory._alert("Data Error","Invalid Email")
+			return
+		}
+		if(! $.payment.validateCardNumber($scope.postData.number) ){
+			dataFactory._alert("Data Error","Invalid Card Number")
+			return
+		}
+		if(! $.payment.validateCardExpiry($scope.postData.exp_month,$scope.postData.exp_year) ){
+			dataFactory._alert("Data Error","Invalid Expiry Date")
+			return			
+		}
+		if(! $.payment.validateCardCVC($scope.postData.cvc) ){
+			dataFactory._alert("Data Error","Invalid CVC")
+			return			
+		}
+			
+    	dataFactory._loading(true)
+    	dataFactory.service('POST','http://app.octantapp.com/scrape',$scope.postData).
+    	then(function(res){
+    		if(res.data.success){
+    			dataFactory._alert(
+    				'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
+    				'ThankYou for you kind Donations'
+    			)
+    		}
+    		else{
+	    		dataFactory._alert("Error","Something went wrong, please try again later");
+    		}
+    		console.log(res.data);
+    	}).
+    	finally(function(){
+		    $scope.modal.hide();
+    		dataFactory._loading(false)
+    	})
+
+	}
+
+})
+
+.controller('tyController', function($scope,dataFactory) {
+
+})
 .controller('PledgeController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,dataFactory,$stateParams) {
 
 
@@ -1158,7 +1231,6 @@ angular.module('starter.controllers', [])
 		dataFactory._alert('Thankyou!\n For your pledge',
 			'<ul><li>-Organization: '+x.title+'</li><li>-Address: '+x.address+'</li><li>-City: '+x.city+'</li><li>-State: '+x.state+'</li><li>-Zip: '+x.zip+'</li><li>-Tel: '+x.tel+'</li></ul>')
 	};
-	// Triggered in the login modal to close it
 })
 
 .run(function($rootScope, $ionicModal, dataFactory) {
