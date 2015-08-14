@@ -63,6 +63,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('FeedsController', function($scope, dataFactory) {
+	$scope.asyncCount();
 
 	$scope.lala = true;
 	$scope.readme = false;
@@ -78,7 +79,8 @@ angular.module('starter.controllers', [])
 					x[i].pic = "img/_octant_logo.png";
 				}
 				x[i].contentPrev = x[i].content.slice(0,100);
-				feeder[x[i].message_id] = x[i];
+				x[i].link_id = i;
+				feeder[i] = x[i];
 			}
 			$scope.feeds = feeder;
 			API.storage.set("feeds_"+App_Session.donor_id,feeder);
@@ -92,9 +94,9 @@ angular.module('starter.controllers', [])
 			locale = $scope.feeds;
 		});
 
-	$scope.isreadchk = function(message_id){
-		$scope.feeds[message_id].is_read = true;
-		dataFactory.service('PUT','http://app.octantapp.com/api/msg_read',{'msg_id':message_id, 'donor_id':donid}).
+	$scope.isreadchk = function(message_id,link){
+		$scope.feeds[link].is_read = true;
+		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
 				console.log(data);
 			}).
@@ -155,7 +157,7 @@ angular.module('starter.controllers', [])
 			});
 	}
 	else{
-		console.log("Not Found");
+		console.log(msgid,"Not Found");
 	}
 	// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
 
@@ -248,7 +250,7 @@ angular.module('starter.controllers', [])
 		dataFactory._loading(true);
 		dataFactory.service('PUT','http://app.octantapp.com/api/donor',$scope.profile).
 			success(function (data, status, headers, config) {
-				console.log(data);
+				console.log(data,$scope.profile);
 				console.log('success');
 				dataFactory._alert('Data Updated','Your new data has been updated');
 				API.storage.set('donorId',$scope.profile.donor_id);
@@ -653,7 +655,6 @@ angular.module('starter.controllers', [])
 
 .controller('LoginController', function($scope, facebookService, md5, dataFactory, $cordovaGeolocation) {
 
-
 	$scope.user = {
 		email : null,
 		password : null,
@@ -835,8 +836,10 @@ angular.module('starter.controllers', [])
 			var feeder = {};
 			var x = data.feed_id;
 			for(i in x){
-				if(x[i].msg_type_id==2)
-					feeder[x[i].message_id] = x[i];
+				if(x[i].msg_type_id==2){
+					x[i].link_id = i;
+					feeder[i] = x[i];					
+				}
 			}
 			$scope.events = feeder;
 			API.storage.set("event_"+App_Session.donor_id,feeder);
@@ -876,8 +879,10 @@ angular.module('starter.controllers', [])
 			var x = data.feed_id;
 			for(i in x){
 				console.log(x[i].msg_type_id)
-				if(x[i].msg_type_id==1)
-					feeder[x[i].message_id] = x[i];
+				if(x[i].msg_type_id==1){
+					x[i].link_id = i;
+					feeder[i] = x[i];					
+				}
 			}
 			$scope.messages = feeder;
 			API.storage.set("msg_"+App_Session.donor_id,feeder);
@@ -890,9 +895,14 @@ angular.module('starter.controllers', [])
 		});
 		
 	$scope.isreadchk = function(message_id){
-		// console.log(message_id);
-		// console.log($scope.feeds[message_id])
 		$scope.messages[message_id].is_read = true;
+		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
+			success(function(data, textStatus, xhr) {
+				console.log(data);
+			}).
+			error(function(data, textStatus, xhr) {
+				console.log(data);
+			});
 	}
 
 	$scope.donatetoorg = function(orgid){

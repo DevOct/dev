@@ -3,7 +3,7 @@
     <ion-list class="__feed">
       <ion-item ng-repeat="feed in feeds" ng-class="feed.is_read ? 'read' : 'unread'">
       	<div class="list">
-		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.message_id}}" ng-click="isreadchk({{feed.message_id}})">
+		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.link_id}}" ng-click="isreadchk({{feed.message_id+','+feed.link_id}})">
 
 		      <img ng-src="{{feed.pic}}" ng-show=" feed.pic || feed.pic.length>0 ? true : false">
 		      <div class="org">
@@ -26,7 +26,7 @@
 		    	<button class="button button-circle button-small" ng-click="donatetoorg(feed.org_id)"><img src="img/1.png" /></button>
 		    	<a class="button button-circle button-small" href="{{feed.event_link}}" target="_blank" ng-show="{{feed.msg_type_id=='2'}}"><img src="img/2.png" /></a>
 		    	<button class="button button-circle button-small"><img src="img/share.png" /></button>
-		      	<a type="button" ng-show="{{feed.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;isreadchk({{feed.message_id}})">see {{lala === false ? 'less': 'more';}}</a>
+		      	<a type="button" ng-show="{{feed.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;isreadchk({{feed.message_id+','+feed.link_id}})">see {{lala === false ? 'less': 'more';}}</a>
 		    </div>
 		</div>
 		<div style="clear:both"></div>
