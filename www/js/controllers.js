@@ -140,15 +140,16 @@ angular.module('starter.controllers', [])
 	$scope.asyncCount();
 
 	var msgid = $stateParams.message_id;
+	var index = $stateParams.index;
 	var donid = App_Session.donor_id;
 	$scope.feed = null;
 	var AllFeeds = API.storage.get("feeds_"+App_Session.donor_id);
 
-	if(AllFeeds[msgid]||AllFeeds[msgid]!=undefined){
-		$scope.feed = AllFeeds[msgid];
+	if(AllFeeds[index]||AllFeeds[index]!=undefined){
+		$scope.feed = AllFeeds[index];
 		$scope.feed.is_read = true;
 		console.log("foundFeed:",$scope.feed)
-		dataFactory.service('PUT','http://app.octantapp.com/api/msg_read',{'msg_id':msgid, 'donor_id':donid}).
+		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
 				console.log(data);
 			}).
@@ -342,9 +343,9 @@ angular.module('starter.controllers', [])
 		$scope.organizaions = co;
 
 		dataFactory._loading(true);
-		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id}).
+		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id,is_active:0}).
 		then(function(res){
-			// console.log(res.data);
+			console.log(res.data);
 			for(key in res.data){
 				console.log(res.data[key]);
 				$scope.organizaions[res.data[key]].is_checked = true;
@@ -371,6 +372,7 @@ angular.module('starter.controllers', [])
 	$scope.checkOrg = function(org_id){
 		if($scope.organizaions[org_id].is_checked){
 			$scope.checkedOrgs[org_id] = $scope.organizaions[org_id];
+			$scope.checkedOrgs[org_id].is_active = 1;
 			console.log($scope.checkedOrgs);
 		}
 		else{
@@ -389,10 +391,13 @@ angular.module('starter.controllers', [])
 		// }
 
 		for(key in $scope.checkedOrgs){
-			var temp = [
-				App_Session.donor_id,
-				$scope.checkedOrgs[key].org_id
-			]
+			var temp = 
+				{
+					'donor_id': App_Session.donor_id,
+					'org_id': $scope.checkedOrgs[key].org_id,
+					'is_active': $scope.checkedOrgs[key].is_active					
+				}
+			
 			$scope.data.push(temp);
 			clength++
 		}
@@ -404,9 +409,11 @@ angular.module('starter.controllers', [])
 
 			dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
 				then(function(res){
+					r = res;
 					console.log(res);
 					dataFactory._alert('Successful','organizaions Selected Successfully');				
-				}, function(){
+				}, function(res){
+					console.log(res);
 					dataFactory._alert('Failed','Some Error occured');
 				})
 				.finally(function(){

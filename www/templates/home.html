@@ -3,7 +3,7 @@
     <ion-list class="__feed">
       <ion-item ng-repeat="feed in feeds" ng-class="feed.is_read ? 'read' : 'unread'">
       	<div class="list">
-		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.link_id}}" ng-click="isreadchk({{feed.message_id+','+feed.link_id}})">
+		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/feed/{{feed.link_id}}/{{feed.message_id}}" ng-click="isreadchk({{feed.message_id+','+feed.link_id}})">
 
 		      <img ng-src="{{feed.pic}}" ng-show=" feed.pic || feed.pic.length>0 ? true : false">
 		      <div class="org">

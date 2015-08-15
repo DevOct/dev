@@ -142,7 +142,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
       }
     })
     .state('app.feed', {
-      url: "/feed/:message_id",
+      url: "/feed/:index/:message_id",
       views: {
         'menuContent': {
           templateUrl: "templates/feed.html",
