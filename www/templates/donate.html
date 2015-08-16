@@ -22,10 +22,8 @@
 		    	<i class="icon  placeholder-icon">$</i>
 		    	<input type="text" placeholder="375" ng-model="data.amount">
 		  	</label>
-		    <select ng-model="data.selectedItem" ng-change="dataChanged(data.selectedItem)">
-		      <option value="20">$20</option>
-		      <option value="30">$30</option>
-		      <option value="40">$40</option>
+		    <select id="pricelist" disabled="true" ng-model="data.selectedItem" ng-change="dataChanged(data.selectedItem)">
+		      <option ng-repeat="p in price" value="{{p}}">${{p}}</option>
 		      <option value="0">Other</option>
 		    </select>
 		  </label>

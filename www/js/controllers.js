@@ -343,7 +343,7 @@ angular.module('starter.controllers', [])
 		$scope.organizaions = co;
 
 		dataFactory._loading(true);
-		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id,is_active:0}).
+		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id,is_active:1}).
 		then(function(res){
 			console.log(res.data);
 			for(key in res.data){
@@ -376,8 +376,10 @@ angular.module('starter.controllers', [])
 			console.log($scope.checkedOrgs);
 		}
 		else{
-			delete $scope.checkedOrgs[org_id];
+			// delete $scope.checkedOrgs[org_id];
+			console.log($scope.checkedOrgs);
 			$scope.organizaions[org_id].is_checked = false;
+			$scope.checkedOrgs[org_id].is_active = 0;
 		}
 	}
 
@@ -395,7 +397,7 @@ angular.module('starter.controllers', [])
 				{
 					'donor_id': App_Session.donor_id,
 					'org_id': $scope.checkedOrgs[key].org_id,
-					'is_active': $scope.checkedOrgs[key].is_active					
+					'is_active': $scope.checkedOrgs[key].is_active
 				}
 			
 			$scope.data.push(temp);
@@ -930,6 +932,9 @@ angular.module('starter.controllers', [])
 		amount:30,
 		slide: null
 	};
+
+	$scope.price = []
+
 	$scope.postData = {}
 	slto = 0
 
@@ -1028,8 +1033,29 @@ angular.module('starter.controllers', [])
 		console.log($scope.data,index);
 		if(index>0){
 	    	$scope.billing = $scope.slides[index-1];
+
+			console.log($scope.billing.scope)
+			dataFactory.service('POST','http://app.octantapp.com/api/defaultdon',{'org_id':$scope.billing.org_id}).
+			then(function(res){
+				console.log(res.data)
+				if(!res.data.error){
+					v = res.data.Values
+					vss = []
+					for(key in v){
+						vss.push(v[key])
+						console.log(v[key]);
+					}
+					$scope.price = vss
+				}
+				else{
+					dataFactory.alert("Cannot fetch Price list, try again later");
+					dataFactory._go('app.home');
+				}
+			})
+
+			document.getElementById('pricelist').disabled = false
 	    }
-	    else
+	    else{
 	    	$scope.billing = {
 				image: null,
 				org_id: null,
@@ -1041,6 +1067,11 @@ angular.module('starter.controllers', [])
 				state: null,
 				tel: null
 			}
+
+			document.getElementById('pricelist').disabled = true
+
+		}
+
 		console.log(index);
 	}
 

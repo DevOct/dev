@@ -12,7 +12,7 @@
 		<label>
 			<hr/>
 		</label>
-    	<label ng-repeat="org in checkedOrgs" class="item item-radio item-thumbnail-left">
+    	<label ng-repeat="org in checkedOrgs" class="item item-radio item-thumbnail-left" ng-show="org.is_active">
 		    <img ng-src="{{org.logo_full}}">
 		    <input type="checkbox" name="group" ng-model="org.is_checked" ng-click="checkOrg(org.org_id)">
 		    <div class="item-content">
