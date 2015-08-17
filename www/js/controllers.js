@@ -96,13 +96,15 @@ angular.module('starter.controllers', [])
 
 	$scope.isreadchk = function(message_id,link){
 		$scope.feeds[link].is_read = true;
-		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
-			success(function(data, textStatus, xhr) {
-				console.log(data);
-			}).
-			error(function(data, textStatus, xhr) {
-				console.log(data);
-			});
+		if(message_id!=false){
+			dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
+				success(function(data, textStatus, xhr) {
+					console.log(data);
+				}).
+				error(function(data, textStatus, xhr) {
+					console.log(data);
+				});			
+		}
 	}
 
 	$scope.donatetoorg = function(orgid){
@@ -1365,6 +1367,24 @@ angular.module('starter.controllers', [])
 		}
 	}
 
+})
+
+.filter('orderObjectBy', function() {
+  return function(items, field, reverse) {
+  	field.reverse();
+    var filtered = [];
+    angular.forEach(items, function(item) {
+      filtered.push(item);
+    });
+    angular.forEach(field, function(value, key){
+	    filtered.sort(function (a, b) {
+	    	// console.log(a[field[]],b[field]);
+	      return (a[field[key]] > b[field[key]] ? 1 : -1);
+	    });    	
+    });
+    if(reverse) filtered.reverse();
+    return filtered;
+  };
 })
 
 .directive('baseImage', ['$window', function ($window) {
