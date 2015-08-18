@@ -22,38 +22,24 @@
 		    	<i class="icon  placeholder-icon">$</i>
 		    	<input type="text" placeholder="375" ng-model="data.amount">
 		  	</label>
-		    <select id="pricelist" disabled="true" ng-model="data.selectedItem" ng-change="dataChanged(data.selectedItem)">
-		      <option ng-repeat="p in price" value="{{p}}">${{p}}</option>
+		    <select id="pricelist" disabled="true" ng-model="data.selectedItem"  ng-change="dataChanged(data.selectedItem)" >
+		      <option ng-show="price" ng-repeat="p in price" value="{{p}}">${{p}}</option>
 		      <option value="0">Other</option>
 		    </select>
 		  </label>
 		</div>
 		
-		<a class="button button-icon icon" ng-click="oct_donate()"><img src="img/1.png" ></a>
+		<a id="dondon" class="button button-icon icon" disabled="true" ng-click="oct_donate()"><img src="img/1.png" ></a>
 	</div>
 		<div class="list card" style="margin-top:-16px">
 			<div class="item item-body">
-				<div class="list">
-				  <label class="item item-input item-stacked-label">
-				    <span class="input-label">Billing Address</span>
-				    <input type="text" ng-model="organizations[slto].address" placeholder="Billing Address" disabled>
-				  </label>
-				  <label class="item item-input item-stacked-label item-3">
-				    <span class="input-label">City</span>
-				    <input type="text" ng-model="billing.city" placeholder="City" disabled>
-				  </label>
-				  <label class="item item-input item-stacked-label item-3">
-				    <span class="input-label">State</span>
-				    <input type="text" ng-model="billing.state" placeholder="State" disabled>
-				  </label>
-				  <label class="item item-input item-stacked-label item-3">
-				    <span class="input-label">Zip</span>
-				    <input type="text" ng-model="billing.zip" placeholder="Zip" disabled>
-				  </label>
-				</div>
-				<p><b>{{billing.desc}}</p>
+				<h4>{{billing.desc}}</h4>
+				<p>{{billing.city}}</p>
+				<p>{{billing.address}}</p>
 			</div>
+			<div class="clearfix"></div>
 		</div>
+		<br/><br/>
 </div>
 </ion-content>
 </ion-view>

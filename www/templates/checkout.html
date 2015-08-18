@@ -1,4 +1,4 @@
-<ion-view view-title="Feed" ng-controller="StripeController">
+<ion-modal-view view-title="Feed" ng-controller="StripeController">
   <ion-header-bar class='bar bar-header bar-positive'>
     <h1 class="title">Stripe Checkout</h1>
   </ion-header-bar>
@@ -25,7 +25,7 @@
 		</div>
 		<div class="item">
 			<h4>Card Information</h4>
-			<div id="stripe-form">
+			<div>
 			  <label class="item item-input">
 				<span class="input-label">Email </span>
 			    <input id="c_email" ng-model="data.email" type="text">
@@ -43,9 +43,36 @@
 			    <input id="c_cvc" ng-model="data.cvc" type="text">
 			  </label>
 			</div>			
+			<h4>Billing Information</h4>
+			<div>
+			  <label class="item item-input">
+				<span class="input-label">Address 1</span>
+			    <input id="c_add1" ng-model="data.address_line1" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">Address 2</span>
+			    <input id="c_add2" ng-model="data.address_line2" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">City</span>
+			    <input id="c_city" ng-model="data.address_city" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">State</span>
+			    <input id="c_state" ng-model="data.address_state" type="text">
+			  </label>
+			  <label class="item item-input">
+				<span class="input-label">Zip</span>
+			    <input id="c_zip" ng-model="data.address_zip" type="text">
+			  </label>
+			</div>			
 		</div>
 	</div>
 
-  	<button class="button button-block button-positive" ng-click="checkout()">Donate ${{data.amount}}</button>
+	<div class="item">
+	  	<button class="button button-positive" ng-click="checkout()">Donate ${{data.amount}}</button>
+	  	<button class="button button-assertive" ng-click="closeMod()">Cancel</button>
+	</div>
+
   </ion-content>
-</ion-view>
+</ion-modal-view>

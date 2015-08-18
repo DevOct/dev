@@ -1,4 +1,4 @@
-<ion-view view-title="Home">
+<ion-view view-title="Octant">
   <ion-content>
     <ion-list class="__feed">
       <ion-item ng-repeat="feed in feeds | orderObjectBy: ['is_read','org_id','msg_type_id','start_date']" ng-class="feed.is_read ? 'read' : 'unread'">

@@ -78,6 +78,7 @@ angular.module('starter.controllers', [])
 				if(x[i].pic == ""){
 					x[i].pic = "img/_octant_logo.png";
 				}
+				lii = x[i].content
 				x[i].contentPrev = x[i].content.slice(0,100);
 				x[i].link_id = i;
 				feeder[i] = x[i];
@@ -930,11 +931,10 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal) {
+.controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal,$timeout) {
 
 	$scope.data = {
-		selectedItem:30, 
-		amount:30,
+		amount: null,
 		slide: null
 	};
 
@@ -1019,11 +1019,12 @@ angular.module('starter.controllers', [])
 
 
 		if($scope.data.slide>0){
-			if($scope.data.amount>=2){
+			console.log($scope.data.amount,min)
+			if($scope.data.amount>=min){
 		    	$scope.stripe();
 			}
 			else{
-				dataFactory._alert('Amount Error','Kindly Enter a Number Greater than the Min Amount ($20)');
+				dataFactory._alert('Amount Error','Kindly Enter a Number Greater than the Min Amount ($'+min+')');
 			}
 		}
 		else{
@@ -1032,34 +1033,54 @@ angular.module('starter.controllers', [])
 		console.log($scope.data);
 	}
 
+	var min = 0
+		rserr = false;
 	$scope.slideC = function(index){
+		document.getElementById('dondon').setAttribute('disabled',true);
 		$scope.data.slide = index;
 		console.log($scope.data,index);
 		if(index>0){
+			min = 0
+
 	    	$scope.billing = $scope.slides[index-1];
 
-			console.log($scope.billing.scope)
 			dataFactory.service('POST','http://app.octantapp.com/api/defaultdon',{'org_id':$scope.billing.org_id}).
 			then(function(res){
-				console.log(res.data)
-				if(!res.data.error){
+				console.log(res.data);
+				rserr = res.data.Error;
+				if(!res.data.Error){
 					v = res.data.Values
 					vss = []
 					for(key in v){
+						if(min==0 || min > v[key]){
+							min = v[key]
+						}
 						vss.push(v[key])
 						console.log(v[key]);
 					}
 					$scope.price = vss
 				}
 				else{
-					dataFactory.alert("Cannot fetch Price list, try again later");
-					dataFactory._go('app.home');
+					dataFactory._alert("Cannot fetch Amount list from this organization, try again later");
+					document.getElementById('pricelist').selectedIndex = 0;
+					document.getElementById('pricelist').disabled = true;
+					document.getElementById('pricelist').value = null;
+				}
+			}).
+			finally(function(res){
+				if(!rserr){
+					$timeout(function(){
+						document.getElementById('pricelist').selectedIndex = 1;
+						document.getElementById('pricelist').removeAttribute('disabled');
+						document.getElementById('dondon').removeAttribute('disabled');
+						$scope.data.amount = document.getElementById('pricelist').value;
+						$scope.data.selectedItem = $scope.data.amount
+					}, 50);
 				}
 			})
-
-			document.getElementById('pricelist').disabled = false
 	    }
 	    else{
+			$scope.price = []
 	    	$scope.billing = {
 				image: null,
 				org_id: null,
@@ -1079,6 +1100,11 @@ angular.module('starter.controllers', [])
 		console.log(index);
 	}
 
+
+  $scope.closeMod = function() {
+    $scope.modal.hide();
+  };
+
 })
 
 .controller('StripeController', function($scope,dataFactory) {
@@ -1092,14 +1118,20 @@ angular.module('starter.controllers', [])
 
 
 	console.log($scope.data);
-	console.log($scope.billing);
 
 	$scope.checkout = function(){
+
+
 		if(
-			$scope.data.expiry 	&&
-			$scope.data.number 	&&
-			$scope.data.cvc 	&&
-			$scope.data.email			
+			$scope.data.expiry 			&&
+			$scope.data.number 			&&
+			$scope.data.cvc 			&&
+			$scope.data.email			&&
+			$scope.data.address_city	&&
+			$scope.data.address_line1	&&
+			$scope.data.address_line2	&&
+			$scope.data.address_state	&&
+			$scope.data.address_zip
 		){
 			$scope.postData.exp_month = $scope.data.expiry.slice(0,2) 
 			$scope.postData.exp_year = $scope.data.expiry.slice(5,$scope.data.expiry.length)
@@ -1108,7 +1140,13 @@ angular.module('starter.controllers', [])
 			$scope.postData.cvc = $scope.data.cvc
 			$scope.postData.donor_id = App_Session.donor_id
 			$scope.postData.org_id = $scope.billing.org_id
-			$scope.postData.email = $scope.data.email			
+			$scope.postData.email = $scope.data.email
+
+			$scope.postData.address_city = $scope.data.address_city
+			$scope.postData.address_line1 = $scope.data.address_line1
+			$scope.postData.address_line2 = $scope.data.address_line2
+			$scope.postData.address_state = $scope.data.address_state
+			$scope.postData.address_zip = $scope.data.address_zip
 		}
 		else{
 			dataFactory._alert("Missing Feilds","Please Fill up the missing feilds");
@@ -1135,8 +1173,7 @@ angular.module('starter.controllers', [])
 			dataFactory._alert("Data Error","Invalid CVC")
 			return			
 		}
-			
-    	dataFactory._loading(true)
+
     	dataFactory.service('POST','http://app.octantapp.com/scrape',$scope.postData).
     	then(function(res){
     		if(res.data.success){
@@ -1152,16 +1189,12 @@ angular.module('starter.controllers', [])
     	}).
     	finally(function(){
 		    $scope.modal.hide();
-    		dataFactory._loading(false)
     	})
 
 	}
 
 })
 
-.controller('tyController', function($scope,dataFactory) {
-
-})
 .controller('PledgeController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,dataFactory,$stateParams) {
 
 
@@ -1233,6 +1266,7 @@ angular.module('starter.controllers', [])
 	})
 
 	$scope.dataChanged = function(selectedItem){
+		console.log(selectedItem)
 		$scope.data.amount = selectedItem;
 	}
 	$scope.oct_pledge = function(){
