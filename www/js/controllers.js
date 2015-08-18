@@ -7,9 +7,10 @@ angular.module('starter.controllers', [])
 	dataFactory._loading(true);
 	dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
 	then(function(res){
-		rem = App_Session.remember
+		console.log('prof',res.data);
+		rem = API.storage.get('remember');
 		if(rem)
-			res.data.remember = true;
+			res.data.Users.remember = true;
 		API.storage.set('userProf',res.data.Users);
 		console.log(res.data);
 
@@ -105,7 +106,6 @@ angular.module('starter.controllers', [])
 				x[i].contentPrev = x[i].content.slice(0,100);
 				x[i].link_id = i;
 				feeder[i] = x[i];
-				console.log(i,x[i].msg_id)
 			}
 			$scope.feeds = feeder;
 			API.storage.set("feeds_"+App_Session.donor_id,feeder);
