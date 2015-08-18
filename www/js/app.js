@@ -23,7 +23,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
       App_Session = {
         donor_id    : API.storage.get('donorId'),
         donor_name  : API.storage.get('donorName'),
-        donor_image  : API.storage.get('donorImage'),
+        donor_image : API.storage.get('donorImage'),
+        donor_image : API.storage.get('remember'),
+        remember    : false
       }
 
     $rootScope.Donor = {
@@ -74,6 +76,21 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     $rootScope.modal.hide();
   };
 
+  $rootScope.destroySess = function(did,logout){
+      $rootScope.Donor = {}
+      App_Session = {}
+      API.storage.remove('userProf')
+      API.storage.remove('event_'+did)
+      API.storage.remove('feeds_'+did)
+      API.storage.remove('msg_'+did)
+      API.storage.remove('donorId')
+      API.storage.remove('donorName')
+      API.storage.remove('donorImage')
+      console.log(logout)
+      if(logout){
+        API.storage.set('remember',false)
+      }
+  }
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -240,7 +257,7 @@ var API = {
     },
     set: function(key, value, skipParse)
     {
-      console.log(value);
+      console.log(key,value);
       if (!skipParse)
       {
         value = JSON.stringify(value);

@@ -2,6 +2,24 @@ angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $timeout, $window, $ionicSlideBoxDelegate, dataFactory) {
 
+
+	profchk = null;
+	dataFactory._loading(true);
+	dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
+	then(function(res){
+		rem = App_Session.remember
+		if(rem)
+			res.data.remember = true;
+		API.storage.set('userProf',res.data.Users);
+		console.log(res.data);
+
+	},function(res){
+		console.log(res);
+	}).
+	finally(function(){
+		dataFactory._loading(false);
+	});
+
 	$scope.$on('$locationChangeStart', function(next, current) { 
 		active    = document.querySelector('.__navtabs .active');
 		activated = document.querySelector('.__navtabs .activated');
@@ -28,6 +46,11 @@ angular.module('starter.controllers', [])
 	}
 	$scope.asyncCount();
 
+	$scope.logout = function(){
+		did = API.storage.get("donorId");
+		$scope.destroySess(did,true);
+		dataFactory._go('login');
+	}
 
 	ionic.DomUtil.ready(function(){
 		active = document.querySelector('active');
@@ -82,6 +105,7 @@ angular.module('starter.controllers', [])
 				x[i].contentPrev = x[i].content.slice(0,100);
 				x[i].link_id = i;
 				feeder[i] = x[i];
+				console.log(i,x[i].msg_id)
 			}
 			$scope.feeds = feeder;
 			API.storage.set("feeds_"+App_Session.donor_id,feeder);
@@ -188,37 +212,19 @@ angular.module('starter.controllers', [])
 	}
 
 	donid = App_Session.donor_id;
-
-	profchk = null;
-	dataFactory._loading(true);
-	dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
-	then(function(res){
-		console.log(res.data);
-		$scope.profile = res.data.Users;
-		// for(key in d){
-		// 	if(d[key].donor_id == donid){
-		// 		if(d[key].image)
-		// 			d[key].image = String.fromCharCode.apply(null, new Uint16Array(d[key].image));
-		// 		$scope.profile = d[key];
-		// 	}
-		// }
-		// $scope.profile.image = API._arrayBufferToBase64($scope.profile.image);
-		profchk = $scope.profile;
-		
-		$scope.pass.oldPass = $scope.profile.password;
-		console.log($scope.pass.oldPass);
-		if($scope.profile.image)
-			$scope.image.img64 = $scope.profile.image;
-	},function(res){
-		console.log(res);
-	}).
-	finally(function(){
-		dataFactory._loading(false);
-	});
-
+	$scope.profile = API.storage.get('userProf');
+	profchk = $scope.profile;
+	
+	$scope.pass.oldPass = $scope.profile.password;
+	console.log($scope.pass.oldPass);
+	if($scope.profile.image)
+		$scope.image.img64 = $scope.profile.image;
 
 
 	$scope.updateUser = function(){
+
+
+
 		if($scope.image.img64)
 			$scope.profile.image = $scope.image.img64;
 		if($scope.pass.pass_1!=null){
@@ -254,8 +260,12 @@ angular.module('starter.controllers', [])
 		dataFactory._loading(true);
 		dataFactory.service('PUT','http://app.octantapp.com/api/donor',$scope.profile).
 			success(function (data, status, headers, config) {
+				if(data.Error && data.Message.code == "ER_DUP_ENTRY"){
+					dataFactory._alert("Error","Duplicate Email Found")
+					return;
+				}
+
 				console.log(data,$scope.profile);
-				console.log('success');
 				dataFactory._alert('Data Updated','Your new data has been updated');
 				API.storage.set('donorId',$scope.profile.donor_id);
 				API.storage.set('donorName',$scope.profile.first_name+" "+$scope.profile.last_name);
@@ -416,7 +426,7 @@ angular.module('starter.controllers', [])
 				then(function(res){
 					r = res;
 					console.log(res);
-					dataFactory._alert('Successful','organizaions Selected Successfully');				
+					dataFactory._alert('Successful','Organizaions Updated Successfully');				
 				}, function(res){
 					console.log(res);
 					dataFactory._alert('Failed','Some Error occured');
@@ -667,11 +677,37 @@ angular.module('starter.controllers', [])
 
 .controller('LoginController', function($scope, facebookService, md5, dataFactory, $cordovaGeolocation) {
 
+  $scope.idky = function(lif){
+	dataFactory.service(
+		'POST',
+		'http://app.octantapp.com/api/userlogin/123456789',
+		{
+			'email': API.storage.get('email'),
+			'login_info': lif
+		}).
+	then(function(res){
+		console.log(res);
+	})  	
+  }
+
+  did = API.storage.get('donorId')
+  rem = API.storage.get('remember')
+  if(!rem){
+  	$scope.destroySess(did,false);
+  }
+  else if(rem){
+	$scope.updateSession();
+	$scope.idky(1);
+	dataFactory._go('app.home');
+  }
+
+
 	$scope.user = {
 		email : null,
 		password : null,
 		latitude: null,
-		longitude: null
+		longitude: null,
+		remember: false
 	}
 	$scope.pass = "";
 
@@ -683,6 +719,7 @@ angular.module('starter.controllers', [])
 	    })
 
 	$scope.login = function(){
+		console.log($scope.user)
 		dataFactory._loading(true);
 		$scope.user.password = md5.createHash($scope.user.pass || '');
 		// console.log($scope.user);
@@ -693,9 +730,11 @@ angular.module('starter.controllers', [])
 				console.log(res.data)
 				if(uid != "false"){
 					// console.log(uid);
+					API.storage.set('email',$scope.user.email);
 					API.storage.set('donorId',uid.donor_id);
 					API.storage.set('donorName',uid.first_name+" "+uid.last_name);
 					API.storage.set('donorImage',uid.image);
+					API.storage.set('remember',$scope.user.remember);
 					$scope.updateSession();
 					dataFactory._go('app.home');
 				}
@@ -704,6 +743,10 @@ angular.module('starter.controllers', [])
 					console.log(uid);
 					return;
 				}
+
+				if($scope.user.remember)
+					$scope.idky(1);
+
 			},function(res){
 				console.log(res);
 			}).finally(function(){
