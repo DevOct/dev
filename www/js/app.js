@@ -134,6 +134,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
   })
     .state('app.home', {
       url: "/home",
+    cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/home.html",
@@ -162,6 +163,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     })
     .state('app.events', {
       url: "/events",
+    cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/events.html",
@@ -171,6 +173,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     })
     .state('app.messages', {
       url: "/messages",
+    cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/messages.html",

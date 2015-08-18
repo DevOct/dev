@@ -16,7 +16,7 @@
         <i class="icon ion-home">
         </i>
         Home
-          <span class="badge badge-assertive bcount">{{data.unread.feed}}</span>
+          <span ng-show="data.unread.feed > 0" class="badge badge-assertive bcount">{{data.unread.feed}}</span>
       </a>
       <a class="tab-item" ui-sref="app.events">
         <i class="icon ion-calendar"></i>
@@ -26,7 +26,7 @@
         <i class="icon ion-chatbubbles">
         </i>
         Messages
-          <span class="badge badge-assertive bcount">{{data.unread.msgs}}</span>
+          <span ng-show="data.unread.msgs > 0" class="badge badge-assertive bcount">{{data.unread.msgs}}</span>
       </a>
       <a class="tab-item" ui-sref="app.donate">
         <i class="icon"><img src="img/1.png" style="width:24px"></i>

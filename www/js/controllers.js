@@ -139,7 +139,6 @@ angular.module('starter.controllers', [])
 
 .controller('FeedController', function($scope, $stateParams, dataFactory) {
 	//alert($stateParams.feedid);
-	$scope.asyncCount();
 
 	var msgid = $stateParams.message_id;
 	var index = $stateParams.index;
@@ -164,6 +163,7 @@ angular.module('starter.controllers', [])
 	}
 	// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
 
+	$scope.asyncCount();
 })
 
 .controller('ProfileController', function($scope,dataFactory,$ionicPopup,md5) {
@@ -808,18 +808,21 @@ angular.module('starter.controllers', [])
 			success(function (data, status, headers, config) {
 				console.log(data);
 				console.log('success');
-				API.storage.set('donorId',data.donor_id);
-				API.storage.set('donorName',data.donor_first_name+" "+data.donor_last_name);
-
+				if(data.Error && data.Message.code == "ER_DUP_ENTRY"){
+					dataFactory._alert("Error","Duplicate Email Found")
+					return;
+				}
 			}).
 			error(function (res) {
-				if(res.data.Message.code == "ER_DUP_ENTRY")
-					dataFactory._alert("Error","Duplicate Email Found")
-				else
-					dataFactory._alert("Error","User Creation Failed!");
 				console.log('error');
 			}).
 			then(function(res){
+				if(res.Error)
+					return;
+
+				API.storage.set('donorId',res.data.donor_id);
+				API.storage.set('donorName',res.data.donor_first_name+" "+res.data.donor_last_name);
+
 				$scope.updateSession();
 				dataFactory._alert("Success","User Creation successful");
 				dataFactory._go('app.org');
@@ -963,7 +966,6 @@ angular.module('starter.controllers', [])
 				zip: ob[key].zip,
 				state: ob[key].state,
 				tel: "+92 321 9579365",
-
 			});
 			if($stateParams.orgid==ob[key].org_id)
 				slto = count;
@@ -974,6 +976,7 @@ angular.module('starter.controllers', [])
     		// API.storage.set('organizaions',$scope.organizaions);
 	}).
 	finally(function(){
+		dataFactory._loading(false);
     	angular.element(document).ready(function () {
 	    	$ionicSlideBoxDelegate.slide(slto);
 	    	if(slto>0){
@@ -995,7 +998,6 @@ angular.module('starter.controllers', [])
 
 		    // console.log('page loading completed');
 		});
-		dataFactory._loading(false);
 	})
 
 	$scope.dataChanged = function(selectedItem){
@@ -1017,7 +1019,7 @@ angular.module('starter.controllers', [])
 
 
 		if($scope.data.slide>0){
-			if($scope.data.amount>19){
+			if($scope.data.amount>=2){
 		    	$scope.stripe();
 			}
 			else{
