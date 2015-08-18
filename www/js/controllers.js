@@ -976,9 +976,17 @@ angular.module('starter.controllers', [])
 
 .controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal,$timeout) {
 
+	$scope.profile = API.storage.get('userProf');
+
 	$scope.data = {
 		amount: null,
-		slide: null
+		slide: null,
+		address_line1: $scope.profile.address_1,
+		address_line2: $scope.profile.address_2,
+		address_zip: $scope.profile.zip,
+		address_city: $scope.profile.city,
+		address_state: $scope.profile.state,
+		email: $scope.profile.email
 	};
 
 	$scope.price = []
