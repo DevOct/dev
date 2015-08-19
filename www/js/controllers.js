@@ -2,24 +2,27 @@ angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $timeout, $window, $ionicSlideBoxDelegate, dataFactory) {
 
+	$scope.updateProf = function(){
+		profchk = null;
+		dataFactory._loading(true);
+		dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
+		then(function(res){
+			console.log('prof',res.data);
+			rem = API.storage.get('remember');
+			if(rem)
+				res.data.Users.remember = true;
+			API.storage.set('userProf',res.data.Users);
+			console.log(res.data);
 
-	profchk = null;
-	dataFactory._loading(true);
-	dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
-	then(function(res){
-		console.log('prof',res.data);
-		rem = API.storage.get('remember');
-		if(rem)
-			res.data.Users.remember = true;
-		API.storage.set('userProf',res.data.Users);
-		console.log(res.data);
+		},function(res){
+			console.log(res);
+		}).
+		finally(function(){
+			dataFactory._loading(false);
+		});		
+	}
 
-	},function(res){
-		console.log(res);
-	}).
-	finally(function(){
-		dataFactory._loading(false);
-	});
+	$scope.updateProf();
 
 	$scope.$on('$locationChangeStart', function(next, current) { 
 		active    = document.querySelector('.__navtabs .active');
@@ -223,25 +226,26 @@ angular.module('starter.controllers', [])
 
 	$scope.updateUser = function(){
 
+		console.log($scope.newuser)
+
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 		var rep = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
-		if(!re.test($scope.newuser.email)){
+		if((parseInt($scope.image.img.filesize)/1024) > 1024){
 			dataFactory._alert("Incomplete Form","Invalid Email");
 			return;
 		}
-		if(!re.test($scope.newuser.password)){
-			dataFactory._alert("Incomplete Form","Your password must be between 6 and 20 characters. It must contain a mixture of upper and lower case letters, and at least one number or symbol.");
+		if(!re.test($scope.profile.email)){
+			dataFactory._alert("Incomplete Form","Invalid Email");
 			return;
 		}
-
 
 		if($scope.image.img64)
 			$scope.profile.image = $scope.image.img64;
 		if($scope.pass.pass_1!=null){
 			console.log("pass Exisits");
 			if($scope.pass.pass_2!=null){
-				if(!($scope.pass.pass_2.length > 8)){
-					dataFactory._alert("Incorrect Password", "The length should be 9 characters");
+				if(!rep.test($scope.pass.pass_2)){
+					dataFactory._alert("Incomplete Form","Your password must be between 6 and 20 characters. It must contain a mixture of upper and lower case letters, and at least one number or symbol.");
 					return;
 				}
 				if($scope.pass.pass_1 === $scope.pass.pass_2){
@@ -285,6 +289,7 @@ angular.module('starter.controllers', [])
 			error(function (data, status, headers, config) {
 					console.log('error',data,status);
 			}).finally(function(){
+				$scope.updateProf();
 				dataFactory._loading(false);
 			});
 	}
@@ -827,7 +832,7 @@ angular.module('starter.controllers', [])
     			dataFactory._alert("Incomplete Form","Invalid Email");
     			return;
     		}
-    		if(!re.test($scope.newuser.password)){
+    		if(!rep.test($scope.newuser.password)){
     			dataFactory._alert("Incomplete Form","Your password must be between 6 and 20 characters. It must contain a mixture of upper and lower case letters, and at least one number or symbol.");
     			return;
     		}
@@ -1514,9 +1519,11 @@ angular.module('starter.controllers', [])
   return function(items, field, reverse) {
   	field.reverse();
     var filtered = [];
+
     angular.forEach(items, function(item) {
       filtered.push(item);
     });
+
     angular.forEach(field, function(value, key){
 	    filtered.sort(function (a, b) {
 	    	// console.log(a[field[]],b[field]);
