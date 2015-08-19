@@ -5,10 +5,11 @@
   <ion-content>
   	
 	<div class="list card">
-		<div class="item item-image"><br/>
+		<div class="item item-image item-text-wrap"><br/>
 			<img ng-src="{{billing.image}}" style="width:150px;margin:0 auto"><br/><br/>
-			<p>Thankyou For your kind Donation Mr/Mrs {{Donor._name}}</p>
-			<p>Please proceed with the checkout to complete the process</p>
+			<span>Thankyou For your kind Donation Mr/Mrs {{Donor._name}}</span><br/>
+			<span>Please proceed with the checkout to complete the process</span>
+			<p>5% will be charged for each transaction</p>
 			<br/><br/>
 		</div>
 		<div class="item">
@@ -42,7 +43,7 @@
 				<span class="input-label">CVC </span>
 			    <input id="c_cvc" ng-model="data.cvc" type="text">
 			  </label>
-			</div>			
+			</div>
 			<h4>Billing Information</h4>
 			<div>
 			  <label class="item item-input">
