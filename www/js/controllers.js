@@ -1031,7 +1031,7 @@ angular.module('starter.controllers', [])
     	angular.element(document).ready(function () {
 	    	$ionicSlideBoxDelegate.slide(slto);
 	    	if(slto>0){
-	    		$scope.billing = $scope.slides[slto];
+	    		$scope.billing = $scope.slides[slto-1];
 	    		$scope.data.slide = slto;
 	    	}
 		    else
