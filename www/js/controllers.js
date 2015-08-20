@@ -103,7 +103,7 @@ angular.module('starter.controllers', [])
 			var x = data.feed_id;
 			for(i in x){
 				if(x[i].pic == ""){
-					x[i].pic = "img/_octant_logo.png";
+					x[i].pic = null;
 				}
 				lii = x[i].content
 				x[i].contentPrev = x[i].content.slice(0,100);
