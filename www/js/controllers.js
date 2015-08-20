@@ -230,9 +230,11 @@ angular.module('starter.controllers', [])
 
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 		var rep = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
-		if((parseInt($scope.image.img.filesize)/1024) > 1024){
-			dataFactory._alert("Incomplete Form","Invalid Email");
-			return;
+		if($scope.image.img){
+			if((parseInt($scope.image.img.filesize)/1024) > 1024){
+				dataFactory._alert("Incomplete Form","Invalid Email");
+				return;
+			}			
 		}
 		if(!re.test($scope.profile.email)){
 			dataFactory._alert("Incomplete Form","Invalid Email");
