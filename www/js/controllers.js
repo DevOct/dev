@@ -829,7 +829,7 @@ angular.module('starter.controllers', [])
 		}
 		else{
 			var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-			var rep = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+			var rep = /^(?=.*[a-z])[a-z]{8,20}$/
     		if(!re.test($scope.newuser.email)){
     			dataFactory._alert("Incomplete Form","Invalid Email");
     			return;
