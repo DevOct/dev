@@ -229,7 +229,7 @@ angular.module('starter.controllers', [])
 		console.log($scope.newuser)
 
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-		var rep = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+		var rep = /^(?=.*[a-z])[a-z]{8,20}$/
 		if($scope.image.img){
 			if((parseInt($scope.image.img.filesize)/1024) > 1024){
 				dataFactory._alert("Incomplete Form","Invalid Email");
@@ -247,7 +247,7 @@ angular.module('starter.controllers', [])
 			console.log("pass Exisits");
 			if($scope.pass.pass_2!=null){
 				if(!rep.test($scope.pass.pass_2)){
-					dataFactory._alert("Incomplete Form","Your password must be between 6 and 20 characters. It must contain a mixture of upper and lower case letters, and at least one number or symbol.");
+					dataFactory._alert("Incomplete Form","Your password must be between 8 and 20 characters");
 					return;
 				}
 				if($scope.pass.pass_1 === $scope.pass.pass_2){
