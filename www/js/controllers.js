@@ -226,23 +226,23 @@ angular.module('starter.controllers', [])
 
 	$scope.updateUser = function(){
 
+		if($scope.image.img64){
+			$scope.profile.image = $scope.image.img64;
+			if((parseInt($scope.image.img.filesize)/1024) > 1024){
+				dataFactory._alert("Image Size too big","Image Size bigger than 1 mb");
+				return;
+			}			
+		}
 		console.log($scope.newuser)
 
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 		var rep = /^(?=.*[a-z])[a-z]{8,20}$/
-		if($scope.image.img){
-			if((parseInt($scope.image.img.filesize)/1024) > 1024){
-				dataFactory._alert("Incomplete Form","Invalid Email");
-				return;
-			}			
-		}
 		if(!re.test($scope.profile.email)){
+			console.log('wut',re.test($scope.profile.email),$scope.profile.email)
 			dataFactory._alert("Incomplete Form","Invalid Email");
 			return;
 		}
 
-		if($scope.image.img64)
-			$scope.profile.image = $scope.image.img64;
 		if($scope.pass.pass_1!=null){
 			console.log("pass Exisits");
 			if($scope.pass.pass_2!=null){
