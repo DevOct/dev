@@ -188,6 +188,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
         }
       }
     })
+    .state('app.event', {
+      url: "/event/:index/:message_id",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/event.html",
+          controller: 'EventController'
+        }
+      }
+    })
     .state('app.messages', {
       url: "/messages",
     cache: false,

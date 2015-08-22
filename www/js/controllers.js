@@ -108,6 +108,7 @@ angular.module('starter.controllers', [])
 				lii = x[i].content
 				x[i].contentPrev = x[i].content.slice(0,100);
 				x[i].link_id = i;
+				x[i].acro = (x[i].msg_type_id == 2) ? "event" : "feed" ;
 				feeder[i] = x[i];
 			}
 			$scope.feeds = feeder;
@@ -181,6 +182,35 @@ angular.module('starter.controllers', [])
 		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
 				console.log(data);
+			}).
+			error(function(data, textStatus, xhr) {
+				console.log(data);
+			});
+	}
+	else{
+		console.log(msgid,"Not Found");
+	}
+	// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
+
+	$scope.asyncCount();
+})
+
+.controller('EventController', function($scope, $stateParams, dataFactory) {
+	//alert($stateParams.feedid);
+
+	var msgid = $stateParams.message_id;
+	var index = $stateParams.index;
+	var donid = App_Session.donor_id;
+	$scope.feed = null;
+	var AllFeeds = API.storage.get("event_"+App_Session.donor_id);
+
+	if(AllFeeds[index]||AllFeeds[index]!=undefined){
+		$scope.feed = AllFeeds[index];
+		$scope.feed.is_read = true;
+		console.log("foundFeed:",$scope.feed)
+		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
+			success(function(data, textStatus, xhr) {
+				console.log('singlePost:',data);
 			}).
 			error(function(data, textStatus, xhr) {
 				console.log(data);
@@ -918,8 +948,6 @@ angular.module('starter.controllers', [])
 		});
 		
 	$scope.isreadchk = function(message_id){
-		// console.log(message_id);
-		// console.log($scope.feeds[message_id])
 		$scope.events[message_id].is_read = true;
 	}
 

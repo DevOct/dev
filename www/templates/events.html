@@ -1,8 +1,8 @@
 <ion-view view-title="Events">
   <ion-content>
     <ion-list class="__feed">
-      <ion-item ng-repeat="msg in events" class="list">
-			<a class="item item-text-wrap itCont" style="background-image:url({{msg.pic}})">
+      <ion-item ng-repeat="msg in events" class="list" ng-class="feed.is_read ? 'eread' : 'eunread'">
+			<a href="#/app/event/{{msg.link_id}}/{{msg.message_id}}" class="item item-text-wrap itCont" style="background-image:url({{msg.pic}})">
 			    <h2>{{msg.message_title}}</h2>
 			    <div>
 			    	<h3>{{msg.name}}</h3><br/>
@@ -11,24 +11,11 @@
 			    	<span><strong>Event Location:</strong> {{msg.event_location}}</span>
 			    </div>
 			</a>
-			<div class="item item-divider actionBarE">
+			<div class="item item-divider actionBarE ev">
 		    	<button class="button button-circle button-small" ng-click="donatetoorg(msg.org_id)"><img src="img/1.png" /></button>
 		    	<a class="button button-circle button-small" href="{{msg.event_link}}" target="_blank"><img src="img/2.png" /></a>
-<!-- 		    	<button class="button button-circle button-small"><img src="img/share.png" /></button>
- -->		      	<a type="button" ng-show="{{msg.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;isreadchk({{msg.message_id}})">see {{lala === false ? 'less': 'more';}}</a>
-			</div>
-<!--         	<div class="list">
-		    <img ng-src="{{msg.pic}}">
-		    <a class="item item-text-wrap" href="#/app/msg/{{msg.message_id}}">
-		      <h2>{{msg.message_title}}</h2>
-		      <div>
-			    <i class="icon ion-cube"></i> <h3>{{msg.name}}</h3>
-		      	<i class="icon social {{platforms(msg.msg_type_id)}}"></i>
-		      </div>
-		      <p ng-show="lala == true">{{msg.content | limitTo: 100}}{{msg.content.length > 100 ? '...' : ''}}</p>
-		      <p ng-show="lala == false">{{msg.content}}</p>
-		    </a>
-		</div> -->
+				<div class="clearfix"></div>
+ 			</div>
 		<div style="clear:both"></div>
       </ion-item>
     </ion-list>

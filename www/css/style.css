@@ -174,6 +174,34 @@
   border: none;
 }
 
+.ev .button-circle{
+  float: right;
+}
+
+.ev h2{
+  line-height: 2.75em
+}
+
+.ev img{
+  max-width: 50px !important;
+  max-height: 50px !important;
+  border-radius: 0 !important;
+}
+
+.ev{
+  padding-left: 70px;
+}
+
+.ti h2{
+  position: absolute;
+  bottom: 0;
+  padding: 10px;
+  font-weight: 900;
+  color: #ECECEC;
+  background-color: rgba(51, 51, 51, 0.67);
+  width: 100%;  
+}
+
 .actionBarE .button-circle,
 .actionBar .button-circle{
 //  background-color: #ED8C2B;
@@ -279,10 +307,20 @@
     margin: auto;
     display: block;
 }
+.eunread .ev,
 .unread {
     background-color: #B7B7B7;
 }
 
+.ti {
+    min-height: 50px;
+}
+
+.ti img {
+    width: 100%;
+}
+
+.eunread > *,
 .unread > * {
     transform: scale(1.02);
     font-weight: bolder;
