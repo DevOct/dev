@@ -1100,8 +1100,14 @@ angular.module('starter.controllers', [])
 	};
 
 	$scope.oct_donate = function(ext_flag){
-		if(ext_flag)
-			$window.location.href = $scope.billing.link_payment.toString();
+		if(ext_flag){
+			var lnk = $scope.billing.link_payment
+			if(lnk.slice(0, 8)=="https://" || lnk.slice(0, 7)=="http://")
+				$window.location.href = $scope.billing.link_payment.toString();
+			else
+				$window.location.href = 'http://'+$scope.billing.link_payment.toString();
+			return;
+		}
 		$scope.data.amountCent = $scope.data.amount*100;
     	console.log($scope.data.amountCent);
 
