@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
 		dataFactory.service('POST','http://app.octantapp.com/api/message_count',{donor_id:App_Session.donor_id}).
 		then(function(res){
 			console.log(res.data);
-			$scope.data.unread = {msgs:res.data.msg,feed:res.data.feed}
+			$scope.data.unread = {msgs:res.data.msg,feed:res.data.feed,events:res.data.events}
 		}).
 		finally(function(){
 			dataFactory._loading(false);
@@ -207,9 +207,9 @@ angular.module('starter.controllers', [])
 	if(AllFeeds[index]||AllFeeds[index]!=undefined){
 		$scope.feed = AllFeeds[index];
 		$scope.feed.is_read = true;
-		console.log("foundFeed:",$scope.feed)
 		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
+		console.log("foundFeed:",$scope.feed)
 				console.log('singlePost:',data);
 			}).
 			error(function(data, textStatus, xhr) {
@@ -266,7 +266,7 @@ angular.module('starter.controllers', [])
 		console.log($scope.newuser)
 
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-		var rep = /^(?=.*[a-z])[a-z]{8,20}$/
+		var rep = /^[a-zA-Z]{8,20}$/
 		if(!re.test($scope.profile.email)){
 			console.log('wut',re.test($scope.profile.email),$scope.profile.email)
 			dataFactory._alert("Incomplete Form","Invalid Email");
@@ -859,7 +859,7 @@ angular.module('starter.controllers', [])
 		}
 		else{
 			var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-			var rep = /^(?=.*[a-z])[a-z]{8,20}$/
+			var rep = /^[a-zA-Z]{8,20}$/
     		if(!re.test($scope.newuser.email)){
     			dataFactory._alert("Incomplete Form","Invalid Email");
     			return;
@@ -1007,7 +1007,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('DonateController', function($scope,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal,$timeout) {
+.controller('DonateController', function($scope,$window,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal,$timeout) {
 
 	$scope.profile = API.storage.get('userProf');
 
@@ -1050,12 +1050,14 @@ angular.module('starter.controllers', [])
 				city: ob[key].city,
 				zip: ob[key].zip,
 				state: ob[key].state,
+				ext_flag: ob[key].is_external_needed,
+				link_payment: ob[key].link_payment,
 				tel: "+92 321 9579365",
 			});
 			if($stateParams.orgid==ob[key].org_id)
 				slto = count;
 		}
-		console.log($scope.slides);
+		console.log("slides",$scope.slides);
     	$ionicSlideBoxDelegate.update();
     	// console.log(slto);
     	// API.storage.set('organizaions',$scope.organizaions);
@@ -1097,7 +1099,9 @@ angular.module('starter.controllers', [])
 	    });
 	};
 
-	$scope.oct_donate = function(){
+	$scope.oct_donate = function(ext_flag){
+		if(ext_flag)
+			$window.location.href = $scope.billing.link_payment.toString();
 		$scope.data.amountCent = $scope.data.amount*100;
     	console.log($scope.data.amountCent);
 
@@ -1563,6 +1567,25 @@ angular.module('starter.controllers', [])
     if(reverse) filtered.reverse();
     return filtered;
   };
+})
+
+.directive('passmall', function() {
+   return {
+     require: 'ngModel',
+     link: function(scope, element, attrs, modelCtrl) {
+        var capitalize = function(inputValue) {
+           if(inputValue == undefined) inputValue = '';
+           var capitalized = inputValue.toLowerCase();
+           if(capitalized !== inputValue) {
+              modelCtrl.$setViewValue(capitalized);
+              modelCtrl.$render();
+            }         
+            return capitalized;
+         }
+         modelCtrl.$parsers.push(capitalize);
+         capitalize(scope[attrs.ngModel]);  // capitalize initial value
+     }
+   };
 })
 
 .directive('baseImage', ['$window', function ($window) {

@@ -1,7 +1,7 @@
 <ion-view view-title="Octant">
   <ion-content>
     <ion-list class="__feed">						  <!--['is_read','org_id','msg_type_id','start_date']-->
-      <ion-item ng-repeat="feed in feeds | orderObjectBy: ['is_read','org_id','msg_type_id','start_date']" ng-class="feed.is_read ? 'read' : 'unread'">
+      <ion-item ng-repeat="feed in feeds | orderObjectBy: ['is_read']" ng-class="feed.is_read ? 'read' : 'unread'">
       	<div class="list">
 		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/{{feed.acro}}/{{feed.link_id}}/{{feed.message_id}}" ng-click="isreadchk({{false+','+feed.link_id}})">
 

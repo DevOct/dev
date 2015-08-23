@@ -320,7 +320,10 @@
     width: 100%;
 }
 
-.eunread > *,
+.eunread > *{
+    font-weight: bolder;
+    color: #000 !important;
+}
 .unread > * {
     transform: scale(1.02);
     font-weight: bolder;
