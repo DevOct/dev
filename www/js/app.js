@@ -18,6 +18,26 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
   $rootScope.Donor = {
   }
 
+  $rootScope.updateProf = function(){
+    profchk = null;
+    dataFactory._loading(true);
+    dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
+    then(function(res){
+      console.log('prof',res.data);
+      rem = API.storage.get('remember');
+      if(rem)
+        res.data.Users.remember = true;
+      API.storage.set('userProf',res.data.Users);
+      console.log(res.data);
+
+    },function(res){
+      console.log(res);
+    }).
+    finally(function(){
+      dataFactory._loading(false);
+    });
+  }
+
   $rootScope.updateSession= function(){
 
       App_Session = {
@@ -227,6 +247,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     })
     .state('app.profile', {
       url: "/profile",
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/profile.html",

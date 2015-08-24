@@ -2,28 +2,6 @@ angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $timeout, $window, $ionicSlideBoxDelegate, dataFactory) {
 
-	$scope.updateProf = function(){
-		profchk = null;
-		dataFactory._loading(true);
-		dataFactory.service('POST',"http://app.octantapp.com/api/donor_dg",{donor_id:App_Session.donor_id}).
-		then(function(res){
-			console.log('prof',res.data);
-			rem = API.storage.get('remember');
-			if(rem)
-				res.data.Users.remember = true;
-			API.storage.set('userProf',res.data.Users);
-			console.log(res.data);
-
-		},function(res){
-			console.log(res);
-		}).
-		finally(function(){
-			dataFactory._loading(false);
-		});		
-	}
-
-	$scope.updateProf();
-
 	$scope.$on('$locationChangeStart', function(next, current) { 
 		active    = document.querySelector('.__navtabs .active');
 		activated = document.querySelector('.__navtabs .activated');
@@ -91,6 +69,7 @@ angular.module('starter.controllers', [])
 
 .controller('FeedsController', function($scope, dataFactory) {
 	$scope.asyncCount();
+	$scope.updateProf();
 
 	$scope.lala = true;
 	$scope.readme = false;
@@ -224,9 +203,12 @@ angular.module('starter.controllers', [])
 	$scope.asyncCount();
 })
 
-.controller('ProfileController', function($scope,dataFactory,$ionicPopup,md5) {
+.controller('ProfileController', function($scope,dataFactory,$ionicPopup,md5,$timeout) {
 
-	dataFactory._loading(true);
+	$scope.updateProf();
+	console.log()
+
+	dataFactory._loading(true,'Organizing Cogs');
 	dataFactory.sec_question().then(function(res){
 		$scope.questions = res.data.feed_id;
 		console.log($scope.questions);
@@ -245,13 +227,16 @@ angular.module('starter.controllers', [])
 	}
 
 	donid = App_Session.donor_id;
-	$scope.profile = API.storage.get('userProf');
-	profchk = $scope.profile;
+
+	$timeout(function(){
+		$scope.profile = API.storage.get('userProf');	
+		profchk = $scope.profile;
+		$scope.pass.oldPass = $scope.profile.password;
+		console.log($scope.pass.oldPass);
+		if($scope.profile.image)
+			$scope.image.img64 = $scope.profile.image;
+	}, 1000);
 	
-	$scope.pass.oldPass = $scope.profile.password;
-	console.log($scope.pass.oldPass);
-	if($scope.profile.image)
-		$scope.image.img64 = $scope.profile.image;
 
 
 	$scope.updateUser = function(){
@@ -345,7 +330,7 @@ angular.module('starter.controllers', [])
 
 		  // An elaborate, custom popup
 		var myPopup = $ionicPopup.show({
-		    template: '<input type="password" ng-model="data.pass">',
+		    template: '<input type="password" ng-model="data.pass" passmall>',
 		    title: 'Enter Old Password',
 		    scope: $scope,
 		    buttons: [
@@ -586,7 +571,7 @@ angular.module('starter.controllers', [])
 	$scope.getPass = function(){
 		$scope.data = {}
 		return myPopup = $ionicPopup.show({
-		    template: '<input type="password" ng-model="data.password"><span class="err"></span>',
+		    template: '<input type="password" ng-model="data.password" passmall><span class="err"></span>',
 		    title: 'Match Found',
 		    subTitle: 'Enter New Password',
 		    scope: $scope,
@@ -903,6 +888,7 @@ angular.module('starter.controllers', [])
 				API.storage.set('donorName',res.data.donor_first_name+" "+res.data.donor_last_name);
 
 				$scope.updateSession();
+				$scope.updateProf();
 				dataFactory._alert("Success","User Creation successful");
 				dataFactory._go('app.org');
 				document.getElementById('signup').disabled = true;
@@ -964,6 +950,7 @@ angular.module('starter.controllers', [])
 	$scope.messages = API.storage.get("msg_"+App_Session.donor_id);
 	var donid = App_Session.donor_id;
 
+	dataFactory._loading(true);
 	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
 		success(function(data, textStatus, xhr){
 			var feeder = {};
@@ -983,6 +970,9 @@ angular.module('starter.controllers', [])
 			console.log("NO INTERNET");
 			// dataFactory._alert("");
 			$scope.feeds = API.storage.get("msg_"+App_Session.donor_id);
+		}).
+		finally(function(){
+			dataFactory._loading(false);
 		});
 		
 	$scope.isreadchk = function(message_id){
@@ -1033,57 +1023,66 @@ angular.module('starter.controllers', [])
 	$scope.billing = {}
 
 	dataFactory._loading(true);
-	dataFactory.service('GET','http://app.octantapp.com/api/organization').
+	dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id,is_active:1}).
 	then(function(res){
-		ob = res.data.feed_id;
-		$scope.organizaions = ob
-		count = 0;
-		console.log(ob);
-		for(key in ob){
-			count++;
-			$scope.slides.push({
-				image: ob[key].logo_full,
-				org_id: ob[key].org_id,
-				title: ob[key].name,
-				desc: ob[key].descrip,
-				address: ob[key].address_1 + ";" + ob[key].address_2,
-				city: ob[key].city,
-				zip: ob[key].zip,
-				state: ob[key].state,
-				ext_flag: ob[key].is_external_needed,
-				link_payment: ob[key].link_payment,
-				tel: "+92 321 9579365",
-			});
-			if($stateParams.orgid==ob[key].org_id)
-				slto = count;
-		}
-		console.log("slides",$scope.slides);
-    	$ionicSlideBoxDelegate.update();
-    	// console.log(slto);
-    	// API.storage.set('organizaions',$scope.organizaions);
-	}).
-	finally(function(){
-		dataFactory._loading(false);
-    	angular.element(document).ready(function () {
-	    	$ionicSlideBoxDelegate.slide(slto);
-	    	if(slto>0){
-	    		$scope.billing = $scope.slides[slto-1];
-	    		$scope.data.slide = slto;
-	    	}
-		    else
-		    	$scope.billing = {
-					image: null,
-					org_id: null,
-					title: null,
-					desc: null,
-					address: null,
-					city: null,
-					zip: null,
-					state: null,
-					tel: null,
+		sorgids = res.data;
+		dataFactory.service('GET','http://app.octantapp.com/api/organization').
+		then(function(res){
+			console.log("data:",res.data)
+			ob = res.data.feed_id;
+			$scope.organizaions = ob
+			count = 0;
+			console.log(ob);
+			for(key in ob){
+				for(key1 in sorgids){
+					if(sorgids[key1]==ob[key].org_id){
+						count++;
+						$scope.slides.push({
+							image: ob[key].logo_full,
+							org_id: ob[key].org_id,
+							title: ob[key].name,
+							desc: ob[key].descrip,
+							address: ob[key].address_1 + ";" + ob[key].address_2,
+							city: ob[key].city,
+							zip: ob[key].zip,
+							state: ob[key].state,
+							ext_flag: ob[key].is_external_needed,
+							link_payment: ob[key].link_payment,
+							tel: "+92 321 9579365",
+						});
+						if($stateParams.orgid==ob[key].org_id)
+							slto = count;						
+					}
 				}
-		    // console.log('page loading completed');
-		});
+			}
+			console.log("slides",$scope.slides);
+	    	$ionicSlideBoxDelegate.update();
+	    	// console.log(slto);
+	    	// API.storage.set('organizaions',$scope.organizaions);
+		}).
+		finally(function(){
+			dataFactory._loading(false);
+	    	angular.element(document).ready(function () {
+		    	$ionicSlideBoxDelegate.slide(slto);
+		    	if(slto>0){
+		    		$scope.billing = $scope.slides[slto-1];
+		    		$scope.data.slide = slto;
+		    	}
+			    else
+			    	$scope.billing = {
+						image: null,
+						org_id: null,
+						title: null,
+						desc: null,
+						address: null,
+						city: null,
+						zip: null,
+						state: null,
+						tel: null,
+					}
+			    // console.log('page loading completed');
+			});
+		})
 	})
 
 	$scope.dataChanged = function(selectedItem){
@@ -1102,6 +1101,7 @@ angular.module('starter.controllers', [])
 	$scope.oct_donate = function(ext_flag){
 		if(ext_flag){
 			var lnk = $scope.billing.link_payment
+			console.log(lnk);
 			if(lnk.slice(0, 8)=="https://" || lnk.slice(0, 7)=="http://")
 				$window.location.href = $scope.billing.link_payment.toString();
 			else
@@ -1527,10 +1527,13 @@ angular.module('starter.controllers', [])
 				 });
 
 		},
-		_loading: function(flag){
+		_loading: function(flag,msg){
+	        tem = '<ion-spinner icon="lines"></ion-spinner><br/>'
+			tem += (msg) ? msg+"<br/>" : 'Loading...';
+			
 			if(flag){
 				$ionicLoading.show({
-			      template: 'Loading...'
+			      template: tem
 			    });
 			}
 			else

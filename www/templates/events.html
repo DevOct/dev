@@ -1,7 +1,7 @@
 <ion-view view-title="Events">
   <ion-content>
     <ion-list class="__feed">
-      <ion-item ng-repeat="msg in events" class="list" ng-class="feed.is_read ? 'eread' : 'eunread'">
+      <ion-item ng-repeat="msg in events" class="list" ng-class="msg.is_read ? 'eread' : 'eunread'">
 			<a href="#/app/event/{{msg.link_id}}/{{msg.message_id}}" class="item item-text-wrap itCont" style="background-image:url({{msg.pic}})">
 			    <h2>{{msg.message_title}}</h2>
 			    <div>
