@@ -1042,7 +1042,8 @@ angular.module('starter.controllers', [])
 							org_id: ob[key].org_id,
 							title: ob[key].name,
 							desc: ob[key].descrip,
-							address: ob[key].address_1 + ";" + ob[key].address_2,
+							org_message: ob[key].org_message,
+							address: ob[key].address_1 + "; " + ob[key].address_2,
 							city: ob[key].city,
 							zip: ob[key].zip,
 							state: ob[key].state,
@@ -1137,6 +1138,7 @@ angular.module('starter.controllers', [])
 			min = 0
 
 	    	$scope.billing = $scope.slides[index-1];
+	    	console.log($scope.billing.org_message)
 
 			dataFactory.service('POST','http://app.octantapp.com/api/defaultdon',{'org_id':$scope.billing.org_id}).
 			then(function(res){
