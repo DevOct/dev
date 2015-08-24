@@ -155,6 +155,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
   })
   .state('signup', {
     url: "/signup",
+    cache: false,
     templateUrl: "templates/signup.html",
     controller: 'SignupController'
     })
@@ -191,6 +192,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     .state('app.org', {
       url: "/org",
       // param: {orgid:0},
+    cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/org.html",
@@ -229,6 +231,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     })
     .state('app.donate', {
       url: "/donate/:orgid",
+    cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/donate.html",
@@ -238,6 +241,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     })
     .state('app.pledge', {
       url: "/pledge",
+    cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/pledge.html",
