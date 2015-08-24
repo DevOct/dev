@@ -1389,6 +1389,7 @@ angular.module('starter.controllers', [])
 
 		if($scope.data.slide>0){
 			$scope.data.org_id = $scope.slides[$scope.data.slide-1].org_id
+			$scope.data.donor_id = App_Session.donor_id;
 			if($scope.data.amount>=minam){
 				dataFactory.service('POST','http://app.octantapp.com/api/pledge',$scope.data).
 				then(function(res){
