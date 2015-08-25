@@ -218,7 +218,7 @@ angular.module('starter.controllers', [])
 	// $scope.image64 = null;
 	$scope.image = {
 		img64: null,
-		img: null		
+		img: null
 	}
 	$scope.pass = {
 		pass_1 : null,
@@ -241,7 +241,8 @@ angular.module('starter.controllers', [])
 
 	$scope.updateUser = function(){
 
-		if($scope.image.img64){
+		if($scope.image && $scope.image.img64 && $scope.image.img){
+			console.log()
 			$scope.profile.image = $scope.image.img64;
 			if((parseInt($scope.image.img.filesize)/1024) > 1024){
 				dataFactory._alert("Image Size too big","Image Size bigger than 1 mb");
@@ -251,7 +252,7 @@ angular.module('starter.controllers', [])
 		console.log($scope.newuser)
 
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-		var rep = /^[a-zA-Z]{8,20}$/
+		var rep = /^[a-zA-Z0-9]{8,20}$/
 		if(!re.test($scope.profile.email)){
 			console.log('wut',re.test($scope.profile.email),$scope.profile.email)
 			dataFactory._alert("Incomplete Form","Invalid Email");
@@ -844,7 +845,7 @@ angular.module('starter.controllers', [])
 		}
 		else{
 			var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-			var rep = /^[a-zA-Z]{8,20}$/
+			var rep = /^[a-zA-Z0-9]{8,20}$/
     		if(!re.test($scope.newuser.email)){
     			dataFactory._alert("Incomplete Form","Invalid Email");
     			return;

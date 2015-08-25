@@ -1,12 +1,12 @@
 <ion-view view-title="Octant">
   <ion-content>
     <ion-list class="__feed">						  <!--['is_read','org_id','msg_type_id','start_date']-->
-      <ion-item ng-repeat="feed in feeds | orderObjectBy: [['is_read',false],['start_date',true],['message_id',true]]" ng-class="feed.is_read ? 'read' : 'unread'">
+      <ion-item ng-repeat="feed in feeds | orderObjectBy: [['iden',false]]" ng-class="feed.is_read ? 'read' : 'unread'">
       	<div class="list">
 		    <a class="item item-thumbnail-left item-text-wrap" href="#/app/{{feed.acro}}/{{feed.link_id}}/{{feed.message_id}}" ng-click="isreadchk({{false+','+feed.link_id}})">
 
 		      <img ng-src="{{feed.pic}}" ng-show=" feed.pic || feed.pic.length>0 ? true : false">
-		      <div class="org">
+		      <div class="org">{{feed.iden}}
 			    <img ng-src="{{feed.logo_full}}"> <h3>{{feed.name}}</h3>
 		    	<h2>{{feed.message_title}}</h2>
 		      	<i class="icon social {{platforms(feed.msg_type_id)}}"></i>
