@@ -208,7 +208,7 @@ angular.module('starter.controllers', [])
 	$scope.updateProf();
 	console.log()
 
-	dataFactory._loading(true,'Organizing Cogs');
+	dataFactory._loading(true,'Fetching Profile');
 	dataFactory.sec_question().then(function(res){
 		$scope.questions = res.data.feed_id;
 		console.log($scope.questions);
@@ -288,7 +288,7 @@ angular.module('starter.controllers', [])
 				dataFactory._alert('Security Answer','Security Answer too short, Please enter more than 8 characters')
 				return
 			}
-		dataFactory._loading(true);
+		dataFactory._loading(true,"Updating Profile");
 		dataFactory.service('PUT','http://app.octantapp.com/api/donor',$scope.profile).
 			success(function (data, status, headers, config) {
 				if(data.Error && data.Message.code == "ER_DUP_ENTRY"){
@@ -376,7 +376,7 @@ angular.module('starter.controllers', [])
 	$scope.checkedOrgs = {};
 	checkProto = {is_checked:false}
 
-	dataFactory._loading(true);
+	dataFactory._loading(true,'Fetching Organizations');
 	dataFactory.service('GET','http://app.octantapp.com/api/organization').
 	then(function(res){
 		ob = res.data.feed_id;
@@ -387,7 +387,7 @@ angular.module('starter.controllers', [])
 		}
 		$scope.organizaions = co;
 
-		dataFactory._loading(true);
+		dataFactory._loading(true,'Fetching Your Organizations');
 		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id,is_active:1}).
 		then(function(res){
 			console.log(res.data);
@@ -505,7 +505,7 @@ angular.module('starter.controllers', [])
 			if($scope.forgot.sec_answer.length>6){
 				var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 	    		if(re.test($scope.forgot.email)){
-					dataFactory._loading(true);
+					dataFactory._loading(true,'Resetting Password');
 	    			dataFactory.service('POST','http://app.octantapp.com/api/reset_pswrd',$scope.forgot).
 	    				success(function(data, textStatus, xhr){
 	    					console.log(data);
@@ -558,7 +558,7 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.EmailCreds = function(){
-		dataFactory._loading(true);
+		dataFactory._loading(true,'Sending Email');
 		dataFactory.service('POST','http://app.octantapp.com/api/forgetpassword/123456789',$scope.forgot).
 		then(function(res){
 			console.log(res.data);
@@ -740,7 +740,7 @@ angular.module('starter.controllers', [])
 		if($scope.user.remember)
 			$scope.user.login_info = 1
 		console.log($scope.user)
-		dataFactory._loading(true);
+		dataFactory._loading(true,'logging in');
 		$scope.user.password = md5.createHash($scope.user.pass || '');
 		// console.log($scope.user);
 		dataFactory.service('POST',"http://app.octantapp.com/api/userlogin/123456789",
@@ -855,7 +855,7 @@ angular.module('starter.controllers', [])
     		}
 		}
 
-		dataFactory._loading(true);
+		dataFactory._loading(true,'Please wait while we Sign You Up');
 
 		k = $scope.newuser;
 		console.log($scope.newuser);
@@ -909,7 +909,7 @@ angular.module('starter.controllers', [])
 	$scope.events = API.storage.get("event_"+App_Session.donor_id);
 	var donid = App_Session.donor_id;
 
-	dataFactory._loading(true);
+	dataFactory._loading(true,'Loading Events');
 	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
 		success(function(data, textStatus, xhr){
 			var feeder = {};
@@ -950,7 +950,7 @@ angular.module('starter.controllers', [])
 	$scope.messages = API.storage.get("msg_"+App_Session.donor_id);
 	var donid = App_Session.donor_id;
 
-	dataFactory._loading(true);
+	dataFactory._loading(true,'Loading Messages');
 	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
 		success(function(data, textStatus, xhr){
 			var feeder = {};
@@ -1022,7 +1022,7 @@ angular.module('starter.controllers', [])
 	$scope.organizaions = {}
 	$scope.billing = {}
 
-	dataFactory._loading(true);
+	dataFactory._loading(true,'Fetching Organizaions');
 	dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id,is_active:1}).
 	then(function(res){
 		sorgids = res.data;
@@ -1319,7 +1319,7 @@ angular.module('starter.controllers', [])
 	$scope.organizaions = {}
 	$scope.billing = {}
 
-	dataFactory._loading(true);
+	dataFactory._loading(true,'Fetching your Organizaions');
 	dataFactory.service('GET','http://app.octantapp.com/api/organization').
 	then(function(res){
 		ob = res.data.feed_id;
@@ -1584,10 +1584,10 @@ angular.module('starter.controllers', [])
     angular.forEach(field, function(value, key){
 	    filtered.sort(function (a, b) {
 	    	// console.log(a[field[]],b[field]);
-	      return (a[field[key]] > b[field[key]] ? 1 : -1);
+	      return (a[field[key][0]] > b[field[key][0]] ? 1 : -1);
 	    });    	
+	    if(field[key][1]) filtered.reverse();
     });
-    if(reverse) filtered.reverse();
     return filtered;
   };
 })
