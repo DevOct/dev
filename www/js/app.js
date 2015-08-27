@@ -112,9 +112,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
       API.storage.remove('event_'+did)
       API.storage.remove('feeds_'+did)
       API.storage.remove('msg_'+did)
+      API.storage.remove('email')
       API.storage.remove('donorId')
       API.storage.remove('donorName')
       API.storage.remove('donorImage')
+      API.storage.remove('cardcache')
       console.log(logout)
       if(logout){
         API.storage.set('remember',false)

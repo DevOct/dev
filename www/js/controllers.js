@@ -1149,7 +1149,6 @@ angular.module('starter.controllers', [])
 						city: null,
 						zip: null,
 						state: null,
-						tel: null,
 					}
 			    // console.log('page loading completed');
 			});
@@ -1256,7 +1255,6 @@ angular.module('starter.controllers', [])
 				city: null,
 				zip: null,
 				state: null,
-				tel: null
 			}
 
 			document.getElementById('pricelist').disabled = true
@@ -1362,6 +1360,7 @@ angular.module('starter.controllers', [])
 		    	}
 		    	API.storage.set('cardcache',cardcache);
 		    }
+		    else{API.storage.remove('cardcache')}
     	})
 
 	}
@@ -1419,7 +1418,6 @@ angular.module('starter.controllers', [])
 								city: ob[key].city,
 								zip: ob[key].zip,
 								state: ob[key].state,
-								tel: "+92 321 9579365"
 
 							});
 							if($stateParams.orgid==ob[key].org_id)
@@ -1450,7 +1448,6 @@ angular.module('starter.controllers', [])
 					city: null,
 					zip: null,
 					state: null,
-					tel: null,
 				}
 
 		    // console.log('page loading completed');
@@ -1543,7 +1540,6 @@ angular.module('starter.controllers', [])
 				city: null,
 				zip: null,
 				state: null,
-				tel: null
 			}
 
 			document.getElementById('pricelist').disabled = true

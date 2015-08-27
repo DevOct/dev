@@ -369,3 +369,9 @@
 .eventsC:before {
   content: "e" !important;
 }
+
+p i {
+  color: #8BBAFF;
+  font-size: 9pt;
+  font-style: italic;
+}
