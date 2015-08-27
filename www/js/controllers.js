@@ -714,8 +714,10 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, facebookService, md5, dataFactory, $cordovaGeolocation,$timeout) {
+.controller('LoginController', function($scope, facebookService, md5, dataFactory, $cordovaGeolocation,$timeout,$ionicPopup) {
 
+  var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+  var rep = /^[a-zA-Z0-9]{8,20}$/
   did = API.storage.get('donorId')
   rem = API.storage.get('remember')
   if(!rem){
@@ -765,10 +767,27 @@ angular.module('starter.controllers', [])
 					API.storage.set('donorImage',uid.image);
 					API.storage.set('remember',$scope.user.remember);
 					$scope.updateSession();
-					$timeout(function(){
-						$scope.closeMod();
-					}, 2000);
-					dataFactory._go('app.home');
+					var cm = null;
+					if(login_info==2){
+						$scope.getPass().
+						then(function(dat){
+    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data).
+    						then(function(res){
+    							// console.log(res);
+    							dataFactory._alert('Updated Successfully');
+    						})
+							$timeout(function(){
+								$scope.closeMod();
+							}, 2000);
+							dataFactory._go('app.home');
+						});
+					} else {
+						$timeout(function(){
+							$scope.closeMod();
+						}, 2000);
+						dataFactory._go('app.home');
+					}
+
 				}
 				else{
 					dataFactory._alert("Error","Cannot Sign in with the given credentials");
@@ -786,6 +805,36 @@ angular.module('starter.controllers', [])
 			});
 	}
 
+	$scope.getPass = function(){
+		$scope.data = {}
+		return myPopup = $ionicPopup.show({
+		    template: '<input type="password" ng-model="data.password" passmall><span class="err"></span>',
+		    title: 'Match Found',
+		    subTitle: 'Enter New Password',
+		    scope: $scope,
+		    buttons: [
+		      { 
+		      	text: 'Cancel',
+		      	onTap: function(e){
+		      		return false;
+		      	}
+		      },
+		      {
+		        text: '<b>Confirm</b>',
+		        type: 'button-positive',
+		        onTap: function(e) {
+		          if (!$scope.data.password && rep.test($scope.data.password))) {
+		          	document.querySelector('span.err').innerHTML = 'Your password must be between 8 and 20 characters and must contain only standard characters and numbers, it is not case sensitive.';
+		            e.preventDefault();
+		          } else {
+		          	console.log($scope.data);
+		            return $scope.data.password;
+		          }
+		        }
+		      }
+		    ]
+		});
+	}
 //
 })
 
