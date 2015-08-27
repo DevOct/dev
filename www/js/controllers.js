@@ -534,6 +534,7 @@ angular.module('starter.controllers', [])
 		    						then(function(res){
 		    							// console.log(res);
 		    							dataFactory._alert('Updated Successfully');
+		    							$scope.closeMod();
 		    						})
 		    					});
 		    					// dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data)
@@ -772,7 +773,7 @@ angular.module('starter.controllers', [])
 					if(login_info==2){
 						$scope.getPass().
 						then(function(dat){
-    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data).
+    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',{'password':dat,donor_id:App_Session.donor_id}).
     						then(function(res){
     							console.log(res);
     							dataFactory._alert('Updated Successfully');
@@ -1075,6 +1076,14 @@ angular.module('starter.controllers', [])
 		email: $scope.profile.email
 	};
 
+	var cardcache  = API.storage.get('cardcache');
+
+	if(cardcache!=undefined||cardcache){
+		$scope.data.number = cardcache.ca_number
+		$scope.data.cvc = cardcache.ca_cvc
+		$scope.data.expiry = cardcache.ca_expiry
+	}
+
 	$scope.price = []
 
 	$scope.postData = {}
@@ -1277,8 +1286,6 @@ angular.module('starter.controllers', [])
 	console.log($scope.data);
 
 	$scope.checkout = function(){
-
-
 		if(
 			$scope.data.expiry 			&&
 			$scope.data.number 			&&
@@ -1328,7 +1335,7 @@ angular.module('starter.controllers', [])
 		}
 		if(! $.payment.validateCardCVC($scope.postData.cvc) ){
 			dataFactory._alert("Data Error","Invalid CVC")
-			return			
+			return
 		}
 
     	dataFactory.service('POST','http://app.octantapp.com/scrape',$scope.postData).
@@ -1346,6 +1353,15 @@ angular.module('starter.controllers', [])
     	}).
     	finally(function(){
 		    $scope.modal.hide();
+
+		    if($scope.data.remember){
+		    	var cardcache = {
+		    		ca_number : $scope.data.number,
+		    		ca_cvc : $scope.data.cvc,
+		    		ca_expiry : $scope.data.expiry
+		    	}
+		    	API.storage.set('cardcache',cardcache);
+		    }
     	})
 
 	}
