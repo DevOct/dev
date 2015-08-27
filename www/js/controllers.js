@@ -758,6 +758,7 @@ angular.module('starter.controllers', [])
 			then(function(res){
 
 				var uid = res.data.Sucess;
+				login_info = res.data.login_info
 				console.log(res.data)
 				if(uid != "false"){
 					// console.log(uid);
@@ -773,18 +774,15 @@ angular.module('starter.controllers', [])
 						then(function(dat){
     						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data).
     						then(function(res){
-    							// console.log(res);
+    							console.log(res);
     							dataFactory._alert('Updated Successfully');
     						})
 							$timeout(function(){
-								$scope.closeMod();
-							}, 2000);
+								$scope.closeMod();				
+							}, 2000);					
 							dataFactory._go('app.home');
 						});
 					} else {
-						$timeout(function(){
-							$scope.closeMod();
-						}, 2000);
 						dataFactory._go('app.home');
 					}
 
@@ -799,9 +797,11 @@ angular.module('starter.controllers', [])
 			},function(res){
 				console.log(res);
 			}).finally(function(){
-				$timeout(function(){
-					$scope.closeMod();				
-				}, 2000);
+				if(login_info!=2){
+					$timeout(function(){
+						$scope.closeMod();				
+					}, 2000);					
+				}
 			});
 	}
 
@@ -823,7 +823,7 @@ angular.module('starter.controllers', [])
 		        text: '<b>Confirm</b>',
 		        type: 'button-positive',
 		        onTap: function(e) {
-		          if (!$scope.data.password && rep.test($scope.data.password))) {
+		          if (!$scope.data.password && rep.test($scope.data.password)) {
 		          	document.querySelector('span.err').innerHTML = 'Your password must be between 8 and 20 characters and must contain only standard characters and numbers, it is not case sensitive.';
 		            e.preventDefault();
 		          } else {
