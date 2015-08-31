@@ -1193,15 +1193,6 @@ angular.module('starter.controllers', [])
 	};
 
 	$scope.oct_donate = function(ext_flag){
-		if(ext_flag){
-			var lnk = $scope.billing.link_payment
-			console.log(lnk);
-			if(lnk.slice(0, 8)=="https://" || lnk.slice(0, 7)=="http://")
-				$window.location.href = $scope.billing.link_payment.toString();
-			else
-				$window.location.href = 'http://'+$scope.billing.link_payment.toString();
-			return;
-		}
 		$scope.data.amountCent = $scope.data.amount*100;
     	console.log($scope.data.amountCent);
 
@@ -1209,7 +1200,33 @@ angular.module('starter.controllers', [])
 		if($scope.data.slide>0){
 			console.log($scope.data.amount,min)
 			if($scope.data.amount>=min){
-		    	$scope.stripe();
+				if(ext_flag){
+					dataFactory._loading(true,'Redirecting to Organization Site')
+					var lnk = $scope.billing.link_payment
+					var h;
+					if(lnk.slice(0, 8)=="https://" || lnk.slice(0, 7)=="http://")
+						h = $scope.billing.link_payment.toString();
+					else
+						h = 'http://'+$scope.billing.link_payment.toString();
+					console.log(lnk,h);
+
+					$scope.d = {
+						donor_id: App_Session.donor_id,
+						org_id: $scope.billing.org_id,
+						amount: $scope.amountCent
+					}
+					dataFactory.service('POST','http://app.octantapp.com/scrape',$scope.d).
+					then().
+					finally(function(){
+						var a = document.createElement('a');
+							a.href = h;
+							a.click();
+						dataFactory._loading(false)
+						return;						
+					})
+				}
+				else
+			    	$scope.stripe();
 			}
 			else{
 				dataFactory._alert('Amount Error','Kindly Enter a Number Greater than the Min Amount ($'+min+')');
