@@ -45,7 +45,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
         donor_id    : API.storage.get('donorId'),
         donor_name  : API.storage.get('donorName'),
         donor_image : API.storage.get('donorImage'),
-        donor_image : API.storage.get('remember'),
         remember    : false
       }
 
