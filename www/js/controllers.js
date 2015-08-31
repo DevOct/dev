@@ -377,7 +377,7 @@ angular.module('starter.controllers', [])
   	}
 })
 
-.controller('orgController', function($scope, dataFactory,$stateParams) {
+.controller('orgController', function($scope, dataFactory,$stateParams,$ionicModal) {
 
 	$scope.organizaions = null;
 	$scope.checkedOrgs = {};
@@ -420,7 +420,6 @@ angular.module('starter.controllers', [])
 
 	})
 
-
 	$scope.checkOrg = function(org_id){
 		if($scope.organizaions[org_id].is_checked){
 			$scope.checkedOrgs[org_id] = $scope.organizaions[org_id];
@@ -435,7 +434,23 @@ angular.module('starter.controllers', [])
 		}
 	}
 
+	$scope.orgSelect = function(){
+	    $ionicModal.fromTemplateUrl('templates/orgChecked.html', {
+	    	scope: $scope
+	    }).then(function(modal) {
+	    	$scope.modal = modal;
+	    	$scope.modal.show();
+	    });
+
+	}
+
+	$scope.closeMod = function(){
+    	$scope.modal.hide();
+	}
+
 	$scope.conferOrgs = function(){
+		dataFactory._loading(true)
+		$scope.closeMod();
 		$scope.checkedOrgs;
 		$scope.data = []
 		clength = 0;
@@ -471,6 +486,7 @@ angular.module('starter.controllers', [])
 					dataFactory._alert('Failed','Some Error occured');
 				})
 				.finally(function(){
+					dataFactory._loading(false)
 					dataFactory._go('app.home');
 				})
 		}
@@ -1024,6 +1040,14 @@ angular.module('starter.controllers', [])
 					x[i].link_id = i;
 					feeder[i] = x[i];					
 				}
+				lii = x[i].content
+				var temp = document.createElement('div');
+					temp.innerHTML = x[i].content
+				var text = temp.textContent || temp.innerText || "";
+				if(text.length > 100)
+					x[i].contentPrev = text.slice(0,100);
+				else
+					x[i].contentPrev = x[i].content
 			}
 			$scope.messages = feeder;
 			API.storage.set("msg_"+App_Session.donor_id,feeder);
@@ -1291,7 +1315,6 @@ angular.module('starter.controllers', [])
 			$scope.data.email			&&
 			$scope.data.address_city	&&
 			$scope.data.address_line1	&&
-			$scope.data.address_line2	&&
 			$scope.data.address_state	&&
 			$scope.data.address_zip
 		){
@@ -1465,11 +1488,21 @@ angular.module('starter.controllers', [])
 			$scope.data.org_id = $scope.slides[$scope.data.slide-1].org_id
 			$scope.data.donor_id = App_Session.donor_id;
 			if($scope.data.amount>=minam){
-				dataFactory.service('POST','http://app.octantapp.com/api/pledge',$scope.data).
-				then(function(res){
-					console.log(res);
-					$scope.showAlert();
-				})
+				if(		address_line1 &&
+						address_zip &&
+						address_city &&
+						address_state &&
+						email ){
+	
+					dataFactory.service('POST','http://app.octantapp.com/api/pledge',$scope.data).
+					then(function(res){
+						console.log(res);
+						$scope.showAlert();
+					})
+					
+				} else {
+					dataFactory._alert('Incomplete Information','Please fill the complete form')
+				}
 				
 			}
 			else{
