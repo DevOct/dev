@@ -731,7 +731,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, facebookService, md5, dataFactory, $cordovaGeolocation,$timeout,$ionicPopup) {
+.controller('LoginController', function($scope, facebookService, md5, dataFactory, $cordovaGeolocation,$timeout,$ionicPopup,$ionicUser) {
 
   var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
   var rep = /^[a-zA-Z0-9]{8,20}$/
@@ -786,22 +786,43 @@ angular.module('starter.controllers', [])
 					API.storage.set('remember',$scope.user.remember);
 					$scope.updateSession();
 					var cm = null;
-					if(login_info==2){
-						$scope.getPass().
-						then(function(dat){
-    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',{'password':dat,donor_id:App_Session.donor_id}).
-    						then(function(res){
-    							console.log(res);
-    							dataFactory._alert('Updated Successfully');
-    						})
-							$timeout(function(){
-								$scope.closeMod();				
-							}, 2000);					
+					var user = $ionicUser.get();
+					console.log($scope.dev1);
+
+					u_id = 'OCT-'+API.storage.get('donorId').toString();
+
+					$ionicUser.identify({
+					  user_id: u_id,
+					  name: API.storage.get('donorName'),
+					  email: API.storage.get('email'),
+					})
+					.error(function(err){console.log("err",err)})
+					.then(function(){
+						
+						console.log($scope.pushRegister);
+						$scope.pushRegister();
+
+						// console.log(err);	
+						// console.log('ionicUser:',$ionicUser)
+						if(login_info==2){
+							$scope.getPass().
+							then(function(dat){
+	    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',{'password':dat,donor_id:App_Session.donor_id}).
+	    						then(function(res){
+	    							console.log(res);
+	    							dataFactory._alert('Updated Successfully');
+	    						})
+								$timeout(function(){
+									$scope.closeMod();				
+								}, 2000);
+
+								//create user
+									dataFactory._go('app.home');
+							});
+						} else {
 							dataFactory._go('app.home');
-						});
-					} else {
-						dataFactory._go('app.home');
-					}
+						}
+					});
 
 				}
 				else{
@@ -994,6 +1015,8 @@ angular.module('starter.controllers', [])
 				dataFactory._alert("Success","User Creation successful");
 				dataFactory._go('app.org');
 				document.getElementById('signup').disabled = true;
+
+
 			}).
 			finally(function(){
 				dataFactory._loading(false);
@@ -1435,8 +1458,7 @@ angular.module('starter.controllers', [])
 	var minam = 0;
 	$scope.profile = API.storage.get('userProf');
 
-	$scope.profile = API.storage.get('userProf');
-
+console.log($scope.profile)
 	$scope.data = {
 		fee: 5,
 		amount: null,
@@ -1528,11 +1550,11 @@ angular.module('starter.controllers', [])
 			$scope.data.org_id = $scope.slides[$scope.data.slide-1].org_id
 			$scope.data.donor_id = App_Session.donor_id;
 			if($scope.data.amount>=minam){
-				if(		address_line1 &&
-						address_zip &&
-						address_city &&
-						address_state &&
-						email ){
+				if(		$scope.data.address_line1 &&
+						$scope.data.address_zip &&
+						$scope.data.address_city &&
+						$scope.data.address_state &&
+						$scope.data.email ){
 	
 					dataFactory.service('POST','http://app.octantapp.com/api/pledge',$scope.data).
 					then(function(res){

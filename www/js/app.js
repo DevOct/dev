@@ -4,9 +4,9 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCordova'])
+angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 'starter.controllers', 'angular-md5' , 'ngCordova'])
 
-.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice) {
+.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice,$ionicPush) {
   $rootScope.dev1 = {};
   $rootScope.dev1.flag = false;
 
@@ -150,9 +150,39 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angular-md5' , 'ngCo
     // }
 
   });
+
+    $rootScope.pushRegister = function() {
+     console.log('Ionic Push: Registering user');
+     
+     console.log($ionicPush.register);
+     // Register with the Ionic Push service.  All parameters are optional.
+     $ionicPush.register({
+       canShowAlert: true, //Can pushes show an alert on your screen?
+       canSetBadge: true, //Can pushes update app icon badges?
+       canPlaySound: true, //Can notifications play a sound?
+       canRunActionsOnWake: true, //Can run actions outside the app,
+       onNotification: function(notification) {
+         // Handle new push notifications here
+         return true;
+       }
+     });
+    };
+
+    $rootScope.$on('$cordovaPush:tokenReceived', function(event, data) {
+      alert("Successfully registered token " + data.token);
+      console.log('Ionic Push: Got token ', data.token, data.platform);
+      $rootScope.token = data.token;
+    });
 })
 
-.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+.config(function($stateProvider, $urlRouterProvider, $httpProvider,$ionicAppProvider) {
+
+    $ionicAppProvider.identify({
+        app_id: '7dfbed51',
+        api_key: '674e2dec3b9d6b424238032b26997a4bf5736d61c6451a6a',
+        dev_push: true
+    });
+
 
     // $httpProvider.defaults.useXDomain = true;
     // $httpProvider.defaults.headers.common = 'Content-Type: application/json';
