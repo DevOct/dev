@@ -1240,15 +1240,7 @@ angular.module('starter.controllers', [])
 
 	$scope.updateAdd = function(){
 		$scope.udata = API.storage.get('userProf')
-		$scope.udata = {
-			city: $scope.data.address_city,
-			address_1: $scope.data.address_line1,
-			address_2: $scope.data.address_line2,
-			state:$scope.data.address_state,
-			zip: $scope.data.address_zip,
-			donor_id: App_Session.donor_id
-		}
-
+		
 		if(
 			$scope.data.email			&&
 			$scope.data.address_city	&&
@@ -1256,6 +1248,12 @@ angular.module('starter.controllers', [])
 			$scope.data.address_state	&&
 			$scope.data.address_zip
 			){
+				$scope.udata.city = $scope.data.address_city
+				$scope.udata.address_1 = $scope.data.address_line1
+				$scope.udata.address_2 = $scope.data.address_line2
+				$scope.udata.state =$scope.data.address_state
+				$scope.udata.zip = $scope.data.address_zip
+				$scope.udata.donor_id = App_Session.donor_id
 
 			dataFactory._loading(true,"Updating Profile");
 			dataFactory.service('PUT','http://app.octantapp.com/api/donor',$scope.udata).
