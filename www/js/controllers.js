@@ -1239,7 +1239,7 @@ angular.module('starter.controllers', [])
 	};
 
 	$scope.updateAdd = function(){
-		$scope.oprof = API.storage.get('userProf')
+		$scope.udata = API.storage.get('userProf')
 		$scope.udata = {
 			city: $scope.data.address_city,
 			address_1: $scope.data.address_line1,
