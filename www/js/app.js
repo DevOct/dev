@@ -169,7 +169,7 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
     };
 
     $rootScope.$on('$cordovaPush:tokenReceived', function(event, data) {
-      alert("Successfully registered token " + data.token);
+      // alert("Successfully registered token " + data.token);
       console.log('Ionic Push: Got token ', data.token, data.platform);
       $rootScope.token = data.token;
     });

@@ -1238,10 +1238,55 @@ angular.module('starter.controllers', [])
 	    });
 	};
 
+	$scope.updateAdd = function(){
+		$scope.oprof = API.storage.get('userProf')
+		$scope.udata = {
+			city: $scope.data.address_city,
+			address_1: $scope.data.address_line1,
+			address_2: $scope.data.address_line2,
+			state:$scope.data.address_state,
+			zip: $scope.data.address_zip,
+			donor_id: App_Session.donor_id
+		}
+
+		if(
+			$scope.data.email			&&
+			$scope.data.address_city	&&
+			$scope.data.address_line1	&&
+			$scope.data.address_state	&&
+			$scope.data.address_zip
+			){
+
+			dataFactory._loading(true,"Updating Profile");
+			dataFactory.service('PUT','http://app.octantapp.com/api/donor',$scope.udata).
+				success(function (data, status, headers, config) {
+					if(data.Error && data.Message.code == "ER_DUP_ENTRY"){
+						dataFactory._alert("Error","Duplicate Email Found")
+						return false;
+					}
+					$scope.updateSession();
+				}).
+				error(function (data, status, headers, config) {
+						console.error('error',data,status);
+				}).finally(function(){
+					$scope.updateProf();
+					dataFactory._loading(false);
+				});
+			return false;
+		}
+		else
+			return true
+	}
+
 	$scope.oct_donate = function(ext_flag){
 		$scope.data.amountCent = $scope.data.amount*100;
     	console.log($scope.data.amountCent);
 
+    	flag=$scope.updateAdd();
+    	if(flag){
+    		dataFactory._alert('Incomplete Data','Kindly update your Address to continue');
+    		return
+    	}
 
 		if($scope.data.slide>0){
 			console.log($scope.data.amount,min)
@@ -1262,7 +1307,9 @@ angular.module('starter.controllers', [])
 						amount: $scope.amountCent
 					}
 					dataFactory.service('POST','http://app.octantapp.com/scrape',$scope.d).
-					then().
+					then(function(res){
+						console.log(res);
+					}).
 					finally(function(){
 						var a = document.createElement('a');
 							a.href = h;
