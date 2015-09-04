@@ -1,5 +1,5 @@
 {
-  "name": "donate",
+  "name": "Octant Analytics",
   "version": "1.0.0",
   "description": "donate: An Ionic project",
   "dependencies": {
@@ -21,7 +21,7 @@
     "com.ionic.keyboard",
     "org.apache.cordova.device",
     "cordova-plugin-device",
-    "D:\\imixtron\\sumair\\gitstuff\\push\\"
+    "ionic-service-push"
   ],
   "cordovaPlatforms": [
     "android"

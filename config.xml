@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.ionicframework.donate809060" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>donate</name>
-  <description>
-        An Ionic Framework and Cordova project.
-    </description>
-  <author email="hi@ionicframework" href="http://ionicframework.com/">
-      Ionic Framework Team
-    </author>
+  <name>Octant Analytics</name>
+  <description>&#xD;
+    Donation app for Octant Analytics&#xD;
+  </description>
+  <author email="imaadabbasi@hotmail.com" href="http://ionicframework.com/">&#xD;
+      Imixtron - Imad Ali&#xD;
+  </author>
   <content src="index.html"/>
   <access origin="*"/>
+  <allow-navigation href="*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>

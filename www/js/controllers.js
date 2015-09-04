@@ -1304,16 +1304,16 @@ angular.module('starter.controllers', [])
 						org_id: $scope.billing.org_id,
 						amount: $scope.amountCent
 					}
-					dataFactory.service('POST','http://app.octantapp.com/scrape',$scope.d).
+					dataFactory.service('POST','http://app.octantapp.com/api/ext_don',$scope.d).
 					then(function(res){
-						console.log(res);
+						console.info('EXT',res);
 					}).
 					finally(function(){
 						var a = document.createElement('a');
 							a.href = h;
 							a.click();
 						dataFactory._loading(false)
-						return;						
+						return;				
 					})
 				}
 				else
