@@ -1472,7 +1472,7 @@ angular.module('starter.controllers', [])
     		if(res.data.success){
     			dataFactory._alert(
     				'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-    				'ThankYou for you kind Donation'
+    				'Thank You for you kind Donation'
     			)
     		}
     		else{
@@ -1692,7 +1692,7 @@ console.log($scope.profile)
 		console.log(x)
 		dataFactory._alert(
 			'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-			'ThankYou for you kind Donations')
+			'Thank You for you kind Donations')
 	};
 })
 
