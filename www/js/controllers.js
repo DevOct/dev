@@ -1302,8 +1302,9 @@ angular.module('starter.controllers', [])
 					$scope.d = {
 						donor_id: App_Session.donor_id,
 						org_id: $scope.billing.org_id,
-						amount: $scope.amountCent
+						amount: $scope.data.amountCent
 					}
+					console.log($scope.d)
 					dataFactory.service('POST','http://app.octantapp.com/api/ext_don',$scope.d).
 					then(function(res){
 						console.info('EXT',res);
