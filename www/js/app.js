@@ -314,6 +314,10 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
 });
 
 var API = {
+  ver: {
+    no: "0.0.1",
+    date: "9/6/2015, 12:19:25 AM"
+  },
   platformCheck : function(){
     return (typeof device !== 'undefined') ? device.platform : '';
   },

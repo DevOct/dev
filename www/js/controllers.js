@@ -929,8 +929,8 @@ angular.module('starter.controllers', [])
 				$scope.newuser.device_identification = $scope.dev1.uuid
 				$scope.newuser.device_os = $scope.dev1.platform
 				$scope.newuser.device_os_version = $scope.dev1.version
-				$scope.newuser.octant_donor_version = null
-				$scope.newuser.updated_on = null
+				$scope.newuser.octant_donor_version = API.ver.no
+				$scope.newuser.updated_on = API.ver.date
 				$scope.newuser.device_available =  $scope.dev1.available
 				$scope.newuser.device_cordova_version = $scope.dev1.cordova
 				$scope.newuser.device_manufacturer = $scope.dev1.manufacturer				
