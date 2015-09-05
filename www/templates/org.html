@@ -1,14 +1,24 @@
 <ion-view view-title="Select Organization">
   <ion-content>
     <ion-list class="__org">
-    	<label ng-repeat="org in organizaions | filter:filterBySearch" class="item item-radio item-thumbnail-left">
-		    <img ng-src="{{org.logo_full}}">
-		    <input type="checkbox" name="group" ng-model="org.is_checked" ng-click="checkOrg(org.org_id)">
-		    <div class="item-content">
-		      {{org.name}}
-		    </div>
-		    <i class="radio-icon ion-checkmark"></i>
-		</label>
+      <label ng-repeat="org in organizaions" class="item item-radio item-thumbnail-left" ng-hide="org.is_checked">
+        <img ng-src="{{org.logo_full}}">
+        <input type="checkbox" name="group" ng-model="org.is_checked" ng-click="checkOrg(org.org_id)">
+        <div class="item-content">
+          {{org.name}}
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+    </label>
+    </ion-list>
+    <ion-list class="__org">
+      <label ng-repeat="org in organizaions" class="item item-radio item-thumbnail-left" ng-show="org.is_checked">
+        <img ng-src="{{org.logo_full}}">
+        <input type="checkbox" name="group" ng-model="org.is_checked" ng-click="checkOrg(org.org_id)">
+        <div class="item-content">
+          {{org.name}}
+        </div>
+        <i class="radio-icon ion-checkmark"></i>
+    </label>
     </ion-list>
     <br/><br/>
     <br/><br/>

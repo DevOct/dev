@@ -435,22 +435,7 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.orgSelect = function(){
-	    $ionicModal.fromTemplateUrl('templates/orgChecked.html', {
-	    	scope: $scope
-	    }).then(function(modal) {
-	    	$scope.modal = modal;
-	    	$scope.modal.show();
-	    });
-
-	}
-
-	$scope.closeMod = function(){
-    	$scope.modal.hide();
-	}
-
-	$scope.conferOrgs = function(){
 		dataFactory._loading(true)
-		$scope.closeMod();
 		$scope.checkedOrgs;
 		$scope.data = []
 		clength = 0;
@@ -1155,9 +1140,12 @@ angular.module('starter.controllers', [])
 	var cardcache  = API.storage.get('cardcache');
 
 	if(cardcache!=undefined||cardcache){
+		var l = cardcache.ca_number
+		$scope.data.number_m = "************"+l.substring(l.length-4,l.length)
 		$scope.data.number = cardcache.ca_number
 		$scope.data.cvc = cardcache.ca_cvc
 		$scope.data.expiry = cardcache.ca_expiry
+		$scope.data.cached = true;
 	}
 
 	$scope.price = []
@@ -1284,7 +1272,6 @@ angular.module('starter.controllers', [])
 
 	$scope.oct_donate = function(ext_flag){
 		$scope.data.amountCent = $scope.data.amount*100;
-    	console.log($scope.data.amountCent);
 
     	flag=$scope.updateAdd();
     	if(flag){
@@ -1423,6 +1410,8 @@ angular.module('starter.controllers', [])
 	console.log($scope.data);
 
 	$scope.checkout = function(){
+		if(!$scope.data.cached)
+			$scope.data.number = $scope.data.number_m;
 		if(
 			$scope.data.expiry 			&&
 			$scope.data.number 			&&
@@ -1479,7 +1468,7 @@ angular.module('starter.controllers', [])
     		if(res.data.success){
     			dataFactory._alert(
     				'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-    				'Thank You for you kind Donation'
+    				'Thank You for your kind Donation'
     			)
     		}
     		else{
@@ -1743,7 +1732,7 @@ console.log($scope.profile)
 		console.log(x)
 		dataFactory._alert(
 			'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-			'Thank You for you kind Donations')
+			'Thank You for your kind Donations')
 	};
 })
 
