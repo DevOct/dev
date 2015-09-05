@@ -1634,7 +1634,7 @@ console.log($scope.profile)
 			return true
 	}
 
-	$scope.oct_donate = function(ext_flag){
+	$scope.oct_pledge = function(ext_flag){
 
     	flag=$scope.updateAdd();
     	if(flag){
