@@ -790,7 +790,6 @@ angular.module('starter.controllers', [])
 					.error(function(err){console.log("err",err)})
 					.then(function(){
 						
-						console.log($scope.pushRegister);
 						$scope.pushRegister();
 
 						// console.log(err);	
@@ -896,8 +895,8 @@ angular.module('starter.controllers', [])
 			//platform: "Android"
 		"device_os_version"		: null,
 			//version : "4.4.4"
-		"octant_donor_version"	: null, 
-		"updated_on"			: null,
+		"octant_donor_version" 	: API.ver.no,
+		"updated_on" 			: API.ver.date,
 
 		"device_available"		: null,
 		"device_cordova"		: null,
@@ -929,8 +928,6 @@ angular.module('starter.controllers', [])
 				$scope.newuser.device_identification = $scope.dev1.uuid
 				$scope.newuser.device_os = $scope.dev1.platform
 				$scope.newuser.device_os_version = $scope.dev1.version
-				$scope.newuser.octant_donor_version = API.ver.no
-				$scope.newuser.updated_on = API.ver.date
 				$scope.newuser.device_available =  $scope.dev1.available
 				$scope.newuser.device_cordova_version = $scope.dev1.cordova
 				$scope.newuser.device_manufacturer = $scope.dev1.manufacturer				
@@ -968,6 +965,7 @@ angular.module('starter.controllers', [])
     			return;
     		}
 		}
+		$scope.pushRegister();
 
 		dataFactory._loading(true,'Please wait while we Sign You Up');
 
@@ -1004,6 +1002,12 @@ angular.module('starter.controllers', [])
 				$scope.updateSession();
 				$scope.updateProf();
 				dataFactory._alert("Success","User Creation successful");
+				u_id = 'OCT-'+API.storage.get('donorId').toString();
+				$ionicUser.identify({
+				  user_id: u_id,
+				  name: API.storage.get('donorName'),
+				  email: API.storage.get('email'),
+				})
 				dataFactory._go('app.org');
 				document.getElementById('signup').disabled = true;
 
@@ -1468,7 +1472,7 @@ angular.module('starter.controllers', [])
     		if(res.data.success){
     			dataFactory._alert(
     				'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-    				'Thank You for your kind Donation'
+    				'Thank you for your kind Donation'
     			)
     		}
     		else{
@@ -1732,7 +1736,7 @@ console.log($scope.profile)
 		console.log(x)
 		dataFactory._alert(
 			'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-			'Thank You for your kind Donations')
+			'Thank you for your kind Donations')
 	};
 })
 

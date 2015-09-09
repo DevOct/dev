@@ -165,6 +165,8 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
          // Handle new push notifications here
          return true;
        }
+     }).then(function(res){
+      console.log(res);
      });
     };
 
@@ -180,7 +182,7 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
     $ionicAppProvider.identify({
         app_id: '7dfbed51',
         api_key: '674e2dec3b9d6b424238032b26997a4bf5736d61c6451a6a',
-        dev_push: true
+        dev_push: false
     });
 
 
