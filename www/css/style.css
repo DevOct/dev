@@ -30,14 +30,21 @@
   color: #fff;
   text-decoration: none;
 }
-
-#__user img {
+.secques select{
   width: 100%;
+  margin-top: 10px;
+  height: 26px;
+}
+#__user img {
+  height: 100%;
 }
 
 #__user {
   border-radius: 50%;
   overflow: hidden;
+  width: 125px;
+  height: 125px;
+  margin: auto;
 }
 
 .__feed .list > a{
@@ -100,12 +107,13 @@
 
 #__login .list .item input[type="password"],
 #__login .list .item input[type="text"]{
-	width: calc(100% - 32px);
-	padding: 7px
+	width: calc(100%);
+	padding: 7px;
+  height: 40px
 }
 
 #__login .list{
-	width: calc(100% - 80px);
+	width: 100%;
 	margin: auto;
 }
 
@@ -299,13 +307,24 @@
   font-weight: normal;
 }
 
+.slider{
+  height: 150px;
+}
+.__Slide h1{
+  font-size: 1.25em;
+  display: block;
+  padding: 40px;
+}
 .__Slide ion-slide{
-  width: 100vw;
-  min-height: 300px;
+  width: 95vw;
+  padding: 12px 0;
+  height: 150px;
 }
 .__Slide ion-slide img {
     margin: auto;
     display: block;
+    height: 125px;
+    max-width: 90%
 }
 .eunread .ev,
 .unread {
@@ -348,11 +367,13 @@
 }
 
 .__loading img{
-  width: 250px;
+  width: 200px;
+  margin: auto;
 }
 
-.outer {
-  padding: 25%;
+.center{
+  width:100%;
+  padding-top: 140px;
 }
 
 .msgs:before,

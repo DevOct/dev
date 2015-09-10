@@ -154,8 +154,8 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
     $rootScope.pushRegister = function() {
      console.log('Ionic Push: Registering user');
      
-     console.log($ionicPush.register);
      // Register with the Ionic Push service.  All parameters are optional.
+     if($rootScope.dev1.platform)
      $ionicPush.register({
        canShowAlert: true, //Can pushes show an alert on your screen?
        canSetBadge: true, //Can pushes update app icon badges?

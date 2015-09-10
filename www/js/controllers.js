@@ -574,6 +574,7 @@ angular.module('starter.controllers', [])
 		}).
 		finally(function(){
 			dataFactory._loading(false);
+			dataFactory._alert('Kindly Check your Email for the new Password');
 		})
 	}
 
@@ -789,7 +790,7 @@ angular.module('starter.controllers', [])
 					})
 					.error(function(err){console.log("err",err)})
 					.then(function(){
-						
+
 						$scope.pushRegister();
 
 						// console.log(err);	
@@ -1177,7 +1178,7 @@ angular.module('starter.controllers', [])
 					if(sorgids[key1]==ob[key].org_id){
 						count++;
 						$scope.slides.push({
-							image: ob[key].logo_full,
+							image: ob[key].logo_thumb,
 							org_id: ob[key].org_id,
 							title: ob[key].name,
 							desc: ob[key].descrip,

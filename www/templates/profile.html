@@ -74,7 +74,8 @@
 					<span class="input-label">Position</span>
 					<input type="text" ng-model="profile.position" placeholder="Position"/>
 				</label>
-				<label class="item item-input item-stacked-label">
+				<label class="item item-input item-stacked-label secques">
+				  <span class="input-label">Security Question</span><br/>
 			      <select ng-model="profile.sec_question">
 			        <option ng-repeat="q in questions" value="{{q.question}}">
 			          {{q.question}}
