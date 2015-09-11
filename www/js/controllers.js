@@ -78,7 +78,7 @@ angular.module('starter.controllers', [])
 
 	dataFactory.service("POST","http://app.octantapp.com/api/msg_feeds",{'donor_id':donid}).
 		success(function(data, textStatus, xhr){
-			var feeder = {};
+			feeder = {};
 			var x = data.feed_id;
 			for(i in x){
 				if(x[i].pic == ""){
@@ -88,10 +88,17 @@ angular.module('starter.controllers', [])
 				var temp = document.createElement('div');
 					temp.innerHTML = x[i].content
 				var text = temp.textContent || temp.innerText || "";
+
 				if(text.length > 100)
 					x[i].contentPrev = text.slice(0,100);
 				else
 					x[i].contentPrev = x[i].content
+
+				// if(x[i].content){
+				// 	var at1 = document.createElement('a');
+				// 	var at1 = document.createElement('a');
+				// }
+
 				x[i].link_id = i;
 				x[i].acro = (x[i].msg_type_id == 2) ? "event" : "feed" ;
 				feeder[i] = x[i];
@@ -1473,7 +1480,7 @@ angular.module('starter.controllers', [])
     		if(res.data.success){
     			dataFactory._alert(
     				'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-    				'Thank you for your kind Donation'
+    				'Thank you for your kind donation'
     			)
     		}
     		else{
@@ -1737,7 +1744,7 @@ console.log($scope.profile)
 		console.log(x)
 		dataFactory._alert(
 			'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
-			'Thank you for your kind Donations')
+			'Thank you for your kind donations')
 	};
 })
 
@@ -1868,6 +1875,7 @@ console.log($scope.profile)
      }
    };
 })
+
 
 .directive('baseImage', ['$window', function ($window) {
   return {
