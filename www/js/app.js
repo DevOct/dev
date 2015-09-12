@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 'starter.controllers', 'angular-md5' , 'ngCordova'])
 
-.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice,$ionicPush) {
+.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice,$ionicPush,$sce) {
   $rootScope.dev1 = {};
   $rootScope.dev1.flag = false;
 
@@ -20,6 +20,10 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
 
     console.log("Dev:",ionic.Platform);
   $rootScope.Donor = {
+  }
+
+  $rootScope.openuri = function(){
+    console.error('kakaka');
   }
 
   $rootScope.updateProf = function(){
@@ -126,7 +130,10 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
       }
   }
 
-  $ionicPlatform.ready(function() {
+  $rootScope.to_trusted = function(html_code) {
+    return $sce.trustAsHtml(html_code);
+  }
+    $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins.Keyboard) {

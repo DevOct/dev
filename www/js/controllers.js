@@ -67,7 +67,7 @@ angular.module('starter.controllers', [])
 	
 })
 
-.controller('FeedsController', function($scope, dataFactory) {
+.controller('FeedsController', function($scope, $sce, dataFactory) {
 	$scope.asyncCount();
 	$scope.updateProf();
 
@@ -87,25 +87,27 @@ angular.module('starter.controllers', [])
 				lii = x[i].content
 				var temp = document.createElement('div');
 					temp.innerHTML = x[i].content
-				var text = temp.textContent || temp.innerText || "";
+				var text = temp.textContent;
 
 				if(text.length > 100)
 					x[i].contentPrev = text.slice(0,100);
 				else
-					x[i].contentPrev = x[i].content
+					x[i].contentPrev = text
 
 				if(x[i].content){
 					var dtt = document.createElement('div')
 					dtt.innerHTML = x[i].content;
 					var arr = dtt.querySelectorAll('a');
-					for(i=0;i<arr.length;i++){
-						
-						var href = arr[i].href;
-						arr[i].removeAttribute('href');
-						arr[i].setAttribute('onclick', "function(){console.info('redirecting to external link');window.open(href.toString(), '_system', 'location=yes');return false;}");
-					}
 					if(arr.length>0){
-						x[i].content = dtt.innerHTML.toString();
+						for(j=0;j<arr.length;j++){
+							var href = arr[j].href.toString();
+							arr[j].removeAttribute('href');
+							arr[j].dataset.url = href;
+							arr[j].setAttribute('class', 'navLink');
+							arr[j].setAttribute('onclick', 'window.open("'+href+'", "_system", "location=yes"); return false;');
+						}
+						console.log(dtt.innerHTML.toString());
+						x[i].content = dtt.innerHTML;
 					}
 				}
 

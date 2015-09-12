@@ -36,4 +36,12 @@
   <body ng-app="starter">
     <ion-nav-view></ion-nav-view>
   </body>
+  <script type="text/javascript">
+    $(".navLink").on('tap', function (e) {
+        //Prevents Default Behavior 
+        e.preventDefault();
+        // Calls Your Function with the URL from the custom data attribute 
+        openUrl($(this).data('url'), '_system');
+    });
+  </script>
 </html>
