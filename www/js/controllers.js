@@ -94,10 +94,20 @@ angular.module('starter.controllers', [])
 				else
 					x[i].contentPrev = x[i].content
 
-				// if(x[i].content){
-				// 	var at1 = document.createElement('a');
-				// 	var at1 = document.createElement('a');
-				// }
+				if(x[i].content){
+					var dtt = document.createElement('div')
+					dtt.innerHTML = x[i].content;
+					var arr = dtt.querySelectorAll('a');
+					for(i=0;i<arr.length;i++){
+						
+						var href = arr[i].href;
+						arr[i].removeAttribute('href');
+						arr[i].setAttribute('onclick', "function(){console.info('redirecting to external link');window.open(href.toString(), '_system', 'location=yes');return false;}");
+					}
+					if(arr.length>0){
+						x[i].content = dtt.innerHTML.toString();
+					}
+				}
 
 				x[i].link_id = i;
 				x[i].acro = (x[i].msg_type_id == 2) ? "event" : "feed" ;
