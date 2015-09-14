@@ -901,7 +901,7 @@ angular.module('starter.controllers', [])
 //
 })
 
-.controller('SignupController', function($scope, $http, $state, dataFactory) {
+.controller('SignupController', function($scope, $http, $state, dataFactory,$ionicUser) {
 	$scope.newuser = {
 		"image"					: null,
 		"donor_id"				: null,
