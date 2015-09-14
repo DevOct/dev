@@ -201,9 +201,8 @@ angular.module('starter.controllers', [])
 	ionic.DomUtil.ready(function(){
 		console.log('rendering')
 		f  = document.querySelector('a.dlnk');
-		fa = $compile(f)($scope);
-		console.log(f,fa);
-		FeedController.$render;
+		$compile(f)($scope);
+		console.log(f,$compile);
 	})
 	$scope.asyncCount();
 })

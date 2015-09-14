@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 'starter.controllers', 'angular-md5' , 'ngCordova'])
 
-.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice,$ionicPush,$sce,$cordovaInAppBrowser) {
+.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice,$ionicPush,$sce,$cordovaInAppBrowser,$compile) {
   $rootScope.dev1 = {};
   $rootScope.dev1.flag = false;
 
@@ -149,7 +149,10 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
   }
 
   $rootScope.to_trusted = function(html_code) {
-    return $sce.trustAsHtml(html_code);
+    f = $sce.trustAsHtml(html_code);
+    $compile(f)($rootScope);
+    return f;
+  
   }
     $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
