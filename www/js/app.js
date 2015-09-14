@@ -6,9 +6,27 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 'starter.controllers', 'angular-md5' , 'ngCordova'])
 
-.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice,$ionicPush,$sce) {
+.run(function($rootScope,$ionicPlatform,$ionicModal,$window,dataFactory,$cordovaDevice,$ionicPush,$sce,$cordovaInAppBrowser) {
   $rootScope.dev1 = {};
   $rootScope.dev1.flag = false;
+
+  $rootScope.open_ext = function(url){
+    console.log('ext',url);
+    
+    var options = {
+      location: 'yes',
+      clearcache: 'yes',
+      toolbar: 'yes',
+      closebuttoncaption: 'DONE?'
+    };
+
+      $cordovaInAppBrowser.open(url, '_system', options)
+      .then(function(event) {
+      })
+      .catch(function(event) {
+        // error
+      });
+  }
 
   document.addEventListener("deviceready", function () {
 
@@ -353,7 +371,7 @@ var API = {
     },
     set: function(key, value, skipParse)
     {
-      console.log(key,value);
+      // console.log(key,value);
       if (!skipParse)
       {
         value = JSON.stringify(value);

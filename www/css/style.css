@@ -414,3 +414,8 @@ footer.org{
 footer.org button {
     margin: 0 !important;
 }
+a.navLink {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
