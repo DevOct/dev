@@ -1344,9 +1344,7 @@ angular.module('starter.controllers', [])
 						console.info('EXT',res);
 					}).
 					finally(function(){
-						var a = document.createElement('a');
-							a.href = h;
-							a.click();
+						$scope.open_ext(h);
 						dataFactory._loading(false)
 						return;				
 					})
