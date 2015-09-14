@@ -18,7 +18,7 @@ angular.module('starter.controllers', [])
 		dataFactory._loading(true);
 		dataFactory.service('POST','http://app.octantapp.com/api/message_count',{donor_id:App_Session.donor_id}).
 		then(function(res){
-			console.log(res.data);
+			//console.log(res.data);
 			$scope.data.unread = {msgs:res.data.msg,feed:res.data.feed,events:res.data.events}
 		}).
 		finally(function(){
@@ -102,11 +102,12 @@ angular.module('starter.controllers', [])
 						for(j=0;j<arr.length;j++){
 							var href = arr[j].href.toString();
 							arr[j].removeAttribute('href');
-							arr[j].dataset.url = href;
-							arr[j].setAttribute('class', 'navLink');
-							arr[j].setAttribute('onclick', 'window.open("'+href+'", "_system", "location=yes"); return false;');
+							// arr[j].setAttribute('href', '#');
+							arr[j].setAttribute('class', 'dlnk button button-clear button-positive');
+							arr[j].setAttribute('ng-click', "open_ext('"+href+"')");
+							arr[j].removeAttribute('target');
 						}
-						console.log(dtt.innerHTML.toString());
+						//console.log(dtt.innerHTML.toString());
 						x[i].content = dtt.innerHTML;
 					}
 				}
@@ -121,7 +122,7 @@ angular.module('starter.controllers', [])
 
 		}).
 		error(function() {
-			console.log("NO INTERNET");
+			//console.log("NO INTERNET");
 			// dataFactory._alert("");
 			$scope.feeds = API.storage.get("feeds_"+App_Session.donor_id);
 			locale = $scope.feeds;
@@ -132,10 +133,10 @@ angular.module('starter.controllers', [])
 		if(message_id!=false){
 			dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
 				success(function(data, textStatus, xhr) {
-					console.log(data);
+					//console.log(data);
 				}).
 				error(function(data, textStatus, xhr) {
-					console.log(data);
+					//console.log(data);
 				});			
 		}
 	}
@@ -170,32 +171,40 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('FeedController', function($scope, $stateParams, dataFactory) {
-	//alert($stateParams.feedid);
+.controller('FeedController', function($scope, $stateParams, dataFactory,$compile) {
 
 	var msgid = $stateParams.message_id;
 	var index = $stateParams.index;
 	var donid = App_Session.donor_id;
 	$scope.feed = null;
 	var AllFeeds = API.storage.get("feeds_"+App_Session.donor_id);
+	console.log($stateParams,AllFeeds);
 
 	if(AllFeeds[index]||AllFeeds[index]!=undefined){
 		$scope.feed = AllFeeds[index];
 		$scope.feed.is_read = true;
-		console.log("foundFeed:",$scope.feed)
+		//console.log("foundFeed:",$scope.feed)
 		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
-				console.log(data);
+				//console.log(data);
 			}).
 			error(function(data, textStatus, xhr) {
-				console.log(data);
+				//console.log(data);
 			});
 	}
 	else{
-		console.log(msgid,"Not Found");
+		//console.log(msgid,"Not Found");
+		dataFactory._alert('Feed Not Found. Kindly Restart the app')
+		return
 	}
-	// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
-
+	//// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
+	ionic.DomUtil.ready(function(){
+		console.log('rendering')
+		f  = document.querySelector('a.dlnk');
+		fa = $compile(f)($scope);
+		console.log(f,fa);
+		FeedController.$render;
+	})
 	$scope.asyncCount();
 })
 
@@ -213,17 +222,17 @@ angular.module('starter.controllers', [])
 		$scope.feed.is_read = true;
 		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':msgid, 'donor_id':donid}).
 			success(function(data, textStatus, xhr) {
-		console.log("foundFeed:",$scope.feed)
-				console.log('singlePost:',data);
+		//console.log("foundFeed:",$scope.feed)
+				//console.log('singlePost:',data);
 			}).
 			error(function(data, textStatus, xhr) {
-				console.log(data);
+				//console.log(data);
 			});
 	}
 	else{
-		console.log(msgid,"Not Found");
+		//console.log(msgid,"Not Found");
 	}
-	// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
+	//// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
 
 	$scope.asyncCount();
 })
@@ -231,12 +240,12 @@ angular.module('starter.controllers', [])
 .controller('ProfileController', function($scope,dataFactory,$ionicPopup,md5,$timeout) {
 
 	$scope.updateProf();
-	console.log()
+	//console.log()
 
 	dataFactory._loading(true,'Fetching Profile');
 	dataFactory.sec_question().then(function(res){
 		$scope.questions = res.data.feed_id;
-		console.log($scope.questions);
+		//console.log($scope.questions);
 	}).
 	finally(function(){dataFactory._loading(false);})
 
@@ -257,7 +266,7 @@ angular.module('starter.controllers', [])
 		$scope.profile = API.storage.get('userProf');	
 		profchk = $scope.profile;
 		$scope.pass.oldPass = $scope.profile.password;
-		console.log($scope.pass.oldPass);
+		//console.log($scope.pass.oldPass);
 		if($scope.profile.image)
 			$scope.image.img64 = $scope.profile.image;
 	}, 1000);
@@ -267,25 +276,25 @@ angular.module('starter.controllers', [])
 	$scope.updateUser = function(){
 
 		if($scope.image && $scope.image.img64 && $scope.image.img){
-			console.log()
+			//console.log()
 			$scope.profile.image = $scope.image.img64;
 			if((parseInt($scope.image.img.filesize)/1024) > 1024){
 				dataFactory._alert("Image Size too big","Image Size bigger than 1 mb");
 				return;
 			}			
 		}
-		console.log($scope.newuser)
+		//console.log($scope.newuser)
 
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 		var rep = /^[a-zA-Z0-9]{8,20}$/
 		if(!re.test($scope.profile.email)){
-			console.log('wut',re.test($scope.profile.email),$scope.profile.email)
+			//console.log('wut',re.test($scope.profile.email),$scope.profile.email)
 			dataFactory._alert("Incomplete Form","Invalid Email");
 			return;
 		}
 
 		if($scope.pass.pass_1!=null){
-			console.log("pass Exisits");
+			//console.log("pass Exisits");
 			if($scope.pass.pass_2!=null){
 				if(!rep.test($scope.pass.pass_2)){
 					dataFactory._alert("Incomplete Form","Your password must be between 8 and 20 characters and must contain only standard characters and numbers, it is not case sensitive");
@@ -322,7 +331,7 @@ angular.module('starter.controllers', [])
 					return;
 				}
 
-				console.log(data,$scope.profile);
+				//console.log(data,$scope.profile);
 				dataFactory._alert('Data Updated','Your new data has been updated');
 				API.storage.set('donorId',$scope.profile.donor_id);
 				API.storage.set('donorName',$scope.profile.first_name+" "+$scope.profile.last_name);
@@ -330,7 +339,7 @@ angular.module('starter.controllers', [])
 				$scope.updateSession();
 			}).
 			error(function (data, status, headers, config) {
-					console.log('error',data,status);
+					//console.log('error',data,status);
 			}).finally(function(){
 				$scope.updateProf();
 				dataFactory._loading(false);
@@ -339,9 +348,9 @@ angular.module('starter.controllers', [])
 
 
 	$scope.swapimage = function(obj){
-		console.log($scope.image);
+		//console.log($scope.image);
 		$scope.image.img64 = 'data:image/jpg;base64,'+$scope.image.img.base64;
-		// console.log($scope.image.img64);
+		//// console.log($scope.image.img64);
 	}
 
 	$scope.upFile = function() {
@@ -352,7 +361,7 @@ angular.module('starter.controllers', [])
 
 	$scope.cont = function(){
 		$scope.data = {}
-		console.log($scope.pass.pass_1);	
+		//console.log($scope.pass.pass_1);	
 
 		  // An elaborate, custom popup
 		var myPopup = $ionicPopup.show({
@@ -380,7 +389,7 @@ angular.module('starter.controllers', [])
 		    ]
 		});
 		myPopup.then(function(res) {
-			console.log(res)
+			//console.log(res)
 			if(res==="cancel")
 				return;
 
@@ -391,7 +400,7 @@ angular.module('starter.controllers', [])
 			else
 				dataFactory._alert("Incorrect Password","The Password you Entered was Incorrect, try again!");
 
-			console.log(res,$scope.pass.oldPass,match);
+			//console.log(res,$scope.pass.oldPass,match);
 		});
   	}
 })
@@ -416,13 +425,13 @@ angular.module('starter.controllers', [])
 		dataFactory._loading(true,'Fetching Your Organizations');
 		dataFactory.service('POST','http://app.octantapp.com/api/donor_org_get',{donor_id:App_Session.donor_id,is_active:1}).
 		then(function(res){
-			console.log(res.data);
+			//console.log(res.data);
 			for(key in res.data){
-				console.log(res.data[key]);
+				//console.log(res.data[key]);
 				$scope.organizaions[res.data[key]].is_checked = true;
 				$scope.checkOrg(res.data[key])
-				console.log($scope.organizaions);
-				console.log($scope.checkedOrgs);
+				//console.log($scope.organizaions);
+				//console.log($scope.checkedOrgs);
 
 			}
 		}).
@@ -443,11 +452,11 @@ angular.module('starter.controllers', [])
 		if($scope.organizaions[org_id].is_checked){
 			$scope.checkedOrgs[org_id] = $scope.organizaions[org_id];
 			$scope.checkedOrgs[org_id].is_active = 1;
-			console.log($scope.checkedOrgs);
+			//console.log($scope.checkedOrgs);
 		}
 		else{
 			// delete $scope.checkedOrgs[org_id];
-			console.log($scope.checkedOrgs);
+			//console.log($scope.checkedOrgs);
 			$scope.organizaions[org_id].is_checked = false;
 			$scope.checkedOrgs[org_id].is_active = 0;
 		}
@@ -475,18 +484,18 @@ angular.module('starter.controllers', [])
 			clength++
 		}
 
-		console.log(clength)
+		//console.log(clength)
 		if(clength>0){
 
-			console.log($scope.data);
+			//console.log($scope.data);
 
 			dataFactory.service('POST','http://app.octantapp.com/api/donor_org',$scope.data).
 				then(function(res){
 					r = res;
-					console.log(res);
+					//console.log(res);
 					dataFactory._alert('Successful','Organizaions Updated Successfully');
 				}, function(res){
-					console.log(res);
+					//console.log(res);
 					dataFactory._alert('Failed','Some Error occured');
 				})
 				.finally(function(){
@@ -496,7 +505,7 @@ angular.module('starter.controllers', [])
 		}
 		else{
 			dataFactory._alert('No Organization Selected','Please Select atleast 1 Organization');
-			console.log(clength);
+			//console.log(clength);
 		}
 			
 	}
@@ -516,7 +525,7 @@ angular.module('starter.controllers', [])
 	dataFactory._loading(true);
 	dataFactory.sec_question().then(function(res){
 		$scope.questions = res.data.feed_id;
-		console.log($scope.questions);
+		//console.log($scope.questions);
 	}).
 	finally(function(){dataFactory._loading(false);})
 
@@ -535,7 +544,7 @@ angular.module('starter.controllers', [])
 					dataFactory._loading(true,'Resetting Password');
 	    			dataFactory.service('POST','http://app.octantapp.com/api/reset_pswrd',$scope.forgot).
 	    				success(function(data, textStatus, xhr){
-	    					console.log(data);
+	    					//console.log(data);
 	    					if(!data.Error){
 		    					$scope.getPass().then(function(d){
 		    						if(d==false)
@@ -548,11 +557,11 @@ angular.module('starter.controllers', [])
 										}
 
 		    						$scope.data.donor_id = data.donor_id;
-		    						console.log(d);
+		    						//console.log(d);
 
 		    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',$scope.data).
 		    						then(function(res){
-		    							// console.log(res);
+		    							//// console.log(res);
 		    							dataFactory._alert('Updated Successfully');
 		    							$scope.closeMod();
 		    						})
@@ -565,7 +574,7 @@ angular.module('starter.controllers', [])
 		    				}
 	    				}).
 	    				error(function(status){
-	    					console.log(status);
+	    					//console.log(status);
 	    				}).finally(function(){
 	    					dataFactory._loading(false);
 	    				})
@@ -589,7 +598,7 @@ angular.module('starter.controllers', [])
 		dataFactory._loading(true,'Sending Email');
 		dataFactory.service('POST','http://app.octantapp.com/api/forgetpassword/123456789',$scope.forgot).
 		then(function(res){
-			console.log(res.data);
+			//console.log(res.data);
 		}).
 		finally(function(){
 			dataFactory._loading(false);
@@ -639,10 +648,10 @@ angular.module('starter.controllers', [])
 		then(function(res){
 			k = res.data.tc_id;
 			terms = [];
-			// console.log(k);
+			//// console.log(k);
 			for (var i = 0; i < k.length; i++) {
 
-				// console.log(terms);
+				//// console.log(terms);
 
 				l = document.createElement('div');
 				l.innerHTML = k[i].tc_donor;
@@ -652,7 +661,7 @@ angular.module('starter.controllers', [])
 					var h = l.getElementsByTagName("h1")[0]
 				else
 					var h = document.createElement('h1');
-				// console.log(h.innerHTML,h);
+				//// console.log(h.innerHTML,h);
 				hd = {"head":h.innerHTML};
 				h.remove();
 
@@ -665,7 +674,7 @@ angular.module('starter.controllers', [])
 				};
 				//mix them together
 				terms[i] = {"head":hd.head,"body":body};
-				console.log(terms[i]);
+				//console.log(terms[i]);
 				body = [];
 			};
 			$scope.terms = terms;
@@ -696,10 +705,10 @@ angular.module('starter.controllers', [])
 		then(function(res){
 			k = res.data.tc_id;
 			privacy = [];
-			console.log(k);
+			//console.log(k);
 			for (var i = 0; i < k.length; i++) {
 
-				console.log(k[i]);
+				//console.log(k[i]);
 
 				l = document.createElement('div');
 				l.innerHTML = k[i].privacy_terms;
@@ -724,7 +733,7 @@ angular.module('starter.controllers', [])
 				body = [];
 			};
 			API.storage.set('privacy',privacy);
-			console.log(privacy);
+			//console.log(privacy);
 			$scope.privacy = privacy;
 
 		})
@@ -770,26 +779,33 @@ angular.module('starter.controllers', [])
 		then(function (position) {
 		    $scope.user.latitude  = position.coords.latitude;
 		    $scope.user.longitude = position.coords.longitude;
-		    console.log(position);
+		    //console.log(position);
 	    })
 
 	$scope.login = function(){
 		if($scope.user.remember)
 			$scope.user.login_info = 1
-		console.log($scope.user)
+		//console.log($scope.user)
 	$scope.loadm();
 		// dataFactory._loading(true,'logging in');
 		$scope.user.password = md5.createHash($scope.user.pass || '');
-		// console.log($scope.user);
+		//// console.log($scope.user);
 		dataFactory.service('POST',"http://app.octantapp.com/api/userlogin/123456789",
 			$scope.user).
 			then(function(res){
+				if(Error==true){
+					console.log(res.data)
+					dataFactory._alert('Server Error');
+									$scope.closeMod();	
+					dataFactory._loading(false)
+					return;
+				}
 
 				var uid = res.data.Sucess;
 				login_info = res.data.login_info
 				console.log(res.data)
 				if(uid != "false"){
-					// console.log(uid);
+					//// console.log(uid);
 					API.storage.set('email',$scope.user.email);
 					API.storage.set('donorId',uid.donor_id);
 					API.storage.set('donorName',uid.first_name+" "+uid.last_name);
@@ -798,7 +814,7 @@ angular.module('starter.controllers', [])
 					$scope.updateSession();
 					var cm = null;
 					var user = $ionicUser.get();
-					console.log($scope.dev1);
+					//console.log($scope.dev1);
 
 					u_id = 'OCT-'+API.storage.get('donorId').toString();
 
@@ -807,23 +823,23 @@ angular.module('starter.controllers', [])
 					  name: API.storage.get('donorName'),
 					  email: API.storage.get('email'),
 					})
-					.error(function(err){console.log("err",err)})
+					//.error(function(err){console.log("err",err)})
 					.then(function(){
 
 						$scope.pushRegister();
 
-						// console.log(err);	
-						// console.log('ionicUser:',$ionicUser)
+						//// console.log(err);	
+						//// console.log('ionicUser:',$ionicUser)
 						if(login_info==2){
 							$scope.getPass().
 							then(function(dat){
 	    						dataFactory.service('PUT','http://app.octantapp.com/api/reset_pswrd_upd',{'password':dat,donor_id:App_Session.donor_id}).
 	    						then(function(res){
-	    							console.log(res);
+	    							//console.log(res);
 	    							dataFactory._alert('Updated Successfully');
 	    						})
 								$timeout(function(){
-									$scope.closeMod();				
+									$scope.closeMod();	
 								}, 2000);
 
 								//create user
@@ -837,13 +853,13 @@ angular.module('starter.controllers', [])
 				}
 				else{
 					dataFactory._alert("Error","Cannot Sign in with the given credentials");
-					console.log(uid);
+					//console.log(uid);
 					return;
 				}
 
 
 			},function(res){
-				console.log(res);
+				//console.log(res);
 			}).finally(function(){
 				if(login_info!=2){
 					$timeout(function(){
@@ -875,7 +891,7 @@ angular.module('starter.controllers', [])
 		          	document.querySelector('span.err').innerHTML = 'Your password must be between 8 and 20 characters and must contain only standard characters and numbers, it is not case sensitive.';
 		            e.preventDefault();
 		          } else {
-		          	console.log($scope.data);
+		          	//console.log($scope.data);
 		            return $scope.data.password;
 		          }
 		        }
@@ -939,10 +955,10 @@ angular.module('starter.controllers', [])
 		then(function (position) {
 		    $scope.newuser.latitude  = position.coords.latitude;
 		    $scope.newuser.longitude = position.coords.longitude;
-		    console.log(position);
+		    //console.log(position);
 
-			console.log($scope.dev1.flag);
-			console.log($scope.dev1);
+			//console.log($scope.dev1.flag);
+			//console.log($scope.dev1);
 			if($scope.dev1.flag){
 				$scope.newuser.device_type = $scope.dev1.model
 				$scope.newuser.device_identification = $scope.dev1.uuid
@@ -990,7 +1006,7 @@ angular.module('starter.controllers', [])
 		dataFactory._loading(true,'Please wait while we Sign You Up');
 
 		k = $scope.newuser;
-		console.log($scope.newuser);
+		//console.log($scope.newuser);
 
 		$scope.userauth = {
 			"donor_authentication_id": null,
@@ -1002,15 +1018,15 @@ angular.module('starter.controllers', [])
 
 		dataFactory.service('Post', ' http://app.octantapp.com/api/donor', $scope.newuser).
 			success(function (data, status, headers, config) {
-				console.log(data);
-				console.log('success');
+				//console.log(data);
+				//console.log('success');
 				if(data.Error && data.Message.code == "ER_DUP_ENTRY"){
 					dataFactory._alert("Error","Duplicate Email Found")
 					return;
 				}
 			}).
 			error(function (res) {
-				console.log('error');
+				//console.log('error');
 			}).
 			then(function(res){
 				if(res.Error)
@@ -1042,7 +1058,7 @@ angular.module('starter.controllers', [])
 
 .controller('EventsController', function($scope, dataFactory) {
 
-	console.log($scope.datify(0),'date');
+	//console.log($scope.datify(0),'date');
 
 	$scope.lala = true;
 	$scope.readme = false;
@@ -1062,12 +1078,12 @@ angular.module('starter.controllers', [])
 			}
 			$scope.events = feeder;
 			API.storage.set("event_"+App_Session.donor_id,feeder);
-			console.log($scope.events);
+			//console.log($scope.events);
 		}).
 		error(function() {
-			console.log("NO INTERNET");
+			//console.log("NO INTERNET");
 			$scope.events = API.storage.get("event_"+App_Session.donor_id);
-			console.log($scope.events);
+			//console.log($scope.events);
 		}).
 		finally(function(){
 			dataFactory._loading(false);
@@ -1096,7 +1112,7 @@ angular.module('starter.controllers', [])
 			var feeder = {};
 			var x = data.feed_id;
 			for(i in x){
-				console.log(x[i].msg_type_id)
+				//console.log(x[i].msg_type_id)
 				if(x[i].msg_type_id==1){
 					x[i].link_id = i;
 					feeder[i] = x[i];					
@@ -1112,10 +1128,10 @@ angular.module('starter.controllers', [])
 			}
 			$scope.messages = feeder;
 			API.storage.set("msg_"+App_Session.donor_id,feeder);
-			console.log($scope.messages);
+			//console.log($scope.messages);
 		}).
 		error(function() {
-			console.log("NO INTERNET");
+			//console.log("NO INTERNET");
 			// dataFactory._alert("");
 			$scope.feeds = API.storage.get("msg_"+App_Session.donor_id);
 		}).
@@ -1123,15 +1139,17 @@ angular.module('starter.controllers', [])
 			dataFactory._loading(false);
 		});
 		
-	$scope.isreadchk = function(message_id){
-		$scope.messages[message_id].is_read = true;
-		dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
-			success(function(data, textStatus, xhr) {
-				console.log(data);
-			}).
-			error(function(data, textStatus, xhr) {
-				console.log(data);
-			});
+	$scope.isreadchk = function(message_id,link){
+		$scope.feeds[link].is_read = true;
+		if(message_id!=false){
+			dataFactory.service('POST','http://app.octantapp.com/api/message_read/123456789',{'msg_id':message_id, 'donor_id':donid}).
+				success(function(data, textStatus, xhr) {
+					//console.log(data);
+				}).
+				error(function(data, textStatus, xhr) {
+					//console.log(data);
+				});			
+		}
 	}
 
 	$scope.donatetoorg = function(orgid){
@@ -1187,11 +1205,11 @@ angular.module('starter.controllers', [])
 		sorgids = res.data;
 		dataFactory.service('GET','http://app.octantapp.com/api/organization').
 		then(function(res){
-			console.log("data:",res.data)
+			//console.log("data:",res.data)
 			ob = res.data.feed_id;
 			$scope.organizaions = ob
 			count = 0;
-			console.log(ob);
+			//console.log(ob);
 			for(key in ob){
 				for(key1 in sorgids){
 					if(sorgids[key1]==ob[key].org_id){
@@ -1214,9 +1232,9 @@ angular.module('starter.controllers', [])
 					}
 				}
 			}
-			console.log("slides",$scope.slides);
+			//console.log("slides",$scope.slides);
 	    	$ionicSlideBoxDelegate.update();
-	    	// console.log(slto);
+	    	//// console.log(slto);
 	    	// API.storage.set('organizaions',$scope.organizaions);
 		}).
 		finally(function(){
@@ -1238,7 +1256,7 @@ angular.module('starter.controllers', [])
 						zip: null,
 						state: null,
 					}
-			    // console.log('page loading completed');
+			    //// console.log('page loading completed');
 			});
 		})
 	})
@@ -1304,7 +1322,7 @@ angular.module('starter.controllers', [])
     	}
 
 		if($scope.data.slide>0){
-			console.log($scope.data.amount,min)
+			//console.log($scope.data.amount,min)
 			if($scope.data.amount>=min){
 				if(ext_flag){
 					dataFactory._loading(true,'Redirecting to Organization Site')
@@ -1314,14 +1332,14 @@ angular.module('starter.controllers', [])
 						h = $scope.billing.link_payment.toString();
 					else
 						h = 'http://'+$scope.billing.link_payment.toString();
-					console.log(lnk,h);
+					//console.log(lnk,h);
 
 					$scope.d = {
 						donor_id: App_Session.donor_id,
 						org_id: $scope.billing.org_id,
 						amount: $scope.data.amountCent
 					}
-					console.log($scope.d)
+					//console.log($scope.d)
 					dataFactory.service('POST','http://app.octantapp.com/api/ext_don',$scope.d).
 					then(function(res){
 						console.info('EXT',res);
@@ -1344,7 +1362,7 @@ angular.module('starter.controllers', [])
 		else{
 			dataFactory._alert('Organization','Please Select an Organization');
 		}
-		console.log($scope.data);
+		//console.log($scope.data);
 	}
 
 	var min = 0
@@ -1352,16 +1370,16 @@ angular.module('starter.controllers', [])
 	$scope.slideC = function(index){
 		document.getElementById('dondon').setAttribute('disabled',true);
 		$scope.data.slide = index;
-		console.log($scope.data,index);
+		//console.log($scope.data,index);
 		if(index>0){
 			min = 0
 
 	    	$scope.billing = $scope.slides[index-1];
-	    	console.log($scope.billing.org_message)
+	    	//console.log($scope.billing.org_message)
 
 			dataFactory.service('POST','http://app.octantapp.com/api/defaultdon',{'org_id':$scope.billing.org_id}).
 			then(function(res){
-				console.log(res.data);
+				//console.log(res.data);
 				rserr = res.data.Error;
 				if(!res.data.Error){
 					v = res.data.Values
@@ -1371,7 +1389,7 @@ angular.module('starter.controllers', [])
 							min = v[key]
 						}
 						vss.push(v[key])
-						console.log(v[key]);
+						//console.log(v[key]);
 					}
 					$scope.price = vss
 				}
@@ -1411,7 +1429,7 @@ angular.module('starter.controllers', [])
 
 		}
 
-		console.log(index);
+		//console.log(index);
 	}
 
 
@@ -1431,7 +1449,7 @@ angular.module('starter.controllers', [])
 	})
 
 
-	console.log($scope.data);
+	//console.log($scope.data);
 
 	$scope.checkout = function(){
 		if(!$scope.data.cached)
@@ -1468,8 +1486,8 @@ angular.module('starter.controllers', [])
 
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
-		console.log($scope.postData);
-		// console.log($scope.data)
+		//console.log($scope.postData);
+		//// console.log($scope.data)
 		if(! re.test($scope.postData.email)){
 			dataFactory._alert("Data Error","Invalid Email")
 			return
@@ -1498,7 +1516,7 @@ angular.module('starter.controllers', [])
     		else{
 	    		dataFactory._alert("Error","Something went wrong, please try again later");
     		}
-    		console.log(res.data);
+    		//console.log(res.data);
     	}).
     	finally(function(){
 		    $scope.modal.hide();
@@ -1523,7 +1541,7 @@ angular.module('starter.controllers', [])
 	var minam = 0;
 	$scope.profile = API.storage.get('userProf');
 
-console.log($scope.profile)
+//console.log($scope.profile)
 	$scope.data = {
 		fee: 5,
 		amount: null,
@@ -1554,13 +1572,13 @@ console.log($scope.profile)
 			sorgids = res.data;
 				$scope.organizaions = ob
 				count = 0;
-				console.log(ob);
+				//console.log(ob);
 				for(key in ob){
 					for(key1 in sorgids){
 						if(sorgids[key1] == ob[key].org_id){
 							count++;
 							$scope.slides.push({
-								image: ob[key].logo_full,
+								image: ob[key].logo_thumb,
 								org_id: ob[key].org_id,
 								title: ob[key].name,
 								desc: ob[key].descrip,
@@ -1575,9 +1593,9 @@ console.log($scope.profile)
 						}
 					}
 				}
-				console.log($scope.slides);
+				//console.log($scope.slides);
 		    	$ionicSlideBoxDelegate.update();
-		    	// console.log(slto);
+		    	//// console.log(slto);
 		    		// API.storage.set('organizaions',$scope.organizaions);				
 		});
 	}).
@@ -1600,13 +1618,13 @@ console.log($scope.profile)
 					state: null,
 				}
 
-		    // console.log('page loading completed');
+		    //// console.log('page loading completed');
 		});
 		dataFactory._loading(false);
 	})
 
 	$scope.dataChanged = function(selectedItem){
-		console.log(selectedItem)
+		//console.log(selectedItem)
 		$scope.data.amount = selectedItem;
 	}
 	$scope.updateAdd = function(){
@@ -1667,7 +1685,7 @@ console.log($scope.profile)
 	
 					dataFactory.service('POST','http://app.octantapp.com/api/pledge',$scope.data).
 					then(function(res){
-						console.log(res);
+						//console.log(res);
 						$scope.showAlert();
 					})
 					
@@ -1683,13 +1701,13 @@ console.log($scope.profile)
 		else{
 			dataFactory._alert('Organization Error','No Organizaions Selected');
 		}
-		console.log($scope.data);
+		//console.log($scope.data);
 	}
 	rserr = false;
 	$scope.slideC = function(index){
 		document.getElementById('dondon').setAttribute('disabled',true);
 		$scope.data.slide = index;
-		console.log($scope.data,index);
+		//console.log($scope.data,index);
 		if(index>0){
 			min = 0
 
@@ -1697,7 +1715,7 @@ console.log($scope.profile)
 
 			dataFactory.service('POST','http://app.octantapp.com/api/defaultdon',{'org_id':$scope.billing.org_id}).
 			then(function(res){
-				console.log(res.data);
+				//console.log(res.data);
 				rserr = res.data.Error;
 				if(!res.data.Error){
 					v = res.data.Values
@@ -1707,7 +1725,7 @@ console.log($scope.profile)
 							min = v[key]
 						}
 						vss.push(v[key])
-						console.log(v[key]);
+						//console.log(v[key]);
 					}
 					$scope.price = vss
 					minam = vss[0];
@@ -1718,11 +1736,11 @@ console.log($scope.profile)
 					document.getElementById('pricelist').disabled = true;
 					document.getElementById('pricelist').value = null;
 				}
-				console.log(rserr,res.data.Error)
+				//console.log(rserr,res.data.Error)
 			}).
 			finally(function(res){
 				if(!rserr){
-				console.log(rserr)
+				//console.log(rserr)
 					$timeout(function(){
 						document.getElementById('pricelist').selectedIndex = 1;
 						document.getElementById('pricelist').removeAttribute('disabled');
@@ -1753,7 +1771,7 @@ console.log($scope.profile)
 
 	$scope.showAlert = function() {
 		x = $scope.data;
-		console.log(x)
+		//console.log(x)
 		dataFactory._alert(
 			'<img src="'+$scope.billing.image+'" style="width:100px;margin:0 auto" /><br/><br/>Donation Successful',
 			'Thank you for your kind donations')
@@ -1839,7 +1857,7 @@ console.log($scope.profile)
 
 			var posOptions = {timeout: 10000, enableHighAccuracy: true};
 			var gps = $cordovaGeolocation.getCurrentPosition(posOptions);
-			console.log(gps);
+			//console.log(gps);
 			return gps
 		},
 		sec_question: function(){
@@ -1860,7 +1878,7 @@ console.log($scope.profile)
 
     angular.forEach(field, function(value, key){
 	    filtered.sort(function (a, b) {
-	    	// console.log(a[field[]],b[field]);
+	    	//// console.log(a[field[]],b[field]);
 	      return (a[field[key][0]] > b[field[key][0]] ? 1 : -1);
 	    });    	
 	    if(field[key][1]) filtered.reverse();
