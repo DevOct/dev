@@ -103,8 +103,8 @@ angular.module('starter.controllers', [])
 							var href = arr[j].href.toString();
 							arr[j].removeAttribute('href');
 							// arr[j].setAttribute('href', '#');
-							arr[j].setAttribute('class', 'dlnk button button-clear button-positive');
-							arr[j].setAttribute('ng-click', "open_ext('"+href+"')");
+							arr[j].setAttribute('class', 'dlnk');
+							arr[j].setAttribute('navigate-To', encodeURI(href));
 							arr[j].removeAttribute('target');
 						}
 						//console.log(dtt.innerHTML.toString());
@@ -171,7 +171,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('FeedController', function($scope, $stateParams, dataFactory,$compile) {
+.controller('FeedController', function($scope, $stateParams, dataFactory,$compile,$timeout) {
 
 	var msgid = $stateParams.message_id;
 	var index = $stateParams.index;
@@ -198,12 +198,18 @@ angular.module('starter.controllers', [])
 		return
 	}
 	//// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
-	ionic.DomUtil.ready(function(){
+		dataFactory._loading(true);
+
 		console.log('rendering')
-		f  = document.querySelector('a.dlnk');
-		$compile(f)($scope);
-		console.log(f,$compile);
-	})
+
+		f = document.createElement('div');
+		f.innerHTML = $scope.feed.content
+
+		$timeout(function() {
+			gf = angular.element(document.querySelectorAll("[mgh]"));
+			gf.append($compile(f)($scope));
+			dataFactory._loading(false);
+		}, 100);
 	$scope.asyncCount();
 })
 
@@ -1903,6 +1909,21 @@ angular.module('starter.controllers', [])
    };
 })
 
+.directive("navigateTo",function($ionicGesture) {
+  return {
+    restrict: 'A',
+    link:function ($scope,$element,$attr) {
+
+      var tapHandler = function(e) {
+        var inAppBrowser = window.open(encodeURI($attr.navigateTo),'_blank','location=yes','toolbar=yes');
+      };
+      var tapGesture = $ionicGesture.on('tap',tapHandler,$element);
+      $scope.$on('$destroy',function() {
+        $ionicGesture.off(tapGesture,'tap',tapHandler);
+      });
+    }
+  }
+})
 
 .directive('baseImage', ['$window', function ($window) {
   return {

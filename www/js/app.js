@@ -10,7 +10,16 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
   $rootScope.dev1 = {};
   $rootScope.dev1.flag = false;
 
-  $rootScope.open_ext = function(url){
+    $rootScope.open_ext = function (url,scope,$element,$attr) {
+      var inAppBrowser = window.open(encodeURI(url),'_blank','location=yes','toolbar=yes');
+      var tapHandler = function(e) {
+        var tapGesture = $ionicGesture.on('tap',tapHandler,$element);
+      };
+      $rootScope.on('$destroy',function() {
+        $ionicGesture.off(tapGesture,'tap',tapHandler);
+      });
+    }
+    $rootScope.open_ext = function(url){
     console.log('ext',url);
     
     var options = {

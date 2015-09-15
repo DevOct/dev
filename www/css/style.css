@@ -419,3 +419,9 @@ a.navLink {
     color: blue;
     cursor: pointer;
 }
+.my_link,
+.dlnk{
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
