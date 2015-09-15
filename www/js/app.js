@@ -194,6 +194,7 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
          return true;
        }
      }).then(function(res){
+      console.info("IONIC-REG-COMPLETE: ",res);
       console.log(res);
      });
     };
@@ -202,6 +203,7 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
       // alert("Successfully registered token " + data.token);
       console.log('Ionic Push: Got token ', data.token, data.platform);
       $rootScope.token = data.token;
+      console.info("DEVICE-TOKEN: ",$rootScope.token);
     });
 })
 
