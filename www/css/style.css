@@ -425,3 +425,7 @@ a.navLink {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.subinp{
+  width: calc(100% - 35% - 113px);
+}

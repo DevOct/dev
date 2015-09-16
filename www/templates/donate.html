@@ -18,14 +18,18 @@
 		    <div class="input-label">
 		      Amount:
 		    </div>
-		    <label ng-show="data.selectedItem == 0" class="item-input-wrapper">
-		    	<i class="icon  placeholder-icon">$</i>
-		    	<input type="text" placeholder="375" ng-model="data.amount">
+		    <div ng-show="data.selectedItem == 0" class="subinp">
+		    	<label class="item-input-wrapper">
+			    	<i class="icon  placeholder-icon">$</i>
+			    	<input type="text" placeholder="375" ng-model="data.amount">
+			  	</label>
+			</div>
+		  	<label class="item item-input item-select">
+			    <select id="pricelist" disabled="true" ng-model="data.selectedItem"  ng-change="dataChanged(data.selectedItem)" >
+			      <option ng-show="price" ng-repeat="p in price" value="{{p}}">${{p}}</option>
+			      <option value="0">Other</option>
+			    </select>
 		  	</label>
-		    <select id="pricelist" disabled="true" ng-model="data.selectedItem"  ng-change="dataChanged(data.selectedItem)" >
-		      <option ng-show="price" ng-repeat="p in price" value="{{p}}">${{p}}</option>
-		      <option value="0">Other</option>
-		    </select>
 		  </label>
 		</div>
 		

@@ -1322,7 +1322,7 @@ angular.module('starter.controllers', [])
 
     	flag=$scope.updateAdd();
     	if(flag){
-    		dataFactory._alert('Incomplete Data','Kindly update your Address to continue');
+    		dataFactory._alert('Incomplete Data','Kindly update your address to continue');
     		return
     	}
 
@@ -1915,7 +1915,7 @@ angular.module('starter.controllers', [])
     link:function ($scope,$element,$attr) {
 
       var tapHandler = function(e) {
-        var inAppBrowser = window.open(encodeURI($attr.navigateTo),'_blank','location=yes','toolbar=yes');
+        var inAppBrowser = window.open(encodeURI($attr.navigateTo),'_system','location=yes','toolbar=yes');
       };
       var tapGesture = $ionicGesture.on('tap',tapHandler,$element);
       $scope.$on('$destroy',function() {
