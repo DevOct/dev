@@ -10,32 +10,16 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
   $rootScope.dev1 = {};
   $rootScope.dev1.flag = false;
 
-    $rootScope.open_ext = function (url,scope,$element,$attr) {
-      var inAppBrowser = window.open(encodeURI(url),'_blank','location=yes','toolbar=yes');
-      var tapHandler = function(e) {
-        var tapGesture = $ionicGesture.on('tap',tapHandler,$element);
-      };
-      $rootScope.on('$destroy',function() {
-        $ionicGesture.off(tapGesture,'tap',tapHandler);
-      });
-    }
     $rootScope.open_ext = function(url){
-    console.log('ext',url);
-    
-    var options = {
-      location: 'yes',
-      clearcache: 'yes',
-      toolbar: 'yes',
-      closebuttoncaption: 'DONE?'
-    };
-
-      $cordovaInAppBrowser.open(url, '_system', 'location=no,toolbar=yes')
-      .then(function(event) {
-      })
-      .catch(function(event) {
-        // error
-      });
-  }
+      console.log('ext',url);
+  
+        $cordovaInAppBrowser.open(url, '_system', 'location=no,toolbar=yes')
+        .then(function(event) {
+        })
+        .catch(function(event) {
+          // error
+        });
+    }
 
   document.addEventListener("deviceready", function () {
 

@@ -220,7 +220,7 @@ angular.module('starter.controllers', [])
 	var index = $stateParams.index;
 	var donid = App_Session.donor_id;
 	$scope.feed = null;
-	var AllFeeds = API.storage.get("event_"+App_Session.donor_id);
+	var AllFeeds = API.storage.get("feeds_"+App_Session.donor_id);
 
 	if(AllFeeds[index]||AllFeeds[index]!=undefined){
 		$scope.feed = AllFeeds[index];
@@ -1168,7 +1168,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('DonateController', function($scope,$window,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal,$timeout) {
+.controller('DonateController', function($scope,$window,$ionicSlideBoxDelegate,$ionicPopup,$stateParams,dataFactory,$ionicModal,$timeout,$cordovaInAppBrowser) {
 
 	$scope.profile = API.storage.get('userProf');
 
@@ -1345,12 +1345,19 @@ angular.module('starter.controllers', [])
 						amount: $scope.data.amountCent
 					}
 					//console.log($scope.d)
+					// $scope.open_ext('www.google.com');
 					dataFactory.service('POST','http://app.octantapp.com/api/ext_don',$scope.d).
 					then(function(res){
+				        $cordovaInAppBrowser.open(h, '_system', 'location=no,toolbar=yes').then(function(){
+				        	console.log(h);
+				        });
 						console.info('EXT',res);
+				        // var inAppBrowser = window.open(encodeURI(h),'_system','location=yes,toolbar=yes');
 					}).
 					finally(function(){
-						$scope.open_ext(h);
+				        gh = $cordovaInAppBrowser.open(h, '_system', {'location':'yes','toolbar':'yes'});
+				        console.log(gh);
+						// $scope.open_ext(h);
 						dataFactory._loading(false)
 						return;				
 					})
