@@ -29,7 +29,7 @@ angular.module('starter', ['ionic','ionic.service.core','ionic.service.push', 's
       closebuttoncaption: 'DONE?'
     };
 
-      $cordovaInAppBrowser.open(url, '_system', options)
+      $cordovaInAppBrowser.open(url, '_system', 'location=no,toolbar=yes')
       .then(function(event) {
       })
       .catch(function(event) {
