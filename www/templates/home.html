@@ -25,7 +25,7 @@
 			<div class="actionBar">
  				<a type="button" ng-show="{{feed.content.length > 100}}" class="button button-small button button-positive seemore" ng-click="lala = lala === false ? true: false;isreadchk({{feed.message_id+','+feed.link_id}})">see {{lala === false ? 'less': 'more';}}</a>
 		    	<button class="button button-small button-energized icon-left ion-card" ng-click="donatetoorg(feed.org_id)">Donate</button>
-		    	<a class="button button-small button-balanced icon-left ion-link"  navigate-To="{{feed.event_link}}" ng-show="{{feed.msg_type_id=='2'}}">link</a>
+		    	<a class="button button-small button-balanced icon-left ion-link"  navigate-To="{{feed.event_link}}" ng-show="{{feed.msg_type_id=='2'}}">Event page</a>
  		    	<!-- <button class="button button-circle button-small"><img src="img/share.png" /></button> -->
 		    </div>
 		</div>
