@@ -40,7 +40,12 @@ angular.module('starter.controllers', [])
 	})
 
 	$scope.datify = function(dt,param){
-		date = new Date(dt.replace('T',' ').replace('Z',''));
+		dreg = re = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
+		if(dreg.test(dt)){
+			date = new Date(dt.replace('T',' ').replace('Z',''));
+		}
+		else
+			date = new Date(dt);
 		// str = date.toISOString().slice(0, 19).replace('T', ' ')
 		switch(param){
 			case 'date':
