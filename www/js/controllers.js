@@ -40,7 +40,7 @@ angular.module('starter.controllers', [])
 	})
 
 	$scope.datify = function(dt,param){
-		date = new Date(dt);
+		date = new Date(dt.replace('T',' ').replace('Z',''));
 		// str = date.toISOString().slice(0, 19).replace('T', ' ')
 		switch(param){
 			case 'date':
