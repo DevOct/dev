@@ -9,10 +9,10 @@
 		    <div class="clearfix"></div>
 		</div>
 
-		<div class="item item-avatar ev">
+		<div class="item item-avatar actionBarE ev">
 		    <img ng-src="{{feed.logo_full}}">
-	    	<button class="button button-circle button-small" ng-click="donatetoorg(msg.org_id)"><img src="img/1.png" /></button>
-	    	<a class="button button-circle button-small" navigate-To="{{msg.event_link}}"><img src="img/2.png" /></a>
+	    	<button class="button button-small button-energized ican icon-left ion-card" ng-click="donatetoorg(msg.org_id)">Donate</button>
+	    	<a class="button button-small button-balanced ican icon-left ion-link" navigate-To="{{msg.event_link}}">Event page</a>
 		    <h2>{{feed.name}}</h2>
 	    </div>
 
@@ -24,11 +24,7 @@
 			    </li>
 			    <li class="item">
 			    	Start time:<br/>
-    		    	{{datify(feed.start_date,'time')}}
-			    </li>
-			    <li class="item">
-			    	End time:<br/>
-    		    	{{datify(feed.end_date,'time')}}
+    		    	{{datify(feed.event_date,'time')}}
 			    </li>
 			    <li class="item">
 			    	Location:<br/>

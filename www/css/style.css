@@ -209,7 +209,10 @@
   background-color: rgba(51, 51, 51, 0.67);
   width: 100%;  
 }
-
+.actionBarE.ev a, .actionBarE.ev button {
+    float: right;
+    margin: 0 2px;
+}
 .actionBarE .button-circle,
 .actionBar .button-circle{
 //  background-color: #ED8C2B;

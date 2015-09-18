@@ -237,7 +237,7 @@ angular.module('starter.controllers', [])
 	else{
 		//console.log(msgid,"Not Found");
 	}
-	//// console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
+	console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
 
 	$scope.asyncCount();
 })
@@ -324,8 +324,8 @@ angular.module('starter.controllers', [])
 		}
 
 		if($scope.profile.sec_answer)
-			if(!($scope.profile.sec_answer.length>8)){
-				dataFactory._alert('Security Answer','Security Answer too short, Please enter more than 8 characters')
+			if(!($scope.profile.sec_answer.length>0)){
+				dataFactory._alert('Missing feild','Please provide with an answer')
 				return
 			}
 		dataFactory._loading(true,"Updating Profile");

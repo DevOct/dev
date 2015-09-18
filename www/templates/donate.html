@@ -4,7 +4,7 @@
 		<div class="item item-body">
 			<ion-slide-box show-pager="false" on-slide-changed="slideC(index)" class="__Slide">
 			  <ion-slide>
-			  	<h1>Select An Organization ></h1>
+			  	<h1>Swipe to Select an Org ></h1>
 			  </ion-slide>
 			  <ion-slide ng-repeat="item in slides">
 			  	<img ng-src="{{item.image}}" Alt="{{item.title}}"/>
@@ -30,8 +30,9 @@
 		    </select>
 		  </label>
 		</div>
-		
-		<a id="dondon" class="button button-icon icon" disabled="true" ng-click="oct_donate(billing.ext_flag)"><img src="img/1.png" ></a>
+		<div class="item" style="border:transparent">
+			<a id="dondon" class="button button-energized ican icon-left ion-card" disabled="true" ng-click="oct_donate(billing.ext_flag)">Donate</a>
+		</div>
 	</div>
 		<div class="list card" style="margin-top:-16px">
 			<div class="item item-body">
