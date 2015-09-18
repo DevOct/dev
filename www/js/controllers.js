@@ -548,7 +548,7 @@ angular.module('starter.controllers', [])
 			}
 		}
 		if(qCheck){
-			if($scope.forgot.sec_answer.length>6){
+			if($scope.forgot.sec_answer.length>0){
 				var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 	    		if(re.test($scope.forgot.email)){
 					dataFactory._loading(true,'Resetting Password');
@@ -595,7 +595,7 @@ angular.module('starter.controllers', [])
 	    		}
 	    	}
 			else{
-				dataFactory._alert("Invalid Entry","Answer Length too short, ("+$scope.forgot.sec_answer.length+") characters");
+				dataFactory._alert("Missing Entry","Kindly insert an answer");
 				return;
 			}
 		} else {
