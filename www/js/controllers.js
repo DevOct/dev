@@ -237,6 +237,11 @@ angular.module('starter.controllers', [])
 	else{
 		//console.log(msgid,"Not Found");
 	}
+
+	$scope.donatetoorg = function(orgid){
+		dataFactory._go('app.donate',{'orgid':orgid})
+	}
+
 	console.log("foundAllFeeds:",$scope.feed,"need",$stateParams.message_id)
 
 	$scope.asyncCount();
