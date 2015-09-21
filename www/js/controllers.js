@@ -1339,8 +1339,7 @@ angular.module('starter.controllers', [])
 		if($scope.data.slide>0){
 			//console.log($scope.data.amount,min)
 			if($scope.data.amount>=min){
-				if(ext_flag){
-					dataFactory._loading(true,'Redirecting to Organization Site')
+				if(ext_flag){					dataFactory._loading(true,'Redirecting to Organization Site')
 					var lnk = $scope.billing.link_payment
 					var h;
 					if(lnk.slice(0, 8)=="https://" || lnk.slice(0, 7)=="http://")
